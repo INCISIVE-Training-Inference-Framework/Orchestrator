@@ -117,7 +117,7 @@ public class Incisive implements Platform {
                 case INFERENCING_FROM_PRETRAINED_MODEL -> {
                     if (inferenceResultsId == null)
                         throw new BadInputParametersException("Inference results id is needed for transmitting the end of the execution");
-                    result = "http://" + this.maasHostname + "/api/inference_results/" + inferenceResultsId + "/download_result_files/";
+                    result = "http://" + this.maasHostname + "/api/inference_results/" + inferenceResultsId + "/";
                 }
                 default -> throw new BadInputParametersException("Unrecognized use case: " + useCase);
             }
