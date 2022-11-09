@@ -1,0 +1,23 @@
+# actions -> download_inference_input_data and download_model
+"{\"actions\": [
+    {\"name\": \"download_data\",
+    \"method\":
+        {\"name\": \"inference_input_data\",
+        \"job_id\": 5}},
+    {\"name\":\"download_model\",
+    "model_id": 2}]}"
+
+# actions -> download_config
+"{\"actions\": [
+    {\"name\":\"download_config\",
+    "job_id": 1}]}"
+
+# actions -> download_input_data and download_model
+"{\"actions\": [
+    {\"name\": \"download_data\",
+    \"method\":
+        {\"name\": \"input_data\",
+        \"job_id\": 5,
+        \"data_partner_patients\": [\"Patient1\", \"Patient2\"]}},
+    {\"name\":\"download_model\",
+    "model_id": 2}]}"

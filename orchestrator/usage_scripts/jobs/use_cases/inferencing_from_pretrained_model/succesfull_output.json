@@ -1,0 +1,10 @@
+{
+	"id": 4,
+	"url": "http://127.0.0.1:8000/api/jobs/4/",
+	"ai_engine_config": "http://127.0.0.1:8000/api/jobs/4/download_ai_engine_config/",
+	"status": "Pending",
+	"use_case": "inferencing_from_pretrained_model",
+	"created_at": "2022-03-21T10:05:14.120466+01:00",
+	"updated_at": "2022-03-21T10:05:14.120575+01:00",
+	"model_id": 1
+}

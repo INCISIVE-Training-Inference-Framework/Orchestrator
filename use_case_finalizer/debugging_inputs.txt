@@ -1,0 +1,24 @@
+# all actions
+1 training_from_pretrained_model "{\"actions\": [
+    {\"name\": \"upload_model\",
+    \"metadata\":
+        {\"name\": \"model_name\",
+        \"type\": \"model_type\",
+        \"data_partners_patients\": {\"data-partner-1\": [1, 7]},
+        \"description\": \"model_description\",
+        \"ai_engine\": 1}},
+    {\"name\":\"upload_metrics\",
+    \"metadata\":
+        {\"data_partner\": \"data-partner-1\",
+        \"data_partner_patients\": [1]}},
+    {\"name\": \"upload_inference_results\",
+    \"metadata\":
+        {\"execution_id\": 7}}]}"
+
+# actions -> upload_metrics
+1 evaluating_from_pretrained_model "{\"actions\": [
+    {\"name\":\"upload_metrics\",
+    \"metadata\":
+        {\"data_partner\": \"data-partner-1\",
+        \"model\": 1,
+        \"data_partner_patients\": [1, 3]}}]}"

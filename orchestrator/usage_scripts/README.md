@@ -1,0 +1,1 @@
+This directory contains an example bash script for performing each of the use cases of the Orchestrator component that have been already implemented. Notice that there exist one global variable, the hostname of the Orchestrator component.

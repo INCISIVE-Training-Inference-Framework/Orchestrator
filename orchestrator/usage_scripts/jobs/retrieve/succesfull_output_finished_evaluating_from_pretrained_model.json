@@ -1,0 +1,14 @@
+{
+	"id": 3,
+	"url": "http://127.0.0.1:8000/api/jobs/3/",
+	"ai_engine_config": "http://127.0.0.1:8000/api/jobs/3/download_ai_engine_config/",
+	"data_partners_patients": {
+		"data-partner-1": ["1", "2"]
+	},
+	"status": "Succeeded",
+	"result": "http://127.0.0.2:8000/api/metrics/?model=1",
+	"use_case": "evaluating_from_pretrained_model",
+	"created_at": "2022-03-21T10:03:06.903270+01:00",
+	"updated_at": "2022-03-21T10:09:48.893917+01:00",
+	"model_id": 1
+}

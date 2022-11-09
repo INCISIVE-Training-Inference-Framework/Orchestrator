@@ -1,0 +1,5 @@
+{
+	"seed": 0,
+	"epochs": 1,
+	"save_model": true
+}
