@@ -29,7 +29,7 @@ class JobUseCase(models.TextChoices):
 
 
 class Job(TypedModel):
-    random_id = models.CharField(default=random_string, max_length=100)
+    random_id = models.CharField(default=random_string, max_length=100)  # TODO delete
     data_partners_patients = models.TextField(null=True)  # nullable for inference
     data_path = models.CharField(max_length=100, null=True)
     number_iterations = models.IntegerField(null=True)

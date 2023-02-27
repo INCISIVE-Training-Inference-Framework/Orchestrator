@@ -1,5 +1,5 @@
-# INCISIVE platform Orchestrator component
-This repository contains the code of the Orchestrator component of the INCISIVE platform along its auxiliary components. Check the official documentation for a full specification of this component and the overall service.
+# Orchestrator
+This component forms the orchestrator of the INCISIVE platform. Check the official documentation for a full specification of this component and the overall service.
 
 Follow the next instructions to run the component in local premisses. Check the official documentation for the deployment instructions with docker:
 - install pip and python3.9
