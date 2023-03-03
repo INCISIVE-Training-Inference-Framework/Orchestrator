@@ -6,7 +6,7 @@ from main.domain.exceptions import InternalError
 from main.factory import Factory
 from main.models import \
     Job, \
-    JobStatus, \
+    JobSchemaStatus, \
     JobWithPretrainedModel
 
 logger = logging.getLogger(__name__)
@@ -59,33 +59,33 @@ class JobsDomain:
         # only update executions that have not finished
         # and only able to put Failed or Running status, never Succeeded
         try:
-            jobs = Job.objects.filter(status__in=[JobStatus.PENDING, JobStatus.RUNNING])
+            jobs = Job.objects.filter(status__in=[JobSchemaStatus.PENDING, JobSchemaStatus.RUNNING])
             logger.info(f'Number of not finished jobs: {len(jobs)}')
             for job in jobs:
                 try:
                     new_execution_status = CONTAINER_MANAGER.get_job_status(job)
-                    if new_execution_status != job.status and new_execution_status in {JobStatus.RUNNING, JobStatus.FAILED}:
+                    if new_execution_status != job.status and new_execution_status in {JobSchemaStatus.RUNNING, JobSchemaStatus.FAILED}:
                         job.status = new_execution_status
                         job.save()
                 # TODO add time out to kill executions that took much longer than expected
                 except InternalError as e:
                     logger.error(f'Caught internal error while updating jobs status: {e.internal_message}')
                 finally:
-                    if job.status == JobStatus.FAILED:
-                        CONTAINER_MANAGER.ended_job_execution(job, JobStatus.FAILED)
+                    if job.status == JobSchemaStatus.FAILED:
+                        CONTAINER_MANAGER.ended_job_execution(job, JobSchemaStatus.FAILED)
         except Error as e:
             logger.error(f'Uncaught internal error while updating jobs status: {e}')
 
     # triggered at the end of the job executions
     @staticmethod
-    def ended_job_execution(job: Job, finish_status: JobStatus.choices, result: str) -> Job:
+    def ended_job_execution(job: Job, finish_status: JobSchemaStatus.choices, result: str) -> Job:
         is_ok = True
         exception = None
 
         # update job status and result
-        if job.status != JobStatus.SUCCEEDED and job.status != JobStatus.FAILED:
+        if job.status != JobSchemaStatus.SUCCEEDED and job.status != JobSchemaStatus.FAILED:
             job.status = finish_status
-            if finish_status == JobStatus.SUCCEEDED:
+            if finish_status == JobSchemaStatus.SUCCEEDED:
                 job.result = result
             try:
                 job.save()

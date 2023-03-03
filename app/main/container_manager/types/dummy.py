@@ -1,5 +1,5 @@
 from main.container_manager.container_manager_interface import ContainerManagerInterface
-from main.models import Job, JobStatus
+from main.models import Job, JobSchemaStatus
 
 
 class ContainerManagerDummy(ContainerManagerInterface):
@@ -14,9 +14,9 @@ class ContainerManagerDummy(ContainerManagerInterface):
         pass
 
     @staticmethod
-    def get_job_status(job: Job) -> JobStatus:
-        return JobStatus.RUNNING
+    def get_job_status(job: Job) -> JobSchemaStatus:
+        return JobSchemaStatus.RUNNING
 
     @staticmethod
-    def ended_job_execution(job: Job, finish_status: JobStatus.choices) -> None:
+    def ended_job_execution(job: Job, finish_status: JobSchemaStatus.choices) -> None:
         pass

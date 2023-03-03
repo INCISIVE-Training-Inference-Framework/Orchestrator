@@ -1,7 +1,13 @@
 import json
 
-from django.http import QueryDict
 from rest_framework import parsers, serializers
+
+
+class DictWithEncoding(dict):
+
+    def __init__(self, *args):
+        super().__init__(*args)
+        self.encoding = 'utf-8'
 
 
 class MultipartJsonParser(parsers.MultiPartParser):
@@ -13,11 +19,11 @@ class MultipartJsonParser(parsers.MultiPartParser):
                 media_type=media_type,
                 parser_context=parser_context
             )
-            qdict = QueryDict('', mutable=True)
+            data = {}
             if 'data' in result.data:
                 data = json.loads(result.data['data'])
-                qdict.update(data)
-        except Exception:
-            raise serializers.ValidationError(f'Error while parsing the input json file')
-        output = parsers.DataAndFiles(qdict, result.files)
-        return output
+                data = DictWithEncoding(data)
+            files = {key: value[0] for key, value in dict(result.files).items()}
+        except Exception as e:
+            raise serializers.ValidationError(f'Error while parsing the input json file. {e}')
+        return parsers.DataAndFiles(data, files)

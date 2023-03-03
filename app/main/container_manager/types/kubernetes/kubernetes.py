@@ -15,7 +15,7 @@ from main.container_manager.types.kubernetes.utils import get_job_name
 from main.domain.exceptions import InternalError
 from main.models import \
     Job, \
-    JobStatus, \
+    JobSchemaStatus, \
     JobTraining, \
     JobEvaluatingFromPretrainedModel, \
     JobInferencingFromPretrainedModel
@@ -48,7 +48,7 @@ class ContainerManagerKubernetes(ContainerManagerInterface):
             cls.__inferencing_from_pretrained_model(platform_adapter, ai_engine_container_name, ai_engine_container_version, job)
 
     @staticmethod
-    def get_job_status(job: Job) -> JobStatus:
+    def get_job_status(job: Job) -> JobSchemaStatus:
         # TODO implement cleaner
         try:
             if not job.is_parallel:
@@ -63,13 +63,13 @@ class ContainerManagerKubernetes(ContainerManagerInterface):
                     if api_response and hasattr(api_response, 'status'):
                         status = api_response.status
                         if hasattr(status, 'failed') and status.failed:
-                            return JobStatus.FAILED
+                            return JobSchemaStatus.FAILED
                         if hasattr(status, 'succeeded') and status.succeeded:
-                            return JobStatus.SUCCEEDED
+                            return JobSchemaStatus.SUCCEEDED
                         elif hasattr(status, 'active') and status.active:
-                            return JobStatus.RUNNING
+                            return JobSchemaStatus.RUNNING
                         else:
-                            return JobStatus.PENDING
+                            return JobSchemaStatus.PENDING
             else:
                 if isinstance(job, JobTraining):
                     with k8s.ApiClient() as api_client:
@@ -86,7 +86,7 @@ class ContainerManagerKubernetes(ContainerManagerInterface):
                         if api_response and hasattr(api_response, 'status'):
                             status = api_response.status
                             if hasattr(status, 'failed') and status.failed:
-                                return JobStatus.FAILED
+                                return JobSchemaStatus.FAILED
                             if hasattr(status, 'succeeded') and status.succeeded:
                                 succeeded += 1
                             elif hasattr(status, 'active') and status.active:
@@ -102,18 +102,18 @@ class ContainerManagerKubernetes(ContainerManagerInterface):
                             if api_response and hasattr(api_response, 'status'):
                                 status = api_response.status
                                 if hasattr(status, 'failed') and status.failed:
-                                    return JobStatus.FAILED
+                                    return JobSchemaStatus.FAILED
                                 if hasattr(status, 'succeeded') and status.succeeded:
                                     succeeded += 1
                                 elif hasattr(status, 'active') and status.active:
                                     running += 1
 
                         if succeeded == len(job.parsed_data_partners_patients) + 1:
-                            return JobStatus.SUCCEEDED
+                            return JobSchemaStatus.SUCCEEDED
                         elif running == len(job.parsed_data_partners_patients) + 1:
-                            return JobStatus.RUNNING
+                            return JobSchemaStatus.RUNNING
                         else:
-                            return JobStatus.PENDING
+                            return JobSchemaStatus.PENDING
                 else:
                     with k8s.ApiClient() as api_client:
                         api_instance = k8s.BatchV1Api(api_client)
@@ -129,18 +129,18 @@ class ContainerManagerKubernetes(ContainerManagerInterface):
                             if api_response and hasattr(api_response, 'status'):
                                 status = api_response.status
                                 if hasattr(status, 'failed') and status.failed:
-                                    return JobStatus.FAILED
+                                    return JobSchemaStatus.FAILED
                                 if hasattr(status, 'succeeded') and status.succeeded:
                                     succeeded += 1
                                 elif hasattr(status, 'active') and status.active:
                                     running += 1
 
                         if succeeded == len(job.parsed_data_partners_patients):
-                            return JobStatus.SUCCEEDED
+                            return JobSchemaStatus.SUCCEEDED
                         elif running == len(job.parsed_data_partners_patients):
-                            return JobStatus.RUNNING
+                            return JobSchemaStatus.RUNNING
                         else:
-                            return JobStatus.PENDING
+                            return JobSchemaStatus.PENDING
         except ApiException as e:
             raise InternalError(
                 f'Error while performing the call to the kubernetes API asking for the job {job.id}; status: {e.status}; reason: {e.reason}; {e}',
@@ -148,7 +148,7 @@ class ContainerManagerKubernetes(ContainerManagerInterface):
             )
 
     @staticmethod
-    def ended_job_execution(job: Job, finish_status: JobStatus.choices) -> None:
+    def ended_job_execution(job: Job, finish_status: JobSchemaStatus.choices) -> None:
         if job.is_parallel and isinstance(job, JobTraining):
             COMMUNICATION_ADAPTER.finalize_execution(job.complete_id)
 

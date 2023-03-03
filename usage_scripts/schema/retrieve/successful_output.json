@@ -1,0 +1,27 @@
+{
+	"url": "http://127.0.0.1:8000/api/schemas/training_from_scratch/",
+	"name": "training_from_scratch",
+	"type": "individual",
+	"implementation": "argo_workflows",
+	"description": "A' schema that trains an AI Engine from scratch with platform data, creating a new AI Model and a new set of Evaluation 'Metrics",
+	"auxiliary_file": "http://127.0.0.1:8000/api/schemas/training_from_scratch/download_auxiliary_file/",
+	"created_at": "2023-02-28T21:52:10.776247+01:00",
+	"input_elements": {
+		"platform_data": true,
+		"external_data": false,
+		"federated_learning_configuration": false
+	},
+	"ai_elements": {
+		"ai_engines": [{
+			"descriptor": "main_ai_engine",
+			"role_type": "*",
+			"functionalities": ["training_from_scratch"],
+			"ai_model": false
+		}]
+	},
+	"output_elements": {
+		"ai_model": true,
+		"evaluation_metrics": true,
+		"generic_file": false
+	}
+}

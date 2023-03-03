@@ -1,6 +1,6 @@
 import abc
 
-from main.models import Job, JobStatus
+from main.models import Job, JobSchemaStatus
 
 
 class ContainerManagerInterface(metaclass=abc.ABCMeta):
@@ -25,9 +25,9 @@ class ContainerManagerInterface(metaclass=abc.ABCMeta):
         raise NotImplementedError('Method not implemented in interface class')
 
     @staticmethod
-    def get_job_status(job: Job) -> JobStatus:
+    def get_job_status(job: Job) -> JobSchemaStatus:
         raise NotImplementedError('Method not implemented in interface class')
 
     @staticmethod
-    def ended_job_execution(job: Job, finish_status: JobStatus.choices) -> None:
+    def ended_job_execution(job: Job, finish_status: JobSchemaStatus.choices) -> None:
         raise NotImplementedError('Method not implemented in interface class')

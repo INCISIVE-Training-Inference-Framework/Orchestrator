@@ -1,6 +1,6 @@
 from main.communication_adapter.types.kafka import CommunicationAdapterKafka
 from main.container_manager.container_manager_interface import ContainerManagerInterface
-from main.models import Job, JobStatus
+from main.models import Job, JobSchemaStatus
 
 
 class ContainerManagerDummyWithKafka(ContainerManagerInterface):
@@ -20,9 +20,9 @@ class ContainerManagerDummyWithKafka(ContainerManagerInterface):
         cls.communication_adapter.prepare_execution(job.complete_id)
 
     @staticmethod
-    def get_job_status(job: Job) -> JobStatus:
-        return JobStatus.RUNNING
+    def get_job_status(job: Job) -> JobSchemaStatus:
+        return JobSchemaStatus.RUNNING
 
     @classmethod
-    def ended_job_execution(cls, job: Job, finish_status: JobStatus.choices) -> None:
+    def ended_job_execution(cls, job: Job, finish_status: JobSchemaStatus.choices) -> None:
         cls.communication_adapter.finalize_execution(job.complete_id)

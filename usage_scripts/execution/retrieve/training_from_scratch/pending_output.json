@@ -1,0 +1,29 @@
+{
+	"url": "http://127.0.0.1:8000/api/executions/1/",
+	"id": 1,
+	"schema": "http://127.0.0.1:8000/api/schemas/training_from_scratch/",
+	"created_at": "2023-03-01T11:13:55.063997+01:00",
+	"updated_at": "2023-03-01T11:13:55.064036+01:00",
+	"state": {
+		"status": "pending"
+	},
+	"input_elements": {
+		"platform_data": {
+			"data_partners_patients": "{'data-partner-1': ['1', '2'], 'data-partner-2': ['1']}"
+		}
+	},
+	"ai_elements": {
+		"ai_engines": [{
+			"descriptor": "main_ai_engine",
+			"version": "http://maas-service:8000/api/ai_engines_versions/1/",
+			"version_user_vars": "http://127.0.0.1:8000/api/executions/1/download_user_vars/?descriptor=main_ai_engine"
+		}]
+	},
+	"output_elements": {
+		"ai_model": {
+			"name": "init_plt_data",
+			"description": "initial model trained on platform data",
+			"merge_type": "default"
+		}
+	}
+}

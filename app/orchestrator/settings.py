@@ -16,14 +16,6 @@ else:
     DEBUG = False
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '127.0.0.1').split(',')
 
-# Define usage of the DP Environment
-USE_INCISIVE_DP = os.getenv('USE_INCISIVE_DP', 'False')
-
-if USE_INCISIVE_DP.lower() in ('yes', 'true', 't', '1'):
-    USE_INCISIVE_DP = True
-else:
-    USE_INCISIVE_DP = False
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -188,16 +180,19 @@ if not DEBUG:
     })
 
 # Domain
-MAAS_SERVICE_HOSTNAME = os.getenv('MAAS_SERVICE_HOSTNAME', 'maas-service:8000')
+MAAS_API_HOSTNAME = os.getenv('MAAS_SERVICE_HOSTNAME', 'maas-service:8000')
 AI_ENGINE_IMAGES_REGISTRY = os.getenv('AI_ENGINE_IMAGES_REGISTRY', 'localhost:5000')
 COMPONENT_IMAGES_REGISTRY = os.getenv('COMPONENT_IMAGES_REGISTRY', 'localhost:5000')
+
 VALID_DATA_PARTNERS = os.getenv('VALID_DATA_PARTNERS', 'data-partner-1,data-partner-2').split(',')
 VALID_DATA_PARTNERS = set(VALID_DATA_PARTNERS)
-TRAINING_FROM_SCRATCH = 'training_from_scratch'
-TRAINING_FROM_PRETRAINED_MODEL = 'training_from_pretrained_model'
-EVALUATING_FROM_PRETRAINED_MODEL = 'evaluating_from_pretrained_model'
-MERGING_MODELS = 'merging_models'
-INFERENCING_FROM_PRETRAINED_MODEL = 'inferencing_from_pretrained_model'
+
+VALID_AI_ENGINE_FUNCTIONALITIES = os.getenv('VALID_AI_ENGINE_FUNCTIONALITIES', 'training_from_scratch,'
+                                                                               'training_from_pretrained_model,'
+                                                                               'evaluating_from_pretrained_model,'
+                                                                               'merging_models,'
+                                                                               'inferencing_from_pretrained_model').split(',')
+VALID_AI_ENGINE_FUNCTIONALITIES = set(VALID_AI_ENGINE_FUNCTIONALITIES)
 
 # tasks
 UPDATE_STATUS_SECONDS_TIMER = int(os.getenv('UPDATE_STATUS_MINUTES_TIMER', 2))

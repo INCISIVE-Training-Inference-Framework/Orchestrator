@@ -24,7 +24,7 @@ class MaaSPlatformAdapter(PlatformAdapterInterface):
     @staticmethod
     def check_ai_engine_correctness_and_get_container_metadata(_id: int, job: Job) -> (str, str):
         error_message = 'Error while checking AI Engine existence'
-        url = f'http://{settings.MAAS_SERVICE_HOSTNAME}/api/ai_engines/{_id}/'
+        url = f'http://{settings.MAAS_API_HOSTNAME}/api/ai_engines/{_id}/'
         try:
             response = requests.get(url)
             status_code = response.status_code
@@ -61,7 +61,7 @@ class MaaSPlatformAdapter(PlatformAdapterInterface):
     @staticmethod
     def check_model_correctness_and_get_ai_engine(job: JobWithPretrainedModel) -> int:
         error_message = 'Error while checking model correctness and getting its ai engine'
-        url = f'http://{settings.MAAS_SERVICE_HOSTNAME}/api/models/{job.model_id}/'
+        url = f'http://{settings.MAAS_API_HOSTNAME}/api/models/{job.model_id}/'
         try:
             response = requests.get(url)
             status_code = response.status_code
