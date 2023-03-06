@@ -180,7 +180,7 @@ if not DEBUG:
     })
 
 # Domain
-MAAS_API_HOSTNAME = os.getenv('MAAS_SERVICE_HOSTNAME', 'maas-service:8000')
+MAAS_API_HOSTNAME = os.getenv('MAAS_API_HOSTNAME', 'maas-service:8000')
 AI_ENGINE_IMAGES_REGISTRY = os.getenv('AI_ENGINE_IMAGES_REGISTRY', 'localhost:5000')
 COMPONENT_IMAGES_REGISTRY = os.getenv('COMPONENT_IMAGES_REGISTRY', 'localhost:5000')
 

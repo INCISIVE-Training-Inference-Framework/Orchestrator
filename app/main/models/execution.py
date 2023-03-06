@@ -1,3 +1,4 @@
+import ast
 from typing import List
 
 from django.db import models
@@ -116,6 +117,12 @@ class ExecutionInputPlatformData(models.Model):
         on_delete=models.CASCADE,
         primary_key=True,
     )
+
+    @property
+    def parsed_data_partners_patients(self) -> dict:
+        if isinstance(self.data_partners_patients, dict):
+            return self.data_partners_patients
+        return ast.literal_eval(self.data_partners_patients)
 
 
 class ExecutionInputExternalData(models.Model):

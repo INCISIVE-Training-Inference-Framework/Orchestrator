@@ -10,7 +10,10 @@
 	},
 	"input_elements": {
 		"platform_data": {
-			"data_partners_patients": "{'data-partner-1': ['1', '2'], 'data-partner-2': ['1']}"
+			"data_partners_patients": {
+					"data-partner-1": ["1", "2"],
+					"data-partner-2": ["1"]
+				}
 		},
 		"federated_learning_configuration": {
 			"number_iterations": 2

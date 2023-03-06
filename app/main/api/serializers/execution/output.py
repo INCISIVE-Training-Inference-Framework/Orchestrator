@@ -51,7 +51,7 @@ class ExecutionOutputSerializer(serializers.ModelSerializer):
         if schema.requires_input_elements_platform_data():
             platform_data = instance.get_input_elements_platform_data()
             representation['input_elements']['platform_data'] = {
-                'data_partners_patients': platform_data.data_partners_patients
+                'data_partners_patients': platform_data.parsed_data_partners_patients
             }
 
         if schema.requires_input_elements_external_data():
