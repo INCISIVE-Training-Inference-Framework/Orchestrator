@@ -8,7 +8,7 @@ from django_apscheduler import util
 from django_apscheduler.jobstores import DjangoJobStore
 from django_apscheduler.models import DjangoJobExecution
 
-from main.domain.jobs_main import JobsDomain
+from main.domain import Domain
 
 logger = logging.getLogger(__name__)
 
@@ -26,7 +26,7 @@ class Command(BaseCommand):
         scheduler.add_jobstore(DjangoJobStore(), 'default')
 
         scheduler.add_job(
-            JobsDomain.update_jobs_status,
+            Domain.update_jobs_status,
             trigger=CronTrigger(minute=f'*/{settings.UPDATE_STATUS_SECONDS_TIMER}'),
             id='update_executions_status',
             max_instances=1,

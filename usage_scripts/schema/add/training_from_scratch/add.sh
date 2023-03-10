@@ -17,7 +17,7 @@ name="training_from_scratch" # str
 type="individual" # str, possible values -> {individual, joint}, individual for one AI Engine executions, joint for pipelines
 implementation="argo_workflows" # str, possible values -> {argo_workflows}
 description="A schema that trains an AI Engine from scratch with platform data, creating a new AI Model and a new set of Evaluation Metrics"
-auxiliary_file="./auxiliary_files/schema_example.yaml" # FILE, optional (it is mandatory for the argo_workflows implementation)
+auxiliary_file="./auxiliary_files/schema_training_from_scratch.yaml" # FILE, optional (it is mandatory for the argo_workflows implementation)
 
 # input attributes
 

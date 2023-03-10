@@ -1,5 +1,9 @@
+import logging
+
 from main.container_manager.container_manager_interface import ContainerManagerInterface
-from main.models import Job, JobSchemaStatus
+from main.models import Execution
+
+logger = logging.getLogger(__name__)
 
 
 class ContainerManagerDummy(ContainerManagerInterface):
@@ -10,13 +14,5 @@ class ContainerManagerDummy(ContainerManagerInterface):
     # ---> Main methods
 
     @staticmethod
-    def start_job_execution(platform_adapter, ai_engine_id: int, ai_engine_container_name: str, ai_engine_container_version: str, job: Job) -> None:
-        pass
-
-    @staticmethod
-    def get_job_status(job: Job) -> JobSchemaStatus:
-        return JobSchemaStatus.RUNNING
-
-    @staticmethod
-    def ended_job_execution(job: Job, finish_status: JobSchemaStatus.choices) -> None:
-        pass
+    def start_schema_execution(execution: Execution) -> None:
+        logger.debug('start_schema_execution method called')

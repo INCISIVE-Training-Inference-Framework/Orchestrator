@@ -5,7 +5,7 @@ import logging
 from rest_framework import status
 from rest_framework.views import Response, exception_handler
 
-from main.domain.exceptions import InternalError, UserError
+from main.exceptions import InternalError, UserError
 
 logger = logging.getLogger(__name__)
 
@@ -26,6 +26,14 @@ def custom_exception_handler(exc, context):
                 f'{exc.message}'
             },
             status=status.HTTP_400_BAD_REQUEST
+        )
+    if response is None:
+        logger.error(exc)
+        response = Response(
+            {
+                f'Unexpected internal error'
+            },
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
     logger.error(response.data)
     return response

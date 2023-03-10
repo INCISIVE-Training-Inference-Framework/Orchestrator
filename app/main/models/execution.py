@@ -149,6 +149,8 @@ class ExecutionInputAIEngine(models.Model):
     descriptor = models.CharField(max_length=100)
     version = models.IntegerField()
     version_user_vars = models.FileField('user_vars')
+    container_name = models.CharField(max_length=200)
+    container_version = models.CharField(max_length=50)
     execution = models.ForeignKey(
         Execution,
         on_delete=models.CASCADE

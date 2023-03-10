@@ -17,7 +17,7 @@ name="inferencing_from_pretrained_model" # str
 type="individual" # str, possible values -> {individual, joint}, individual for one AI Engine executions, joint for pipelines
 implementation="argo_workflows" # str, possible values -> {argo_workflows}
 description="A schema that performs inference with an AI Engine to some external data, creating a set of results and charts"
-auxiliary_file="./auxiliary_files/schema_example.yaml" # FILE, optional (it is mandatory for the argo_workflows implementation)
+auxiliary_file="./auxiliary_files/schema_inferencing_from_pretrained_model_parameters.yaml" # FILE, optional (it is mandatory for the argo_workflows implementation)
 
 # input attributes
 

@@ -12,6 +12,7 @@ from main.models import \
     SchemaOutputAIModel, \
     SchemaOutputEvaluationMetric, \
     SchemaOutputGenericFile
+from main.exceptions import InternalError
 
 
 # TODO add validate methods
@@ -31,7 +32,6 @@ class SchemaInputSerializerInputElements(serializers.Serializer):
         pass
 
     def assign(self, schema_instance, validated_data):
-        # TODO roll back if error
         if validated_data['platform_data']:
             SchemaInputPlatformData.objects.create(**{
                 'schema': schema_instance
@@ -61,7 +61,6 @@ class SchemaInputSerializerInputAIEngine(serializers.Serializer):
         pass
 
     def assign(self, schema_instance, validated_data):
-        # TODO roll back if error
         ai_engine_schema = SchemaInputAIEngine.objects.create(**{
             'descriptor': validated_data['descriptor'],
             'role_type': validated_data['role_type'],
@@ -103,7 +102,6 @@ class SchemaInputSerializerOutputElements(serializers.Serializer):
         pass
 
     def assign(self, schema_instance, validated_data):
-        # TODO roll back if error
         if validated_data['ai_model']:
             SchemaOutputAIModel.objects.create(**{
                 'schema': schema_instance
@@ -130,15 +128,22 @@ class SchemaInputSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def create(self, validated_data):
-        # TODO if error roll back schema creation
         input_elements = validated_data.pop('input_elements')
         ai_elements = validated_data.pop('ai_elements')
         output_elements = validated_data.pop('output_elements')
         schema_instance = Schema.objects.create(**validated_data)
-        SchemaInputSerializerInputElements().assign(schema_instance, input_elements)
-        SchemaInputSerializerAIElements().assign(schema_instance, ai_elements)
-        SchemaInputSerializerOutputElements().assign(schema_instance, output_elements)
-        return schema_instance
+        try:
+            SchemaInputSerializerInputElements().assign(schema_instance, input_elements)
+            SchemaInputSerializerAIElements().assign(schema_instance, ai_elements)
+            SchemaInputSerializerOutputElements().assign(schema_instance, output_elements)
+            return schema_instance
+        except Exception as e:
+            schema_instance.delete()
+            raise InternalError(
+                f'Internal error while creating schema: {e}',
+                'Internal error while creating schema'
+            )
+
 
     def to_representation(self, instance):
         instance = SchemaOutputSerializer(context=self.context).to_representation(instance)

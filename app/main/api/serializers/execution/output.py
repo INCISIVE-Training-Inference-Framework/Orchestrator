@@ -1,22 +1,9 @@
-from django.conf import settings
+from .maas_methods import get_maas_url
 from rest_framework import serializers
 
 from main.models import \
     Execution, \
     ExecutionStatus
-
-
-def get_maas_url(resource, resource_id):
-    if resource == 'ai_engine_version':
-        return f'http://{settings.MAAS_API_HOSTNAME}/api/ai_engines_versions/{resource_id}/'
-    elif resource == 'ai_model':
-        return f'http://{settings.MAAS_API_HOSTNAME}/api/ai_models/{resource_id}/'
-    elif resource == 'evaluation_metric':
-        return f'http://{settings.MAAS_API_HOSTNAME}/api/evaluation_metrics/{resource_id}/'
-    elif resource == 'generic_file':
-        return f'http://{settings.MAAS_API_HOSTNAME}/api/generic_files/{resource_id}/'
-    else:
-        raise NotImplementedError()
 
 
 class ExecutionOutputSerializer(serializers.ModelSerializer):

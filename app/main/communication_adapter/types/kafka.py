@@ -5,7 +5,7 @@ import kafka.errors
 from django.conf import settings
 from kafka.admin import KafkaAdminClient, NewTopic
 
-from main.domain.exceptions import InternalError
+from main.exceptions import InternalError
 
 logger = logging.getLogger(__name__)
 

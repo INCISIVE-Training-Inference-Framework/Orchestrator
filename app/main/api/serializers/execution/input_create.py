@@ -13,9 +13,12 @@ from main.models import \
     ExecutionInputAIEngine, \
     ExecutionInputAIModel, \
     ExecutionOutputAIModel
+from main.exceptions import InternalError
+from .maas_methods import retrieve_container_information
+from main.domain import Domain
 
 
-# TODO add validate methods
+# TODO implement validate methods
 
 
 def validate_data_partners_patients(value: Dict[str, list]) -> Dict[str, list]:
@@ -65,6 +68,7 @@ class ExecutionInputSerializerPlatformData(serializers.Serializer):
     data_partners_patients = serializers.DictField(required=False, allow_empty=False)
 
     def validate_data_partners_patients(self, value):
+        # TODO validate only one if not federated, more than in the opposite case
         return validate_data_partners_patients(value)
 
     def create(self, validated_data):
@@ -151,7 +155,6 @@ class ExecutionInputSerializerInputElements(serializers.Serializer):
         return validated_data
 
     def assign(self, execution_instance, validated_data):
-        # TODO roll back if error
         if 'platform_data' in validated_data:
             ExecutionInputSerializerPlatformData().assign(execution_instance, validated_data['platform_data'])
         if 'external_data' in validated_data:
@@ -198,6 +201,16 @@ class ExecutionInputSerializerInputAIEngine(serializers.Serializer):
             self.context,
             f'{validated_data["descriptor"]}_version_user_vars'
         )
+
+        # retrieve container name and version from MaaS
+        container_name = 'dummy'
+        container_version = 'dummy'
+        if settings.VALIDATE_WITH_MAAS:
+            container_name, container_version = retrieve_container_information(validated_data['version'])
+
+        validated_data['container_name'] = container_name
+        validated_data['container_version'] = container_version
+
         return validated_data
 
     def create(self, validated_data):
@@ -207,11 +220,12 @@ class ExecutionInputSerializerInputAIEngine(serializers.Serializer):
         pass
 
     def assign(self, execution_instance, validated_data):
-        # TODO roll back if error
         ai_engine_schema = ExecutionInputAIEngine.objects.create(**{
             'descriptor': validated_data['descriptor'],
             'version': validated_data['version'],
             'version_user_vars': validated_data['version_user_vars'],
+            'container_name': validated_data['container_name'],
+            'container_version': validated_data['container_version'],
             'execution': execution_instance
         })
         if 'ai_model' in validated_data:
@@ -293,7 +307,6 @@ class ExecutionInputSerializerOutputElements(serializers.Serializer):
         pass
 
     def assign(self, execution_instance, validated_data):
-        # TODO roll back if error
         if 'ai_model' in validated_data:
             ExecutionInputSerializerOutputAIModel().assign(execution_instance, validated_data['ai_model'])
 
@@ -310,16 +323,23 @@ class ExecutionInputSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def create(self, validated_data):
-        # TODO if error roll back schema creation
         input_elements = validated_data.pop('input_elements')
         ai_elements = validated_data.pop('ai_elements')
         output_elements = validated_data.pop('output_elements')
         execution_instance = Execution.objects.create(**validated_data)
-        ExecutionState.objects.create(**{'execution': execution_instance})
-        ExecutionInputSerializerInputElements().assign(execution_instance, input_elements)
-        ExecutionInputSerializerAIElements().assign(execution_instance, ai_elements)
-        ExecutionInputSerializerOutputElements().assign(execution_instance, output_elements)
-        return execution_instance
+        try:
+            ExecutionState.objects.create(**{'execution': execution_instance})
+            ExecutionInputSerializerInputElements().assign(execution_instance, input_elements)
+            ExecutionInputSerializerAIElements().assign(execution_instance, ai_elements)
+            ExecutionInputSerializerOutputElements().assign(execution_instance, output_elements)
+            Domain.start_schema_execution(execution_instance)
+            return execution_instance
+        except Exception as e:
+            execution_instance.delete()
+            raise InternalError(
+                f'Internal error while creating execution: {e}',
+                'Internal error while creating execution'
+            )
 
     def to_representation(self, instance):
         instance = ExecutionOutputSerializer(context=self.context).to_representation(instance)

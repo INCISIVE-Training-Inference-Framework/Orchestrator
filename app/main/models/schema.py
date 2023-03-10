@@ -15,6 +15,7 @@ class SchemaType(models.TextChoices):
 
 class SchemaImplementation(models.TextChoices):
     ARGO_WORKFLOWS = 'argo_workflows'
+    DUMMY = 'dummy'
 
 
 # Main class
