@@ -17,7 +17,7 @@ name="inferencing_from_pretrained_model" # str
 type="individual" # str, possible values -> {individual, joint}, individual for one AI Engine executions, joint for pipelines
 implementation="argo_workflows" # str, possible values -> {argo_workflows}
 description="A schema that performs inference with an AI Engine to some external data, creating a set of results and charts"
-auxiliary_file="./auxiliary_files/schema_inferencing_from_pretrained_model_parameters.yaml" # FILE, optional (it is mandatory for the argo_workflows implementation)
+auxiliary_file="./auxiliary_files/schema_inferencing_from_pretrained_model/schema.yaml" # FILE, optional (it is mandatory for the argo_workflows implementation)
 
 # input attributes
 
@@ -28,7 +28,7 @@ input_federated_learning_configuration="false" # bool
 
 # AI logic attributes
 
-input_ai_engine_descriptor="main_ai_engine" # str, cannot contain spaces or special symbols
+input_ai_engine_descriptor="main-ai-engine" # str, cannot contain spaces or special symbols (neither _)
 input_ai_engine_role_type="*" # str, possible values -> the ones defined on the MaaS along the symbol *
 input_ai_engine_functionalities='["inferencing_from_pretrained_model"]' # list[str], possible values -> the ones defined on the MaaS
 input_ai_engine_model="true" # bool

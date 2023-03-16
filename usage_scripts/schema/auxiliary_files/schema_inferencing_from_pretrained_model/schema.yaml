@@ -9,7 +9,7 @@ spec:
   ttlStrategy:
     secondsAfterCompletion: 100
     secondsAfterSuccess: 100
-    secondsAfterFailure: 100
+    secondsAfterFailure: 1200
   nodeSelector: {agentpool: agentpool}
   entrypoint: processor-resource-manager
   volumes:

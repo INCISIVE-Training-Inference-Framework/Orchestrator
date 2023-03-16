@@ -1,3 +1,5 @@
+venv/
 storage/
 usage_scripts/
+.git/
 .gitignore

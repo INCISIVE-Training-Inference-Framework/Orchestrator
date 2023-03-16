@@ -43,7 +43,7 @@ curl -X POST http://${orchestrator_api_hostname}/api/executions/ \
                                 \"ai_elements\": {
                                     \"ai_engines\": [
                                         {
-                                            \"descriptor\": \"main_ai_engine\",
+                                            \"descriptor\": \"main-ai-engine\",
                                             \"version\": ${input_ai_engine_version}
                                         }
                                     ]
@@ -56,7 +56,7 @@ curl -X POST http://${orchestrator_api_hostname}/api/executions/ \
                                     }
                                 }
                             }" \
-                            -F main_ai_engine_version_user_vars=@${input_ai_engine_version_user_vars}
+                            -F main-ai-engine_version_user_vars=@${input_ai_engine_version_user_vars}
 
 # --> SUCCESSFUL OUTPUT
 # code: 201

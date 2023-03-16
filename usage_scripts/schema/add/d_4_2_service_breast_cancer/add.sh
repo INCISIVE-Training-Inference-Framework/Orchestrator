@@ -17,7 +17,7 @@ name="d_4_2_breast_cancer" # str
 type="joint" # str, possible values -> {individual, joint}, individual for one AI Engine executions, joint for pipelines
 implementation="argo_workflows" # str, possible values -> {argo_workflows}
 description="A schema that performs the Breast Cancer Service from D.4.2, creating a set of results and charts"
-auxiliary_file="./auxiliary_files/schema_example.yaml" # FILE, optional (it is mandatory for the argo_workflows implementation)
+auxiliary_file="./auxiliary_files/schema_d_4_2_service_breast_cancer/schema.yaml" # FILE, optional (it is mandatory for the argo_workflows implementation)
 
 # input attributes
 
@@ -28,25 +28,20 @@ input_federated_learning_configuration="false" # bool
 
 # AI logic attributes
 
-_1_input_ai_engine_descriptor="prioritization_and_segmentation" # str, cannot contain spaces or special symbols
+_1_input_ai_engine_descriptor="prioritization-and-segmentation" # str, cannot contain spaces or special symbols
 _1_input_ai_engine_role_type="segmentation" # str, possible values -> the ones defined on the MaaS along the symbol *
 _1_input_ai_engine_functionalities='["inferencing_from_pretrained_model"]' # list[str], possible values -> the ones defined on the MaaS
 _1_input_ai_engine_model="true" # bool
 
-_2_input_ai_engine_descriptor="birads_classification" # str, cannot contain spaces or special symbols
+_2_input_ai_engine_descriptor="birads-classification" # str, cannot contain spaces or special symbols
 _2_input_ai_engine_role_type="classification" # str, possible values -> the ones defined on the MaaS along the symbol *
 _2_input_ai_engine_functionalities='["inferencing_from_pretrained_model"]' # list[str], possible values -> the ones defined on the MaaS
 _2_input_ai_engine_model="true" # bool
 
-_3_input_ai_engine_descriptor="density_classification" # str, cannot contain spaces or special symbols
-_3_input_ai_engine_role_type="classification" # str, possible values -> the ones defined on the MaaS along the symbol *
+_3_input_ai_engine_descriptor="medical-report-generation" # str, cannot contain spaces or special symbols
+_3_input_ai_engine_role_type="report_generation" # str, possible values -> the ones defined on the MaaS along the symbol *
 _3_input_ai_engine_functionalities='["inferencing_from_pretrained_model"]' # list[str], possible values -> the ones defined on the MaaS
-_3_input_ai_engine_model="true" # bool
-
-_4_input_ai_engine_descriptor="medical_report_generation" # str, cannot contain spaces or special symbols
-_4_input_ai_engine_role_type="report_generation" # str, possible values -> the ones defined on the MaaS along the symbol *
-_4_input_ai_engine_functionalities='["inferencing_from_pretrained_model"]' # list[str], possible values -> the ones defined on the MaaS
-_4_input_ai_engine_model="true" # bool
+_3_input_ai_engine_model="false" # bool
 
 # output attributes
 
@@ -86,12 +81,6 @@ curl -X POST http://${orchestrator_api_hostname}/api/schemas/ \
                                             \"role_type\": \"${_3_input_ai_engine_role_type}\",
                                             \"functionalities\": ${_3_input_ai_engine_functionalities},
                                             \"ai_model\": ${_3_input_ai_engine_model}
-                                        },
-                                        {
-                                            \"descriptor\": \"${_4_input_ai_engine_descriptor}\",
-                                            \"role_type\": \"${_4_input_ai_engine_role_type}\",
-                                            \"functionalities\": ${_4_input_ai_engine_functionalities},
-                                            \"ai_model\": ${_4_input_ai_engine_model}
                                         }
                                     ]
                                 },

@@ -1,0 +1,268 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: d-4-2-service-breast-cancer-
+spec:
+  serviceAccountName: argo-workflow
+  imagePullSecrets:
+  - name: incisive-azurecrio-secret
+  ttlStrategy:
+    secondsAfterCompletion: 100
+    secondsAfterSuccess: 100
+    secondsAfterFailure: 1200
+  #nodeSelector: {dataPartner: uoa}
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: dataPartner
+            operator: In
+            values:
+            - uoa-rm2
+            - auth-rm2
+            - uns-rm2
+  hostNetwork: true  # does not permit more than one execution at the same time
+  dnsPolicy: ClusterFirstWithHostNet
+  entrypoint: d-4-2-service-breast-cancer
+  volumes:  # internally shared volumes
+  - name: ai-elements
+    emptyDir: {}
+  - name: output-elements
+    emptyDir: {}
+  - name: platform-vars
+    configMap:
+      name: ai-engine-config-2nd-prototype
+
+  templates:
+    - name: d-4-2-service-breast-cancer
+      inputs:
+        parameters:
+        - name: platform_maasApiHostname
+        - name: platform_orchestratorApiHostname
+        - name: platform_processorResourceManagerVersion
+        - name: platform_processorResourceManagerCallbackUrl
+        - name: platform_processorResourceManagerApiHost
+        - name: aiEngine_plaformVarsInputElements
+        - name: aiEngine_plaformVarsInputDataInference
+        - name: aiEngine_plaformVarsInputAIElements
+        - name: aiEngine_plaformVarsInputUserVars
+        - name: aiEngine_plaformVarsInputModel
+        - name: aiEngine_plaformVarsOutputElements
+        - name: aiEngine_plaformVarsOutputInferenceResults
+        - name: aiEngine_plaformVarsApiPingUrl
+        - name: aiEngine_plaformVarsApiRunUrl
+        - name: aiEngine_plaformVarsApiHost
+        - name: execution_id
+        - name: execution_prioritization-and-segmentation-container-name
+        - name: execution_prioritization-and-segmentation-container-version
+        - name: execution_prioritization-and-segmentation-ai-model
+        - name: execution_birads-classification-container-name
+        - name: execution_birads-classification-container-version
+        - name: execution_birads-classification-ai-model
+        - name: execution_medical-report-generation-container-name
+        - name: execution_medical-report-generation-container-version
+      steps:
+      - - name: initialization
+          template: initialization-step
+      - - name: prioritization-and-segmentation
+          template: prioritization-and-segmentation-step
+      - - name: birads-classification
+          template: birads-classification-step
+      - - name: medical-report-generation
+          template: medical-report-generation-step
+      - - name: finalization
+          template: finalization-step
+
+    - name: initialization-step
+      outputs:
+        artifacts:
+        - name: external-data
+          path: "{{workflow.parameters.aiEngine_plaformVarsInputDataInference}}"
+          azure:
+            endpoint: https://incisivesa.blob.core.windows.net
+            container: d-4-2-service-breast-cancer
+            blob: "external-data-initialization-{{workflow.creationTimestamp.RFC3339}}"
+            accountKeySecret:
+              name: incisive-azure-storage-credentials
+              key: account-access-key
+      container:
+        image: "incisive.azurecr.io/processor-resource-manager:{{workflow.parameters.platform_processorResourceManagerVersion}}"
+        command: [java, -jar, processor_resource_manager.jar]
+        args: ["{\"actions\":[{\"name\":\"update_to_running\",\"update_status_url\":\"http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/update_to_running/\"},{\"name\":\"download_external_data\",\"external_data_url\":\"http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/download_external_data/\",\"output_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputDataInference}}\"}]}", "--failure-endpoint", "http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/update_to_failed/"]
+
+    - name: prioritization-and-segmentation-step
+      inputs:
+        artifacts:
+        - name: external-data
+          path: "{{workflow.parameters.aiEngine_plaformVarsInputDataInference}}"
+          azure:
+            endpoint: https://incisivesa.blob.core.windows.net
+            container: d-4-2-service-breast-cancer
+            blob: "external-data-initialization-{{workflow.creationTimestamp.RFC3339}}"
+            accountKeySecret:
+              name: incisive-azure-storage-credentials
+              key: account-access-key
+      outputs:
+        artifacts:
+        - name: external-data
+          path: "{{workflow.parameters.aiEngine_plaformVarsInputDataInference}}"
+          azure:
+            endpoint: https://incisivesa.blob.core.windows.net
+            container: d-4-2-service-breast-cancer
+            blob: "external-data-prioritization-and-segmentation-{{workflow.creationTimestamp.RFC3339}}"
+            accountKeySecret:
+              name: incisive-azure-storage-credentials
+              key: account-access-key
+        - name: visualization
+          path: "{{workflow.parameters.aiEngine_plaformVarsOutputInferenceResults}}"
+          azure:
+            endpoint: https://incisivesa.blob.core.windows.net
+            container: d-4-2-service-breast-cancer
+            blob: "visualization-prioritization-and-segmentation-{{workflow.creationTimestamp.RFC3339}}"
+            accountKeySecret:
+              name: incisive-azure-storage-credentials
+              key: account-access-key
+      container:
+        image: "incisive.azurecr.io/processor-resource-manager:{{workflow.parameters.platform_processorResourceManagerVersion}}"
+        command: [java, -jar, processor_resource_manager.jar]
+        args: ["{\"actions\":[{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputAIElements}}\"},{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputModel}}\"},{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsOutputInferenceResults}}\"},{\"name\":\"download_user_vars\",\"user_vars_url\":\"http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/download_user_vars/?descriptor=prioritization-and-segmentation\",\"output_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputUserVars}}\"},{\"name\":\"download_ai_model\",\"ai_model_url\":\"http://{{workflow.parameters.platform_maasApiHostname}}/api/ai_models/{{workflow.parameters.execution_prioritization-and-segmentation-ai-model}}/download_contents/\",\"output_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputModel}}\"},{\"name\":\"run_ai_engine\",\"use_case\":\"inferencing_from_pretrained_model\",\"max_iteration_time\":1200,\"max_initialization_time\":600,\"client_host\":\"{{workflow.parameters.aiEngine_plaformVarsApiHost}}\",\"server_host\":\"{{workflow.parameters.platform_processorResourceManagerApiHost}}\",\"ping_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiPingUrl}}\",\"run_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiRunUrl}}\",\"callback_url\":\"{{workflow.parameters.platform_processorResourceManagerCallbackUrl}}\"}]}", "--failure-endpoint", "http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/update_to_failed/"]
+        volumeMounts:
+        - name: ai-elements
+          mountPath: "{{workflow.parameters.aiEngine_plaformVarsInputAIElements}}"
+        - name: output-elements
+          mountPath: "{{workflow.parameters.aiEngine_plaformVarsOutputElements}}"
+        - name: platform-vars
+          mountPath: /platform_vars.json
+          subPath: platform_vars.json
+      sidecars:
+      - name: main-ai-engine
+        image: "incisive.azurecr.io/{{workflow.parameters.execution_prioritization-and-segmentation-container-name}}:{{workflow.parameters.execution_prioritization-and-segmentation-container-version}}"
+        command: [python, rest_api.py, --environment-config-file, /platform_vars.json]
+        mirrorVolumeMounts: true
+        
+    - name: birads-classification-step
+      inputs:
+        artifacts:
+        - name: external-data
+          path: "{{workflow.parameters.aiEngine_plaformVarsInputDataInference}}"
+          azure:
+            endpoint: https://incisivesa.blob.core.windows.net
+            container: d-4-2-service-breast-cancer
+            blob: "external-data-prioritization-and-segmentation-{{workflow.creationTimestamp.RFC3339}}"
+            accountKeySecret:
+              name: incisive-azure-storage-credentials
+              key: account-access-key
+      outputs:
+          artifacts:
+          - name: external-data
+            path: "{{workflow.parameters.aiEngine_plaformVarsInputDataInference}}"
+            azure:
+              endpoint: https://incisivesa.blob.core.windows.net
+              container: d-4-2-service-breast-cancer
+              blob: "external-data-birads-classification-{{workflow.creationTimestamp.RFC3339}}"
+              accountKeySecret:
+                name: incisive-azure-storage-credentials
+                key: account-access-key
+          - name: visualization
+            path: "{{workflow.parameters.aiEngine_plaformVarsOutputInferenceResults}}"
+            azure:
+              endpoint: https://incisivesa.blob.core.windows.net
+              container: d-4-2-service-breast-cancer
+              blob: "visualization-birads-classification-{{workflow.creationTimestamp.RFC3339}}"
+              accountKeySecret:
+                name: incisive-azure-storage-credentials
+                key: account-access-key
+      container:
+        image: "incisive.azurecr.io/processor-resource-manager:{{workflow.parameters.platform_processorResourceManagerVersion}}"
+        command: [java, -jar, processor_resource_manager.jar]
+        args: ["{\"actions\":[{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputAIElements}}\"},{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputModel}}\"},{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsOutputInferenceResults}}\"},{\"name\":\"download_user_vars\",\"user_vars_url\":\"http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/download_user_vars/?descriptor=birads-classification\",\"output_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputUserVars}}\"},{\"name\":\"download_ai_model\",\"ai_model_url\":\"http://{{workflow.parameters.platform_maasApiHostname}}/api/ai_models/{{workflow.parameters.execution_birads-classification-ai-model}}/download_contents/\",\"output_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputModel}}\"},{\"name\":\"run_ai_engine\",\"use_case\":\"inferencing_from_pretrained_model\",\"max_iteration_time\":1200,\"max_initialization_time\":600,\"client_host\":\"{{workflow.parameters.aiEngine_plaformVarsApiHost}}\",\"server_host\":\"{{workflow.parameters.platform_processorResourceManagerApiHost}}\",\"ping_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiPingUrl}}\",\"run_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiRunUrl}}\",\"callback_url\":\"{{workflow.parameters.platform_processorResourceManagerCallbackUrl}}\"}]}", "--failure-endpoint", "http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/update_to_failed/"]
+        volumeMounts:
+        - name: ai-elements
+          mountPath: "{{workflow.parameters.aiEngine_plaformVarsInputAIElements}}"
+        - name: output-elements
+          mountPath: "{{workflow.parameters.aiEngine_plaformVarsOutputElements}}"
+        - name: platform-vars
+          mountPath: /platform_vars.json
+          subPath: platform_vars.json
+      sidecars:
+      - name: main-ai-engine
+        image: "incisive.azurecr.io/{{workflow.parameters.execution_birads-classification-container-name}}:{{workflow.parameters.execution_birads-classification-container-version}}"
+        command: [python, rest_api.py, --environment-config-file, /platform_vars.json]
+        mirrorVolumeMounts: true
+        
+    - name: medical-report-generation-step
+      inputs:
+        artifacts:
+        - name: external-data
+          path: "{{workflow.parameters.aiEngine_plaformVarsInputDataInference}}"
+          azure:
+            endpoint: https://incisivesa.blob.core.windows.net
+            container: d-4-2-service-breast-cancer
+            blob: "external-data-birads-classification-{{workflow.creationTimestamp.RFC3339}}"
+            accountKeySecret:
+              name: incisive-azure-storage-credentials
+              key: account-access-key
+      outputs:
+          artifacts:
+          - name: visualization
+            path: "{{workflow.parameters.aiEngine_plaformVarsOutputInferenceResults}}"
+            azure:
+              endpoint: https://incisivesa.blob.core.windows.net
+              container: d-4-2-service-breast-cancer
+              blob: "visualization-medical-report-generation-{{workflow.creationTimestamp.RFC3339}}"
+              accountKeySecret:
+                name: incisive-azure-storage-credentials
+                key: account-access-key
+      container:
+        image: "incisive.azurecr.io/processor-resource-manager:{{workflow.parameters.platform_processorResourceManagerVersion}}"
+        command: [java, -jar, processor_resource_manager.jar]
+        args: ["{\"actions\":[{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputAIElements}}\"},{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsOutputInferenceResults}}\"},{\"name\":\"download_user_vars\",\"user_vars_url\":\"http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/download_user_vars/?descriptor=medical-report-generation\",\"output_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputUserVars}}\"},{\"name\":\"run_ai_engine\",\"use_case\":\"inferencing_from_pretrained_model\",\"max_iteration_time\":1200,\"max_initialization_time\":600,\"client_host\":\"{{workflow.parameters.aiEngine_plaformVarsApiHost}}\",\"server_host\":\"{{workflow.parameters.platform_processorResourceManagerApiHost}}\",\"ping_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiPingUrl}}\",\"run_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiRunUrl}}\",\"callback_url\":\"{{workflow.parameters.platform_processorResourceManagerCallbackUrl}}\"}]}", "--failure-endpoint", "http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/update_to_failed/"]
+        volumeMounts:
+        - name: ai-elements
+          mountPath: "{{workflow.parameters.aiEngine_plaformVarsInputAIElements}}"
+        - name: output-elements
+          mountPath: "{{workflow.parameters.aiEngine_plaformVarsOutputElements}}"
+        - name: platform-vars
+          mountPath: /platform_vars.json
+          subPath: platform_vars.json
+      sidecars:
+      - name: main-ai-engine
+        image: "incisive.azurecr.io/{{workflow.parameters.execution_medical-report-generation-container-name}}:{{workflow.parameters.execution_medical-report-generation-container-version}}"
+        command: [python, rest_api.py, --environment-config-file, /platform_vars.json]
+        mirrorVolumeMounts: true
+
+    - name: finalization-step
+      inputs:
+        artifacts:
+        - name: visualization-prioritization-and-segmentation
+          path: "/tmp/output_elements/prioritization-and-segmentation/"
+          azure:
+            endpoint: https://incisivesa.blob.core.windows.net
+            container: d-4-2-service-breast-cancer
+            blob: "visualization-prioritization-and-segmentation-{{workflow.creationTimestamp.RFC3339}}"
+            accountKeySecret:
+              name: incisive-azure-storage-credentials
+              key: account-access-key
+        - name: visualization-birads-classification
+          path: "/tmp/output_elements/birads-classification/"
+          azure:
+            endpoint: https://incisivesa.blob.core.windows.net
+            container: d-4-2-service-breast-cancer
+            blob: "visualization-birads-classification-{{workflow.creationTimestamp.RFC3339}}"
+            accountKeySecret:
+              name: incisive-azure-storage-credentials
+              key: account-access-key
+        - name: visualization-medical-report-generation
+          path: "/tmp/output_elements/medical-report-generation/"
+          azure:
+            endpoint: https://incisivesa.blob.core.windows.net
+            container: d-4-2-service-breast-cancer
+            blob: "visualization-medical-report-generation-{{workflow.creationTimestamp.RFC3339}}"
+            accountKeySecret:
+              name: incisive-azure-storage-credentials
+              key: account-access-key
+      container:
+        image: "incisive.azurecr.io/processor-resource-manager:{{workflow.parameters.platform_processorResourceManagerVersion}}"
+        command: [java, -jar, processor_resource_manager.jar]
+        args: ["{\"actions\":[{\"name\":\"update_to_succeeded\",\"update_status_url\":\"http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/update_to_succeeded/\",\"upload_ai_model\":false,\"upload_evaluation_metrics\":false,\"upload_generic_file\":true,\"generic_file_upload_url\":\"http://{{workflow.parameters.platform_maasApiHostname}}/api/generic_files/\",\"generic_file_delete_url\":\"http://{{workflow.parameters.platform_maasApiHostname}}/api/generic_files/\",\"generic_file_upload_path\":\"/tmp/output_elements/\",\"generic_file_upload_metadata\":{\"name\":\"InferenceResultsfromExecution{{workflow.parameters.execution_id}}\"}}]}", "--failure-endpoint", "http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/update_to_failed/"]

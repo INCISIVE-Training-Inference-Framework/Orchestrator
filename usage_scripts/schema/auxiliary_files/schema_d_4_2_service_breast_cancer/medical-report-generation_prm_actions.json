@@ -1,0 +1,24 @@
+{
+  "actions": [
+    {
+      "name": "create_directory",
+      "directory_path": "{{workflow.parameters.aiEngine_plaformVarsInputAIElements}}"
+    },
+    {
+      "name": "download_user_vars",
+      "user_vars_url": "http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/download_user_vars/?descriptor=medical-report-generation",
+      "output_path": "{{workflow.parameters.aiEngine_plaformVarsInputUserVars}}"
+    },
+    {
+      "name": "run_ai_engine",
+      "use_case": "inferencing_from_pretrained_model",
+      "max_iteration_time": 1200,
+      "max_initialization_time": 600,
+      "client_host": "{{workflow.parameters.aiEngine_plaformVarsApiHost}}",
+      "server_host": "{{workflow.parameters.platform_processorResourceManagerApiHost}}",
+      "ping_url": "{{workflow.parameters.aiEngine_plaformVarsApiPingUrl}}",
+      "run_url": "{{workflow.parameters.aiEngine_plaformVarsApiRunUrl}}",
+      "callback_url": "{{workflow.parameters.platform_processorResourceManagerCallbackUrl}}"
+    }  
+  ]
+}

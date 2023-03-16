@@ -28,7 +28,7 @@ input_federated_learning_configuration="true" # bool
 
 # AI logic attributes
 
-input_ai_engine_descriptor="main_ai_engine" # str, cannot contain spaces or special symbols
+input_ai_engine_descriptor="main-ai-engine" # str, cannot contain spaces or special symbols (neither _)
 input_ai_engine_role_type="*" # str, possible values -> the ones defined on the MaaS along the symbol *
 input_ai_engine_functionalities='["training_from_scratch", "training_from_pretrained_model", "evaluating_from_pretrained_model", "merging_models"]' # list[str], possible values -> the ones defined on the MaaS
 input_ai_engine_model="false" # bool

@@ -9,8 +9,8 @@ spec:
   ttlStrategy:
     secondsAfterCompletion: 100
     secondsAfterSuccess: 100
-    secondsAfterFailure: 100
-  entrypoint: processor-resource-manager
+    secondsAfterFailure: 1200
+  entrypoint: training-from-scratch
   volumes:
   - name: input-elements
     emptyDir: {}
@@ -23,7 +23,7 @@ spec:
       name: ai-engine-config-2nd-prototype
       
   templates:
-  - name: processor-resource-manager
+  - name: training-from-scratch
     inputs:
       parameters:
       - name: platform_maasApiHostname

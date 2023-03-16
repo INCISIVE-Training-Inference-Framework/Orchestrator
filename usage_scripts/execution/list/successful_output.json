@@ -6,8 +6,8 @@
 		"url": "http://127.0.0.1:8000/api/executions/4/",
 		"id": 4,
 		"schema": "http://127.0.0.1:8000/api/schemas/d_4_2_breast_cancer/",
-		"created_at": "2023-03-06T18:54:46.538366+01:00",
-		"updated_at": "2023-03-06T18:54:46.538397+01:00",
+		"created_at": "2023-03-16T15:02:21.172178+01:00",
+		"updated_at": "2023-03-16T15:02:21.172209+01:00",
 		"state": {
 			"status": "pending"
 		},
@@ -18,25 +18,19 @@
 		},
 		"ai_elements": {
 			"ai_engines": [{
-				"descriptor": "prioritization_and_segmentation",
-				"version": "http://maas-service:8000/api/ai_engines_versions/1/",
-				"version_user_vars": "http://127.0.0.1:8000/api/executions/4/download_user_vars/?descriptor=prioritization_and_segmentation",
-				"ai_model": "http://maas-service:8000/api/ai_models/1/"
+				"descriptor": "prioritization-and-segmentation",
+				"version": "http://127.0.0.2:8000/api/ai_engines_versions/1/",
+				"version_user_vars": "http://127.0.0.1:8000/api/executions/4/download_user_vars/?descriptor=prioritization-and-segmentation",
+				"ai_model": "http://127.0.0.2:8000/api/ai_models/1/"
 			}, {
-				"descriptor": "birads_classification",
-				"version": "http://maas-service:8000/api/ai_engines_versions/2/",
-				"version_user_vars": "http://127.0.0.1:8000/api/executions/4/download_user_vars/?descriptor=birads_classification",
-				"ai_model": "http://maas-service:8000/api/ai_models/2/"
+				"descriptor": "birads-classification",
+				"version": "http://127.0.0.2:8000/api/ai_engines_versions/2/",
+				"version_user_vars": "http://127.0.0.1:8000/api/executions/4/download_user_vars/?descriptor=birads-classification",
+				"ai_model": "http://127.0.0.2:8000/api/ai_models/2/"
 			}, {
-				"descriptor": "density_classification",
-				"version": "http://maas-service:8000/api/ai_engines_versions/3/",
-				"version_user_vars": "http://127.0.0.1:8000/api/executions/4/download_user_vars/?descriptor=density_classification",
-				"ai_model": "http://maas-service:8000/api/ai_models/3/"
-			}, {
-				"descriptor": "medical_report_generation",
-				"version": "http://maas-service:8000/api/ai_engines_versions/4/",
-				"version_user_vars": "http://127.0.0.1:8000/api/executions/4/download_user_vars/?descriptor=medical_report_generation",
-				"ai_model": "http://maas-service:8000/api/ai_models/4/"
+				"descriptor": "medical-report-generation",
+				"version": "http://127.0.0.2:8000/api/ai_engines_versions/4/",
+				"version_user_vars": "http://127.0.0.1:8000/api/executions/4/download_user_vars/?descriptor=medical-report-generation"
 			}]
 		},
 		"output_elements": {}
@@ -44,8 +38,8 @@
 		"url": "http://127.0.0.1:8000/api/executions/3/",
 		"id": 3,
 		"schema": "http://127.0.0.1:8000/api/schemas/inferencing_from_pretrained_model/",
-		"created_at": "2023-03-06T18:54:41.499752+01:00",
-		"updated_at": "2023-03-06T18:54:41.499793+01:00",
+		"created_at": "2023-03-16T15:01:56.274068+01:00",
+		"updated_at": "2023-03-16T15:01:56.274132+01:00",
 		"state": {
 			"status": "pending"
 		},
@@ -56,10 +50,10 @@
 		},
 		"ai_elements": {
 			"ai_engines": [{
-				"descriptor": "main_ai_engine",
-				"version": "http://maas-service:8000/api/ai_engines_versions/1/",
-				"version_user_vars": "http://127.0.0.1:8000/api/executions/3/download_user_vars/?descriptor=main_ai_engine",
-				"ai_model": "http://maas-service:8000/api/ai_models/1/"
+				"descriptor": "main-ai-engine",
+				"version": "http://127.0.0.2:8000/api/ai_engines_versions/1/",
+				"version_user_vars": "http://127.0.0.1:8000/api/executions/3/download_user_vars/?descriptor=main-ai-engine",
+				"ai_model": "http://127.0.0.2:8000/api/ai_models/1/"
 			}]
 		},
 		"output_elements": {}
@@ -67,8 +61,8 @@
 		"url": "http://127.0.0.1:8000/api/executions/2/",
 		"id": 2,
 		"schema": "http://127.0.0.1:8000/api/schemas/training_from_scratch_federated_learning/",
-		"created_at": "2023-03-06T18:54:37.388764+01:00",
-		"updated_at": "2023-03-06T18:54:37.388793+01:00",
+		"created_at": "2023-03-16T15:00:43.148475+01:00",
+		"updated_at": "2023-03-16T15:00:43.148517+01:00",
 		"state": {
 			"status": "pending"
 		},
@@ -85,9 +79,9 @@
 		},
 		"ai_elements": {
 			"ai_engines": [{
-				"descriptor": "main_ai_engine",
-				"version": "http://maas-service:8000/api/ai_engines_versions/1/",
-				"version_user_vars": "http://127.0.0.1:8000/api/executions/2/download_user_vars/?descriptor=main_ai_engine"
+				"descriptor": "main-ai-engine",
+				"version": "http://127.0.0.2:8000/api/ai_engines_versions/1/",
+				"version_user_vars": "http://127.0.0.1:8000/api/executions/2/download_user_vars/?descriptor=main-ai-engine"
 			}]
 		},
 		"output_elements": {
@@ -101,8 +95,8 @@
 		"url": "http://127.0.0.1:8000/api/executions/1/",
 		"id": 1,
 		"schema": "http://127.0.0.1:8000/api/schemas/training_from_scratch/",
-		"created_at": "2023-03-06T18:54:32.265093+01:00",
-		"updated_at": "2023-03-06T18:54:32.265135+01:00",
+		"created_at": "2023-03-16T14:59:51.346122+01:00",
+		"updated_at": "2023-03-16T14:59:51.346163+01:00",
 		"state": {
 			"status": "pending"
 		},
@@ -116,9 +110,9 @@
 		},
 		"ai_elements": {
 			"ai_engines": [{
-				"descriptor": "main_ai_engine",
-				"version": "http://maas-service:8000/api/ai_engines_versions/1/",
-				"version_user_vars": "http://127.0.0.1:8000/api/executions/1/download_user_vars/?descriptor=main_ai_engine"
+				"descriptor": "main-ai-engine",
+				"version": "http://127.0.0.2:8000/api/ai_engines_versions/1/",
+				"version_user_vars": "http://127.0.0.1:8000/api/executions/1/download_user_vars/?descriptor=main-ai-engine"
 			}]
 		},
 		"output_elements": {

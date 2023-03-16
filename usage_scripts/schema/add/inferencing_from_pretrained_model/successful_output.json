@@ -5,7 +5,7 @@
 	"implementation": "argo_workflows",
 	"description": "A schema that performs inference with an AI Engine to some external data, creating a set of results and charts",
 	"auxiliary_file": "http://127.0.0.1:8000/api/schemas/inferencing_from_pretrained_model/download_auxiliary_file/",
-	"created_at": "2023-02-28T21:38:25.333631+01:00",
+	"created_at": "2023-03-16T14:56:09.726376+01:00",
 	"input_elements": {
 		"platform_data": false,
 		"external_data": true,
@@ -13,7 +13,7 @@
 	},
 	"ai_elements": {
 		"ai_engines": [{
-			"descriptor": "main_ai_engine",
+			"descriptor": "main-ai-engine",
 			"role_type": "*",
 			"functionalities": ["inferencing_from_pretrained_model"],
 			"ai_model": true

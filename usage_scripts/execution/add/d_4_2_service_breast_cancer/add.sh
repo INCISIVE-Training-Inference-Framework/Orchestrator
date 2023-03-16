@@ -29,13 +29,8 @@ _2_input_ai_engine_version=2 # int, must exist on the MaaS
 _2_input_ai_engine_version_user_vars="./auxiliary_files/user_vars.json" # FILE
 _2_input_ai_model=2 # int, must exist on the MaaS
 
-_3_input_ai_engine_version=3 # int, must exist on the MaaS
+_3_input_ai_engine_version=4 # int, must exist on the MaaS
 _3_input_ai_engine_version_user_vars="./auxiliary_files/user_vars.json" # FILE
-_3_input_ai_model=3 # int, must exist on the MaaS
-
-_4_input_ai_engine_version=4 # int, must exist on the MaaS
-_4_input_ai_engine_version_user_vars="./auxiliary_files/user_vars.json" # FILE
-_4_input_ai_model=4 # int, must exist on the MaaS
 
 # output attributes
 
@@ -48,34 +43,27 @@ curl -X POST http://${orchestrator_api_hostname}/api/executions/ \
                                 \"ai_elements\": {
                                     \"ai_engines\": [
                                         {
-                                            \"descriptor\": \"prioritization_and_segmentation\",
+                                            \"descriptor\": \"prioritization-and-segmentation\",
                                             \"version\": ${_1_input_ai_engine_version},
                                             \"ai_model\": ${_1_input_ai_model}
                                         },
                                         {
-                                            \"descriptor\": \"birads_classification\",
+                                            \"descriptor\": \"birads-classification\",
                                             \"version\": ${_2_input_ai_engine_version},
                                             \"ai_model\": ${_2_input_ai_model}
                                         },
                                         {
-                                            \"descriptor\": \"density_classification\",
-                                            \"version\": ${_3_input_ai_engine_version},
-                                            \"ai_model\": ${_3_input_ai_model}
-                                        },
-                                        {
-                                            \"descriptor\": \"medical_report_generation\",
-                                            \"version\": ${_4_input_ai_engine_version},
-                                            \"ai_model\": ${_4_input_ai_model}
+                                            \"descriptor\": \"medical-report-generation\",
+                                            \"version\": ${_3_input_ai_engine_version}
                                         }
                                     ]
                                 },
                                 \"output_elements\": {}
                             }" \
                             -F external_data=@${input_external_data} \
-                            -F prioritization_and_segmentation_version_user_vars=@${_1_input_ai_engine_version_user_vars} \
-                            -F birads_classification_version_user_vars=@${_2_input_ai_engine_version_user_vars} \
-                            -F density_classification_version_user_vars=@${_3_input_ai_engine_version_user_vars} \
-                            -F medical_report_generation_version_user_vars=@${_4_input_ai_engine_version_user_vars}
+                            -F prioritization-and-segmentation_version_user_vars=@${_1_input_ai_engine_version_user_vars} \
+                            -F birads-classification_version_user_vars=@${_2_input_ai_engine_version_user_vars} \
+                            -F medical-report-generation_version_user_vars=@${_3_input_ai_engine_version_user_vars}
 
 # --> SUCCESSFUL OUTPUT
 # code: 201

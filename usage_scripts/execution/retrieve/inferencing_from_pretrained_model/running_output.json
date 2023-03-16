@@ -2,8 +2,8 @@
 	"url": "http://127.0.0.1:8000/api/executions/3/",
 	"id": 3,
 	"schema": "http://127.0.0.1:8000/api/schemas/inferencing_from_pretrained_model/",
-	"created_at": "2023-03-01T11:15:00.430046+01:00",
-	"updated_at": "2023-03-01T11:15:00.430076+01:00",
+	"created_at": "2023-03-16T15:01:56.274068+01:00",
+	"updated_at": "2023-03-16T15:01:56.274132+01:00",
 	"state": {
 		"status": "running"
 	},
@@ -14,10 +14,10 @@
 	},
 	"ai_elements": {
 		"ai_engines": [{
-			"descriptor": "main_ai_engine",
-			"version": "http://maas-service:8000/api/ai_engines_versions/1/",
-			"version_user_vars": "http://127.0.0.1:8000/api/executions/3/download_user_vars/?descriptor=main_ai_engine",
-			"ai_model": "http://maas-service:8000/api/ai_models/1/"
+			"descriptor": "main-ai-engine",
+			"version": "http://127.0.0.2:8000/api/ai_engines_versions/1/",
+			"version_user_vars": "http://127.0.0.1:8000/api/executions/3/download_user_vars/?descriptor=main-ai-engine",
+			"ai_model": "http://127.0.0.2:8000/api/ai_models/1/"
 		}]
 	},
 	"output_elements": {}

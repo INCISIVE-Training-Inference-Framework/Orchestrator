@@ -9,7 +9,7 @@
 		"implementation": "argo_workflows",
 		"description": "A schema that performs the Breast Cancer Service from D.4.2, creating a set of results and charts",
 		"auxiliary_file": "http://127.0.0.1:8000/api/schemas/d_4_2_breast_cancer/download_auxiliary_file/",
-		"created_at": "2023-02-28T21:52:29.768991+01:00",
+		"created_at": "2023-03-16T14:56:36.661847+01:00",
 		"input_elements": {
 			"platform_data": false,
 			"external_data": true,
@@ -17,25 +17,20 @@
 		},
 		"ai_elements": {
 			"ai_engines": [{
-				"descriptor": "prioritization_and_segmentation",
+				"descriptor": "prioritization-and-segmentation",
 				"role_type": "segmentation",
 				"functionalities": ["inferencing_from_pretrained_model"],
 				"ai_model": true
 			}, {
-				"descriptor": "birads_classification",
+				"descriptor": "birads-classification",
 				"role_type": "classification",
 				"functionalities": ["inferencing_from_pretrained_model"],
 				"ai_model": true
 			}, {
-				"descriptor": "density_classification",
-				"role_type": "classification",
-				"functionalities": ["inferencing_from_pretrained_model"],
-				"ai_model": true
-			}, {
-				"descriptor": "medical_report_generation",
+				"descriptor": "medical-report-generation",
 				"role_type": "report_generation",
 				"functionalities": ["inferencing_from_pretrained_model"],
-				"ai_model": true
+				"ai_model": false
 			}]
 		},
 		"output_elements": {
@@ -50,7 +45,7 @@
 		"implementation": "argo_workflows",
 		"description": "A schema that performs inference with an AI Engine to some external data, creating a set of results and charts",
 		"auxiliary_file": "http://127.0.0.1:8000/api/schemas/inferencing_from_pretrained_model/download_auxiliary_file/",
-		"created_at": "2023-02-28T21:52:24.065761+01:00",
+		"created_at": "2023-03-16T14:56:09.726376+01:00",
 		"input_elements": {
 			"platform_data": false,
 			"external_data": true,
@@ -58,7 +53,7 @@
 		},
 		"ai_elements": {
 			"ai_engines": [{
-				"descriptor": "main_ai_engine",
+				"descriptor": "main-ai-engine",
 				"role_type": "*",
 				"functionalities": ["inferencing_from_pretrained_model"],
 				"ai_model": true
@@ -76,7 +71,7 @@
 		"implementation": "argo_workflows",
 		"description": "A schema that trains an AI Engine from scratch with platform data in a federated learning fashion, creating a new AI Model and a new set of Evaluation Metrics",
 		"auxiliary_file": "http://127.0.0.1:8000/api/schemas/training_from_scratch_federated_learning/download_auxiliary_file/",
-		"created_at": "2023-02-28T21:52:18.967374+01:00",
+		"created_at": "2023-03-16T14:55:43.643512+01:00",
 		"input_elements": {
 			"platform_data": true,
 			"external_data": false,
@@ -84,7 +79,7 @@
 		},
 		"ai_elements": {
 			"ai_engines": [{
-				"descriptor": "main_ai_engine",
+				"descriptor": "main-ai-engine",
 				"role_type": "*",
 				"functionalities": ["training_from_scratch", "training_from_pretrained_model", "evaluating_from_pretrained_model", "merging_models"],
 				"ai_model": false
@@ -102,7 +97,7 @@
 		"implementation": "argo_workflows",
 		"description": "A schema that trains an AI Engine from scratch with platform data, creating a new AI Model and a new set of Evaluation Metrics",
 		"auxiliary_file": "http://127.0.0.1:8000/api/schemas/training_from_scratch/download_auxiliary_file/",
-		"created_at": "2023-02-28T21:52:10.776247+01:00",
+		"created_at": "2023-03-16T14:54:53.625993+01:00",
 		"input_elements": {
 			"platform_data": true,
 			"external_data": false,
@@ -110,7 +105,7 @@
 		},
 		"ai_elements": {
 			"ai_engines": [{
-				"descriptor": "main_ai_engine",
+				"descriptor": "main-ai-engine",
 				"role_type": "*",
 				"functionalities": ["training_from_scratch"],
 				"ai_model": false

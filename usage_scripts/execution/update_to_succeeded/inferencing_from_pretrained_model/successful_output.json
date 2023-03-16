@@ -1,28 +1,28 @@
 {
-	"url": "http://127.0.0.1:8000/api/executions/1/",
-	"id": 1,
+	"url": "http://127.0.0.1:8000/api/executions/3/",
+	"id": 3,
 	"schema": "http://127.0.0.1:8000/api/schemas/inferencing_from_pretrained_model/",
-	"created_at": "2023-03-01T11:06:05.589068+01:00",
-	"updated_at": "2023-03-01T11:06:05.589107+01:00",
+	"created_at": "2023-03-16T15:14:42.944201+01:00",
+	"updated_at": "2023-03-16T15:14:42.944234+01:00",
 	"state": {
 		"status": "succeeded"
 	},
 	"input_elements": {
 		"external_data": {
-			"contents": "http://127.0.0.1:8000/api/executions/1/download_external_data/"
+			"contents": "http://127.0.0.1:8000/api/executions/3/download_external_data/"
 		}
 	},
 	"ai_elements": {
 		"ai_engines": [{
-			"descriptor": "main_ai_engine",
-			"version": "http://maas-service:8000/api/ai_engines_versions/1/",
-			"version_user_vars": "http://127.0.0.1:8000/api/executions/1/download_user_vars/?descriptor=main_ai_engine",
-			"ai_model": "http://maas-service:8000/api/ai_models/1/"
+			"descriptor": "main-ai-engine",
+			"version": "http://127.0.0.2:8000/api/ai_engines_versions/1/",
+			"version_user_vars": "http://127.0.0.1:8000/api/executions/3/download_user_vars/?descriptor=main-ai-engine",
+			"ai_model": "http://127.0.0.2:8000/api/ai_models/1/"
 		}]
 	},
 	"output_elements": {
 		"generic_file": {
-			"generic_file": "http://maas-service:8000/api/generic_files/1/"
+			"generic_file": "http://127.0.0.2:8000/api/generic_files/1/"
 		}
 	}
 }

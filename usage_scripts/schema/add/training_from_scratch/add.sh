@@ -17,7 +17,7 @@ name="training_from_scratch" # str
 type="individual" # str, possible values -> {individual, joint}, individual for one AI Engine executions, joint for pipelines
 implementation="argo_workflows" # str, possible values -> {argo_workflows}
 description="A schema that trains an AI Engine from scratch with platform data, creating a new AI Model and a new set of Evaluation Metrics"
-auxiliary_file="./auxiliary_files/schema_training_from_scratch.yaml" # FILE, optional (it is mandatory for the argo_workflows implementation)
+auxiliary_file="./auxiliary_files/schema_training_from_scratch/schema.yaml" # FILE, optional (it is mandatory for the argo_workflows implementation)
 
 # input attributes
 
@@ -28,7 +28,7 @@ input_federated_learning_configuration="false" # bool
 
 # AI logic attributes
 
-input_ai_engine_descriptor="main_ai_engine" # str, cannot contain spaces or special symbols
+input_ai_engine_descriptor="main-ai-engine" # str, cannot contain spaces or special symbols (neither _)
 input_ai_engine_role_type="*" # str, possible values -> the ones defined on the MaaS along the symbol *
 input_ai_engine_functionalities='["training_from_scratch"]' # list[str], possible values -> the ones defined on the MaaS
 input_ai_engine_model="false" # bool

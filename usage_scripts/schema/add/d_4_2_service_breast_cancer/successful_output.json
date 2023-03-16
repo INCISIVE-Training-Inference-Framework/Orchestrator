@@ -5,7 +5,7 @@
 	"implementation": "argo_workflows",
 	"description": "A schema that performs the Breast Cancer Service from D.4.2, creating a set of results and charts",
 	"auxiliary_file": "http://127.0.0.1:8000/api/schemas/d_4_2_breast_cancer/download_auxiliary_file/",
-	"created_at": "2023-02-28T21:47:31.965623+01:00",
+	"created_at": "2023-03-16T14:56:36.661847+01:00",
 	"input_elements": {
 		"platform_data": false,
 		"external_data": true,
@@ -13,25 +13,20 @@
 	},
 	"ai_elements": {
 		"ai_engines": [{
-			"descriptor": "prioritization_and_segmentation",
+			"descriptor": "prioritization-and-segmentation",
 			"role_type": "segmentation",
 			"functionalities": ["inferencing_from_pretrained_model"],
 			"ai_model": true
 		}, {
-			"descriptor": "birads_classification",
+			"descriptor": "birads-classification",
 			"role_type": "classification",
 			"functionalities": ["inferencing_from_pretrained_model"],
 			"ai_model": true
 		}, {
-			"descriptor": "density_classification",
-			"role_type": "classification",
-			"functionalities": ["inferencing_from_pretrained_model"],
-			"ai_model": true
-		}, {
-			"descriptor": "medical_report_generation",
+			"descriptor": "medical-report-generation",
 			"role_type": "report_generation",
 			"functionalities": ["inferencing_from_pretrained_model"],
-			"ai_model": true
+			"ai_model": false
 		}]
 	},
 	"output_elements": {

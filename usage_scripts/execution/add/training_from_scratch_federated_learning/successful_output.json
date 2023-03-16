@@ -20,9 +20,9 @@
 	},
 	"ai_elements": {
 		"ai_engines": [{
-			"descriptor": "main_ai_engine",
+			"descriptor": "main-ai-engine",
 			"version": "http://maas-service:8000/api/ai_engines_versions/1/",
-			"version_user_vars": "http://127.0.0.1:8000/api/executions/2/download_user_vars/?descriptor=main_ai_engine"
+			"version_user_vars": "http://127.0.0.1:8000/api/executions/2/download_user_vars/?descriptor=main-ai-engine"
 		}]
 	},
 	"output_elements": {
