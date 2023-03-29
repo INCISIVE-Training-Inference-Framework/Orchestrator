@@ -92,8 +92,9 @@ class ContainerManagerArgoWorkflows(ContainerManagerInterface):
         }
 
         if execution.schema.requires_input_elements_platform_data():
-            parameters['execution_dataPartner'] = execution.get_input_elements_platform_data().parsed_data_partners_patients.keys()[0]
-            parameters['execution_dataPartnerPatients'] = execution.get_input_elements_platform_data().parsed_data_partners_patients
+            parsed_data_partners_patients = execution.get_input_elements_platform_data().parsed_data_partners_patients
+            parameters['execution_dataPartner'] = list(parsed_data_partners_patients.keys())[0]
+            parameters['execution_dataPartnerPatients'] = parsed_data_partners_patients
 
         ai_engines = execution.get_ai_elements_ai_engines()
         for ai_engine in ai_engines:
