@@ -1,5 +1,7 @@
 import logging
 
+from django.conf import settings
+
 from main.factory import Factory
 from main.models import Execution
 
@@ -14,4 +16,11 @@ class Domain:
     @staticmethod
     def start_schema_execution(execution: Execution):
         container_manager = Factory.get_container_manager(execution.schema.implementation)
-        container_manager.start_schema_execution(execution)
+        communication_adapter = Factory.get_communication_adapter(settings.COMMUNICATION_ADAPTER)
+        container_manager.start_schema_execution(execution, communication_adapter)
+
+    @staticmethod
+    def end_schema_execution(execution: Execution):
+        container_manager = Factory.get_container_manager(execution.schema.implementation)
+        communication_adapter = Factory.get_communication_adapter(settings.COMMUNICATION_ADAPTER)
+        container_manager.end_schema_execution(execution, communication_adapter)

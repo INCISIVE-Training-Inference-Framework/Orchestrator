@@ -5,7 +5,16 @@ class UserError(Exception):
 
 
 class InternalError(Exception):
-    def __init__(self, internal_message, public_message):
-        self.internal_message = internal_message
-        self.public_message = public_message
-        super().__init__(self.public_message)
+    def __init__(self, message: str, exception: Exception):
+        super().__init__(message)
+        self.message = message
+        self.exception = exception
+
+    def get_message(self):
+        return self.message
+
+    def get_exception(self):
+        if self.exception:
+            return self.exception
+        else:
+            return self

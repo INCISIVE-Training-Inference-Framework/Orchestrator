@@ -10,8 +10,11 @@ spec:
     secondsAfterCompletion: 100
     secondsAfterSuccess: 100
     secondsAfterFailure: 1200
-  nodeSelector: {agentpool: agentpool}
-  entrypoint: processor-resource-manager
+  nodeSelector: {fakeCloudNode: fakeCloudNode}
+  hostNetwork: true
+  dnsPolicy: ClusterFirstWithHostNet
+  entrypoint: main
+  onExit: exit-handler
   volumes:
   - name: input-elements
     emptyDir: {}
@@ -24,51 +27,70 @@ spec:
       name: ai-engine-config-2nd-prototype
     
   templates:
-  - name: processor-resource-manager
+  - name: main
+    retryStrategy:
+      limit: "1"
+      retryPolicy: "Always"
     inputs:
       parameters:
-        - name: platform_maasApiHostname
-        - name: platform_orchestratorApiHostname
-        - name: platform_processorResourceManagerVersion
-        - name: platform_processorResourceManagerCallbackUrl
-        - name: platform_processorResourceManagerApiHost
-        - name: aiEngine_plaformVarsInputElements
-        - name: aiEngine_plaformVarsInputDataInference
-        - name: aiEngine_plaformVarsInputAIElements
-        - name: aiEngine_plaformVarsInputUserVars
-        - name: aiEngine_plaformVarsInputModel
-        - name: aiEngine_plaformVarsOutputElements
-        - name: aiEngine_plaformVarsOutputInferenceResults
-        - name: aiEngine_plaformVarsApiPingUrl
-        - name: aiEngine_plaformVarsApiRunUrl
-        - name: aiEngine_plaformVarsApiHost
-        - name: execution_id
-        - name: execution_main-ai-engine-container-name
-        - name: execution_main-ai-engine-container-version
-        - name: execution_main-ai-engine-ai-model
+      - name: platform_maasApiHostname
+      - name: platform_orchestratorApiHostname
+      - name: platform_processorResourceManagerVersion
+      - name: platform_processorResourceManagerCallbackUrl
+      - name: platform_processorResourceManagerApiHost
+      - name: aiEngine_plaformVarsInputElements
+      - name: aiEngine_plaformVarsInputDataInference
+      - name: aiEngine_plaformVarsInputAIElements
+      - name: aiEngine_plaformVarsInputUserVars
+      - name: aiEngine_plaformVarsInputModel
+      - name: aiEngine_plaformVarsOutputElements
+      - name: aiEngine_plaformVarsOutputInferenceResults
+      - name: aiEngine_plaformVarsApiPingUrl
+      - name: aiEngine_plaformVarsApiRunUrl
+      - name: aiEngine_plaformVarsApiHost
+      - name: execution_id
+      - name: execution_main-ai-engine-container-name
+      - name: execution_main-ai-engine-container-version
+      - name: execution_main-ai-engine-ai-model
+    outputs:
+      parameters:
+      - name: error-message
+        valueFrom:
+          default: "Unexpected error"
+          path: /usr/application/error_message.txt
+        globalName: main-error-message
     container:
-      image: "incisive.azurecr.io/processor-resource-manager:{{inputs.parameters.platform_processorResourceManagerVersion}}"
+      image: "incisive.azurecr.io/processor-resource-manager:{{workflow.parameters.platform_processorResourceManagerVersion}}"
       command: [java, -jar, processor_resource_manager.jar]
-      args: ["{\"actions\":[{\"name\":\"update_to_running\",\"update_status_url\":\"http://{{inputs.parameters.platform_orchestratorApiHostname}}/api/executions/{{inputs.parameters.execution_id}}/update_to_running/\"},{\"name\":\"create_directory\",\"directory_path\":\"{{inputs.parameters.aiEngine_plaformVarsInputDataInference}}\"},{\"name\":\"create_directory\",\"directory_path\":\"{{inputs.parameters.aiEngine_plaformVarsInputAIElements}}\"},{\"name\":\"create_directory\",\"directory_path\":\"{{inputs.parameters.aiEngine_plaformVarsInputModel}}\"},{\"name\":\"create_directory\",\"directory_path\":\"{{inputs.parameters.aiEngine_plaformVarsOutputInferenceResults}}\"},{\"name\":\"download_external_data\",\"external_data_url\":\"http://{{inputs.parameters.platform_orchestratorApiHostname}}/api/executions/{{inputs.parameters.execution_id}}/download_external_data/\",\"output_path\":\"{{inputs.parameters.aiEngine_plaformVarsInputDataInference}}\"},{\"name\":\"download_user_vars\",\"user_vars_url\":\"http://{{inputs.parameters.platform_orchestratorApiHostname}}/api/executions/{{inputs.parameters.execution_id}}/download_user_vars/?descriptor=main_ai_engine\",\"output_path\":\"{{inputs.parameters.aiEngine_plaformVarsInputUserVars}}\"},{\"name\":\"download_ai_model\",\"ai_model_url\":\"http://{{inputs.parameters.platform_maasApiHostname}}/api/ai_models/{{inputs.parameters.execution_main-ai-engine-ai-model}}/download_contents/\",\"output_path\":\"{{inputs.parameters.aiEngine_plaformVarsInputModel}}\"},{\"name\":\"run_ai_engine\",\"use_case\":\"inferencing_from_pretrained_model\",\"max_iteration_time\":1200,\"max_initialization_time\":600,\"client_host\":\"{{inputs.parameters.aiEngine_plaformVarsApiHost}}\",\"server_host\":\"{{inputs.parameters.platform_processorResourceManagerApiHost}}\",\"ping_url\":\"{{inputs.parameters.aiEngine_plaformVarsApiPingUrl}}\",\"run_url\":\"{{inputs.parameters.aiEngine_plaformVarsApiRunUrl}}\",\"callback_url\":\"{{inputs.parameters.platform_processorResourceManagerCallbackUrl}}\"},{\"name\":\"update_to_succeeded\",\"update_status_url\":\"http://{{inputs.parameters.platform_orchestratorApiHostname}}/api/executions/{{inputs.parameters.execution_id}}/update_to_succeeded/\",\"upload_ai_model\":false,\"upload_evaluation_metrics\":false,\"upload_generic_file\":true,\"generic_file_upload_url\":\"http://{{inputs.parameters.platform_maasApiHostname}}/api/generic_files/\",\"generic_file_delete_url\":\"http://{{inputs.parameters.platform_maasApiHostname}}/api/generic_files/\",\"generic_file_upload_path\":\"{{inputs.parameters.aiEngine_plaformVarsOutputInferenceResults}}\",\"generic_file_upload_metadata\":{\"name\":\"InferenceResultsfromExecution{{inputs.parameters.execution_id}}\"}}]}", "--failure-endpoint", "http://{{inputs.parameters.platform_orchestratorApiHostname}}/api/executions/{{inputs.parameters.execution_id}}/update_to_failed/"]
+      args: ["{\"actions\":[{\"name\":\"update_to_running\",\"update_status_url\":\"http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/update_to_running/\"},{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputDataInference}}\"},{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputAIElements}}\"},{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputModel}}\"},{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsOutputInferenceResults}}\"},{\"name\":\"download_external_data\",\"external_data_url\":\"http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/download_external_data/\",\"output_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputDataInference}}\"},{\"name\":\"download_user_vars\",\"user_vars_url\":\"http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/download_user_vars/?descriptor=main-ai-engine\",\"output_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputUserVars}}\"},{\"name\":\"download_ai_model\",\"ai_model_url\":\"http://{{workflow.parameters.platform_maasApiHostname}}/api/ai_models/{{workflow.parameters.execution_main-ai-engine-ai-model}}/download_contents/\",\"output_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputModel}}\"},{\"name\":\"run_ai_engine\",\"use_case\":\"inferencing_from_pretrained_model\",\"max_iteration_time\":1200,\"max_initialization_time\":600,\"client_host\":\"{{workflow.parameters.aiEngine_plaformVarsApiHost}}\",\"server_host\":\"{{workflow.parameters.platform_processorResourceManagerApiHost}}\",\"ping_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiPingUrl}}\",\"run_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiRunUrl}}\",\"callback_url\":\"{{workflow.parameters.platform_processorResourceManagerCallbackUrl}}\"},{\"name\":\"update_to_succeeded\",\"update_status_url\":\"http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/update_to_succeeded/\",\"upload_ai_model\":false,\"upload_evaluation_metrics\":false,\"upload_generic_file\":true,\"generic_file_upload_url\":\"http://{{workflow.parameters.platform_maasApiHostname}}/api/generic_files/\",\"generic_file_delete_url\":\"http://{{workflow.parameters.platform_maasApiHostname}}/api/generic_files/\",\"generic_file_upload_path\":\"{{workflow.parameters.aiEngine_plaformVarsOutputInferenceResults}}\",\"generic_file_upload_metadata\":{\"name\":\"InferenceResultsfromExecution{{workflow.parameters.execution_id}}\"}}]}"]
       volumeMounts:
       - name: input-elements
-        mountPath: "{{inputs.parameters.aiEngine_plaformVarsInputElements}}"
+        mountPath: "{{workflow.parameters.aiEngine_plaformVarsInputElements}}"
       - name: ai-elements
-        mountPath: "{{inputs.parameters.aiEngine_plaformVarsInputAIElements}}"
+        mountPath: "{{workflow.parameters.aiEngine_plaformVarsInputAIElements}}"
       - name: output-elements
-        mountPath: "{{inputs.parameters.aiEngine_plaformVarsOutputElements}}"
+        mountPath: "{{workflow.parameters.aiEngine_plaformVarsOutputElements}}"
     sidecars:
     - name: main-ai-engine
-      image: "incisive.azurecr.io/{{inputs.parameters.execution_main-ai-engine-container-name}}:{{inputs.parameters.execution_main-ai-engine-container-version}}"
-      command: [python, rest_api.py, --environment-config-file, /platform_vars.json]
+      image: "incisive.azurecr.io/{{workflow.parameters.execution_main-ai-engine-container-name}}:{{workflow.parameters.execution_main-ai-engine-container-version}}"
       volumeMounts:
       - name: input-elements
-        mountPath: "{{inputs.parameters.aiEngine_plaformVarsInputElements}}"
+        mountPath: "{{workflow.parameters.aiEngine_plaformVarsInputElements}}"
       - name: ai-elements
-        mountPath: "{{inputs.parameters.aiEngine_plaformVarsInputAIElements}}"
+        mountPath: "{{workflow.parameters.aiEngine_plaformVarsInputAIElements}}"
         readOnly: true
       - name: output-elements
-        mountPath: "{{inputs.parameters.aiEngine_plaformVarsOutputElements}}"
+        mountPath: "{{workflow.parameters.aiEngine_plaformVarsOutputElements}}"
       - name: platform-vars
         mountPath: /platform_vars.json
         subPath: platform_vars.json
+        
+  - name: exit-handler
+    steps:
+    - - name: notify-failure
+        when: "{{workflow.status}} != Succeeded"
+        inline:
+          container:
+            image: "incisive.azurecr.io/processor-resource-manager:{{workflow.parameters.platform_processorResourceManagerVersion}}"
+            command: [java, -jar, processor_resource_manager.jar]
+            args: ["{\"actions\":[{\"name\":\"update_to_failed\", \"message\":\"{{io.argoproj.workflow.v1alpha1.outputs.parameters.main-error-message}}\", \"update_status_url\":\"http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/update_to_failed/\"}]}"]

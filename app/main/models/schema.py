@@ -31,7 +31,7 @@ class Schema(models.Model):
         choices=SchemaImplementation.choices
     )
     description = models.TextField()
-    auxiliary_file = models.FileField('schemas')
+    auxiliary_file = models.FileField(upload_to='schemas')
     created_at = models.DateTimeField(auto_now_add=True)
 
     # input elements

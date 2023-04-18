@@ -10,6 +10,10 @@
     },
     {
       "name": "create_directory",
+      "directory_path": "{{inputs.parameters.aiEngine_plaformVarsInputModel}}"
+    },
+    {
+      "name": "create_directory",
       "directory_path": "{{inputs.parameters.aiEngine_plaformVarsOutputElements}}"
     },
     {
@@ -22,8 +26,13 @@
       "output_path": "{{inputs.parameters.aiEngine_plaformVarsInputUserVars}}"
     },
     {
+      "name": "download_ai_model",
+      "ai_model_url": "http://{{inputs.parameters.platform_maasApiHostname}}/api/ai_models/{{inputs.parameters.execution_main-ai-engine-ai-model}}/download_contents/",
+      "output_path": "{{inputs.parameters.aiEngine_plaformVarsInputModel}}"
+    },
+    {
       "name": "run_ai_engine",
-      "use_case": "training_from_scratch",
+      "use_case": "training_from_pretrained_model",
       "max_iteration_time": 1200,
       "max_initialization_time": 600,
       "client_host": "{{inputs.parameters.aiEngine_plaformVarsApiHost}}",
@@ -48,7 +57,8 @@
         "name": "{{inputs.parameters.execution_outputAIModelName}}",
         "data_partners_patients": {{inputs.parameters.execution_dataPartnerPatients}},
         "description": "{{inputs.parameters.execution_outputAIModelDescription}}",
-        "merge_type": "{{inputs.parameters.execution_outputAIModelMergeType}}"
+        "merge_type": "{{inputs.parameters.execution_outputAIModelMergeType}}",
+        "parent_ai_model": {{inputs.parameters.execution_main-ai-engine-ai-model}}
       },
 
       "evaluation_metrics_upload_url": "http://{{inputs.parameters.platform_maasApiHostname}}/api/evaluation_metrics/update_or_create/",

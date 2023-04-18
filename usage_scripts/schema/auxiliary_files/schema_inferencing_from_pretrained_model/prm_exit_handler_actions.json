@@ -1,0 +1,9 @@
+{
+  "actions": [
+    {
+      "name": "update_to_failed",
+      "message": "{{io.argoproj.workflow.v1alpha1.outputs.parameters.main-error-message}}",
+      "update_status_url": "http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/update_to_failed/"
+    } 
+  ]
+}

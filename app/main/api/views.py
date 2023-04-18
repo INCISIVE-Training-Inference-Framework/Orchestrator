@@ -9,6 +9,7 @@ from main.api.serializers.execution.input_create import ExecutionInputSerializer
 from main.api.serializers.execution.input_update_failed import ExecutionInputSerializerForFailedUpdate
 from main.api.serializers.execution.input_update_succeeded import ExecutionInputSerializerForSucceededUpdate
 from main.api.serializers.schema.input import SchemaInputSerializer
+from main.domain import Domain
 from main.models import \
     Schema, \
     Execution, \
@@ -78,6 +79,11 @@ class ExecutionViewSet(
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        Domain.end_schema_execution(instance)
+        return super().destroy(request, *args, **kwargs)
 
     @action(
         methods=['get'],

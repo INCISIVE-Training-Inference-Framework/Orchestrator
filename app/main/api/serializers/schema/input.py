@@ -2,6 +2,7 @@ from django.conf import settings
 from rest_framework import serializers
 
 from main.api.serializers.schema.output import SchemaOutputSerializer
+from main.exceptions import InternalError
 from main.models import \
     Schema, \
     SchemaInputPlatformData, \
@@ -12,7 +13,6 @@ from main.models import \
     SchemaOutputAIModel, \
     SchemaOutputEvaluationMetric, \
     SchemaOutputGenericFile
-from main.exceptions import InternalError
 
 
 # TODO add validate methods
@@ -139,10 +139,7 @@ class SchemaInputSerializer(serializers.ModelSerializer):
             return schema_instance
         except Exception as e:
             schema_instance.delete()
-            raise InternalError(
-                f'Internal error while creating schema: {e}',
-                'Internal error while creating schema'
-            )
+            raise InternalError(f'Internal error while creating schema: {e}', e)
 
 
     def to_representation(self, instance):

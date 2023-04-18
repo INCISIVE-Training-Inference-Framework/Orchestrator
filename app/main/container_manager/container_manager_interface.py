@@ -1,5 +1,6 @@
 import abc
 
+from main.communication_adapter.communication_adapter_interface import CommunicationAdapterInterface
 from main.models import Execution
 
 
@@ -17,5 +18,9 @@ class ContainerManagerInterface(metaclass=abc.ABCMeta):
     # ---> Main methods
 
     @staticmethod
-    def start_schema_execution(execution: Execution) -> None:
+    def start_schema_execution(execution: Execution, communication_adapter: CommunicationAdapterInterface.__class__) -> None:
+        raise NotImplementedError('Method not implemented in interface class')
+
+    @staticmethod
+    def end_schema_execution(execution: Execution, communication_adapter: CommunicationAdapterInterface.__class__) -> None:
         raise NotImplementedError('Method not implemented in interface class')

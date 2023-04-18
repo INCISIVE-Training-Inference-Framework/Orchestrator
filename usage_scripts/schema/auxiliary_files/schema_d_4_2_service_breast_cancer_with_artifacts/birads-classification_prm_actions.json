@@ -1,0 +1,37 @@
+{
+  "actions": [
+    {
+      "name": "create_directory",
+      "directory_path": "{{workflow.parameters.aiEngine_plaformVarsInputAIElements}}"
+    },
+    {
+      "name": "create_directory",
+      "directory_path": "{{workflow.parameters.aiEngine_plaformVarsInputModel}}"
+    },
+    {
+      "name": "download_user_vars",
+      "user_vars_url": "http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/download_user_vars/?descriptor=birads-classification",
+      "output_path": "{{workflow.parameters.aiEngine_plaformVarsInputUserVars}}"
+    },
+    {
+      "name": "download_ai_model",
+      "ai_model_url": "http://{{workflow.parameters.platform_maasApiHostname}}/api/ai_models/{{workflow.parameters.execution_birads-classification-ai-model}}/download_contents/",
+      "output_path": "{{workflow.parameters.aiEngine_plaformVarsInputModel}}"
+    },
+    {
+      "name": "create_directory",
+      "directory_path": "{{workflow.parameters.aiEngine_plaformVarsOutputInferenceResults}}"
+    },
+    {
+      "name": "run_ai_engine",
+      "use_case": "inferencing_from_pretrained_model",
+      "max_iteration_time": 1200,
+      "max_initialization_time": 600,
+      "client_host": "{{workflow.parameters.aiEngine_plaformVarsApiHost}}",
+      "server_host": "{{workflow.parameters.platform_processorResourceManagerApiHost}}",
+      "ping_url": "{{workflow.parameters.aiEngine_plaformVarsApiPingUrl}}",
+      "run_url": "{{workflow.parameters.aiEngine_plaformVarsApiRunUrl}}",
+      "callback_url": "{{workflow.parameters.platform_processorResourceManagerCallbackUrl}}"
+    }  
+  ]
+}

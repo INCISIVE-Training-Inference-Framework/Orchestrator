@@ -67,6 +67,7 @@ class Execution(models.Model):
         values = {'status': status}
         if error_message: values['message'] = error_message
         ExecutionState.objects.filter(execution=self).update(**values)
+        self.save(update_fields=['updated_at'])  # TODO do with atomic operation along previous update
         return Execution.objects.filter(pk=self.pk)[0]
 
     def update_output_elements_ai_model(self, ai_model: int):
@@ -148,7 +149,7 @@ class ExecutionInputFederatedLearningConfiguration(models.Model):
 class ExecutionInputAIEngine(models.Model):
     descriptor = models.CharField(max_length=100)
     version = models.IntegerField()
-    version_user_vars = models.FileField('user_vars')
+    version_user_vars = models.FileField(upload_to='user_vars')
     container_name = models.CharField(max_length=200)
     container_version = models.CharField(max_length=50)
     execution = models.ForeignKey(

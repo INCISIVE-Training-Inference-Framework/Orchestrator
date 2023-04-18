@@ -6,10 +6,6 @@
     },
     {
       "name": "create_directory",
-      "directory_path": "{{inputs.parameters.aiEngine_plaformVarsInputDataInference}}"
-    },
-    {
-      "name": "create_directory",
       "directory_path": "{{inputs.parameters.aiEngine_plaformVarsInputAIElements}}"
     },
     {
@@ -18,16 +14,11 @@
     },
     {
       "name": "create_directory",
-      "directory_path": "{{inputs.parameters.aiEngine_plaformVarsOutputInferenceResults}}"
-    },
-    {
-      "name": "download_external_data",
-      "external_data_url": "http://{{inputs.parameters.platform_orchestratorApiHostname}}/api/executions/{{inputs.parameters.execution_id}}/download_external_data/",
-      "output_path": "{{inputs.parameters.aiEngine_plaformVarsInputDataInference}}"
+      "directory_path": "{{inputs.parameters.aiEngine_plaformVarsOutputElements}}"
     },
     {
       "name": "download_user_vars",
-      "user_vars_url": "http://{{inputs.parameters.platform_orchestratorApiHostname}}/api/executions/{{inputs.parameters.execution_id}}/download_user_vars/?descriptor=main_ai_engine",
+      "user_vars_url": "http://{{inputs.parameters.platform_orchestratorApiHostname}}/api/executions/{{inputs.parameters.execution_id}}/download_user_vars/?descriptor=main-ai-engine",
       "output_path": "{{inputs.parameters.aiEngine_plaformVarsInputUserVars}}"
     },
     {
@@ -37,7 +28,7 @@
     },
     {
       "name": "run_ai_engine",
-      "use_case": "inferencing_from_pretrained_model",
+      "use_case": "evaluating_from_pretrained_model",
       "max_iteration_time": 1200,
       "max_initialization_time": 600,
       "client_host": "{{inputs.parameters.aiEngine_plaformVarsApiHost}}",
@@ -50,14 +41,15 @@
       "name": "update_to_succeeded",
       "update_status_url": "http://{{inputs.parameters.platform_orchestratorApiHostname}}/api/executions/{{inputs.parameters.execution_id}}/update_to_succeeded/",
       "upload_ai_model": false,
-      "upload_evaluation_metrics": false,
-      "upload_generic_file": true,
+      "upload_evaluation_metrics": true,
+      "upload_generic_file": false,
 
-      "generic_file_upload_url": "http://{{inputs.parameters.platform_maasApiHostname}}/api/generic_files/",
-      "generic_file_delete_url": "http://{{inputs.parameters.platform_maasApiHostname}}/api/generic_files/",
-      "generic_file_upload_path": "{{inputs.parameters.aiEngine_plaformVarsOutputInferenceResults}}",
-      "generic_file_upload_metadata": {
-        "name": "Inference Results from Execution {{inputs.parameters.execution_id}}"
+      "evaluation_metrics_ai_model": {{inputs.parameters.execution_main-ai-engine-ai-model}},
+      "evaluation_metrics_upload_url": "http://{{inputs.parameters.platform_maasApiHostname}}/api/evaluation_metrics/update_or_create/",
+      "evaluation_metrics_delete_url": "http://{{inputs.parameters.platform_maasApiHostname}}/api/evaluation_metrics/",
+      "evaluation_metrics_upload_path": "{{inputs.parameters.aiEngine_plaformVarsOutputEvaluationMetrics}}",
+      "evaluation_metrics_upload_metadata": {
+        "data_partners_patients": {{inputs.parameters.execution_dataPartnerPatients}}
       }
     }    
   ]

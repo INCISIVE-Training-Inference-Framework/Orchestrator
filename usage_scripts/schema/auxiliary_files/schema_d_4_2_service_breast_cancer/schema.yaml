@@ -10,7 +10,7 @@ spec:
     secondsAfterCompletion: 100
     secondsAfterSuccess: 100
     secondsAfterFailure: 1200
-  nodeSelector: {agentpool: agentpool}
+  nodeSelector: {fakeCloudNode: fakeCloudNode}
   entrypoint: d-4-2-service-breast-cancer
   volumes:  # internally shared volumes
   - name: ai-elements-prioritization-and-segmentation
@@ -99,6 +99,13 @@ spec:
     - name: initialization-step
       container:
         image: "incisive.azurecr.io/processor-resource-manager:{{workflow.parameters.platform_processorResourceManagerVersion}}"
+        resources:
+          requests:
+            cpu: 250m
+            memory: 512Mi
+          limits:
+            cpu: 1000m
+            memory: 512Mi 
         command: [java, -jar, processor_resource_manager.jar]
         args: ["{\"actions\":[{\"name\":\"update_to_running\",\"update_status_url\":\"http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/update_to_running/\"},{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputDataInference}}\"},{\"name\":\"download_external_data\",\"external_data_url\":\"http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/download_external_data/\",\"output_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputDataInference}}\"}]}", "--failure-endpoint", "http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/update_to_failed/"]
         volumeMounts:
@@ -108,6 +115,13 @@ spec:
     - name: prioritization-and-segmentation-step
       container:
         image: "incisive.azurecr.io/processor-resource-manager:{{workflow.parameters.platform_processorResourceManagerVersion}}"
+        resources:
+          requests:
+            cpu: 250m
+            memory: 1Gi
+          limits:
+            cpu: 1000m
+            memory: 1Gi
         command: [java, -jar, processor_resource_manager.jar]
         args: ["{\"actions\":[{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputAIElements}}\"},{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputModel}}\"},{\"name\":\"download_user_vars\",\"user_vars_url\":\"http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/download_user_vars/?descriptor=prioritization-and-segmentation\",\"output_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputUserVars}}\"},{\"name\":\"download_ai_model\",\"ai_model_url\":\"http://{{workflow.parameters.platform_maasApiHostname}}/api/ai_models/{{workflow.parameters.execution_prioritization-and-segmentation-ai-model}}/download_contents/\",\"output_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputModel}}\"},{\"name\":\"run_ai_engine\",\"use_case\":\"inferencing_from_pretrained_model\",\"max_iteration_time\":1200,\"max_initialization_time\":600,\"client_host\":\"{{workflow.parameters.aiEngine_plaformVarsApiHost}}\",\"server_host\":\"{{workflow.parameters.platform_processorResourceManagerApiHost}}\",\"ping_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiPingUrl}}\",\"run_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiRunUrl}}\",\"callback_url\":\"{{workflow.parameters.platform_processorResourceManagerCallbackUrl}}\"}]}", "--failure-endpoint", "http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/update_to_failed/"]
         volumeMounts:
@@ -116,7 +130,13 @@ spec:
       sidecars:
       - name: main-ai-engine
         image: "incisive.azurecr.io/{{workflow.parameters.execution_prioritization-and-segmentation-container-name}}:{{workflow.parameters.execution_prioritization-and-segmentation-container-version}}"
-        command: [python, rest_api.py, --environment-config-file, /platform_vars.json]
+        resources:
+          requests:
+            cpu: 250m
+            memory: 2Gi
+          limits:
+            cpu: 1000m
+            memory: 2Gi
         volumeMounts:
         - name: input-elements
           mountPath: "{{workflow.parameters.aiEngine_plaformVarsInputElements}}"
@@ -132,6 +152,13 @@ spec:
     - name: birads-classification-step
       container:
         image: "incisive.azurecr.io/processor-resource-manager:{{workflow.parameters.platform_processorResourceManagerVersion}}"
+        resources:
+          requests:
+            cpu: 250m
+            memory: 1Gi
+          limits:
+            cpu: 1000m
+            memory: 1Gi
         command: [java, -jar, processor_resource_manager.jar]
         args: ["{\"actions\":[{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputAIElements}}\"},{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputModel}}\"},{\"name\":\"download_user_vars\",\"user_vars_url\":\"http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/download_user_vars/?descriptor=birads-classification\",\"output_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputUserVars}}\"},{\"name\":\"download_ai_model\",\"ai_model_url\":\"http://{{workflow.parameters.platform_maasApiHostname}}/api/ai_models/{{workflow.parameters.execution_birads-classification-ai-model}}/download_contents/\",\"output_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputModel}}\"},{\"name\":\"run_ai_engine\",\"use_case\":\"inferencing_from_pretrained_model\",\"max_iteration_time\":1200,\"max_initialization_time\":600,\"client_host\":\"{{workflow.parameters.aiEngine_plaformVarsApiHost}}\",\"server_host\":\"{{workflow.parameters.platform_processorResourceManagerApiHost}}\",\"ping_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiPingUrl}}\",\"run_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiRunUrl}}\",\"callback_url\":\"{{workflow.parameters.platform_processorResourceManagerCallbackUrl}}\"}]}", "--failure-endpoint", "http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/update_to_failed/"]
         volumeMounts:
@@ -140,7 +167,13 @@ spec:
       sidecars:
       - name: main-ai-engine
         image: "incisive.azurecr.io/{{workflow.parameters.execution_birads-classification-container-name}}:{{workflow.parameters.execution_birads-classification-container-version}}"
-        command: [python, rest_api.py, --environment-config-file, /platform_vars.json]
+        resources:
+          requests:
+            cpu: 250m
+            memory: 2Gi
+          limits:
+            cpu: 1000m
+            memory: 2Gi
         volumeMounts:
         - name: input-elements
           mountPath: "{{workflow.parameters.aiEngine_plaformVarsInputElements}}"
@@ -156,6 +189,13 @@ spec:
     - name: medical-report-generation-step
       container:
         image: "incisive.azurecr.io/processor-resource-manager:{{workflow.parameters.platform_processorResourceManagerVersion}}"
+        resources:
+          requests:
+            cpu: 250m
+            memory: 1Gi
+          limits:
+            cpu: 1000m
+            memory: 1Gi
         command: [java, -jar, processor_resource_manager.jar]
         args: ["{\"actions\":[{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputAIElements}}\"},{\"name\":\"download_user_vars\",\"user_vars_url\":\"http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/download_user_vars/?descriptor=medical-report-generation\",\"output_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputUserVars}}\"},{\"name\":\"run_ai_engine\",\"use_case\":\"inferencing_from_pretrained_model\",\"max_iteration_time\":1200,\"max_initialization_time\":600,\"client_host\":\"{{workflow.parameters.aiEngine_plaformVarsApiHost}}\",\"server_host\":\"{{workflow.parameters.platform_processorResourceManagerApiHost}}\",\"ping_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiPingUrl}}\",\"run_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiRunUrl}}\",\"callback_url\":\"{{workflow.parameters.platform_processorResourceManagerCallbackUrl}}\"}]}", "--failure-endpoint", "http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/update_to_failed/"]
         volumeMounts:
@@ -164,7 +204,13 @@ spec:
       sidecars:
       - name: main-ai-engine
         image: "incisive.azurecr.io/{{workflow.parameters.execution_medical-report-generation-container-name}}:{{workflow.parameters.execution_medical-report-generation-container-version}}"
-        command: [python, rest_api.py, --environment-config-file, /platform_vars.json]
+        resources:
+          requests:
+            cpu: 250m
+            memory: 2Gi
+          limits:
+            cpu: 1000m
+            memory: 2Gi
         volumeMounts:
         - name: input-elements
           mountPath: "{{workflow.parameters.aiEngine_plaformVarsInputElements}}"
@@ -180,6 +226,13 @@ spec:
     - name: finalization-step
       container:
         image: "incisive.azurecr.io/processor-resource-manager:{{workflow.parameters.platform_processorResourceManagerVersion}}"
+        resources:
+          requests:
+            cpu: 250m
+            memory: 512Mi
+          limits:
+            cpu: 1000m
+            memory: 512Mi
         command: [java, -jar, processor_resource_manager.jar]
         args: ["{\"actions\":[{\"name\":\"update_to_succeeded\",\"update_status_url\":\"http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/update_to_succeeded/\",\"upload_ai_model\":false,\"upload_evaluation_metrics\":false,\"upload_generic_file\":true,\"generic_file_upload_url\":\"http://{{workflow.parameters.platform_maasApiHostname}}/api/generic_files/\",\"generic_file_delete_url\":\"http://{{workflow.parameters.platform_maasApiHostname}}/api/generic_files/\",\"generic_file_upload_path\":\"/tmp/output_elements/\",\"generic_file_upload_metadata\":{\"name\":\"InferenceResultsfromExecution{{workflow.parameters.execution_id}}\"}}]}", "--failure-endpoint", "http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/update_to_failed/"]
         volumeMounts:

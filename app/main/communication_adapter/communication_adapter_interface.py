@@ -1,5 +1,7 @@
 import abc
 
+from main.models import Execution
+
 
 class CommunicationAdapterInterface(metaclass=abc.ABCMeta):
 
@@ -9,9 +11,10 @@ class CommunicationAdapterInterface(metaclass=abc.ABCMeta):
                 callable(subclass.initialize) and
                 hasattr(subclass, 'prepare_execution') and
                 callable(subclass.prepare_execution) and
-                hasattr(subclass, 'evaluating_from_pretrained_model') and
+                hasattr(subclass, 'finalize_execution') and
                 callable(subclass.finalize_execution) and
-                hasattr(subclass, 'finalize_execution') or
+                hasattr(subclass, 'clean_old_topics') and
+                callable(subclass.clean_old_topics) or
                 NotImplemented)
 
     def __init__(self):
@@ -24,9 +27,13 @@ class CommunicationAdapterInterface(metaclass=abc.ABCMeta):
         raise NotImplementedError('Method not implemented in interface class')
 
     @staticmethod
-    def prepare_execution(execution_id: str) -> None:
+    def prepare_execution(execution: Execution) -> str:
         raise NotImplementedError('Method not implemented in interface class')
 
     @staticmethod
-    def finalize_execution(execution_id: str) -> None:
+    def finalize_execution(execution: Execution) -> None:
+        raise NotImplementedError('Method not implemented in interface class')
+
+    @staticmethod
+    def clean_old_topics() -> None:
         raise NotImplementedError('Method not implemented in interface class')

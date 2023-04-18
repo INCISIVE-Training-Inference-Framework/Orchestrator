@@ -1,0 +1,29 @@
+{
+  "actions": [
+    {
+      "name": "update_to_running",
+      "update_status_url": "http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/update_to_running/"
+    },
+    {
+      "name": "create_directory",
+      "directory_path": "{{workflow.parameters.aiEngine_plaformVarsInputAIElements}}"
+    },
+    {
+      "name": "create_directory",
+      "directory_path": "{{workflow.parameters.aiEngine_plaformVarsInputModel}}"
+    },
+    {
+      "name": "create_directory",
+      "directory_path": "{{workflow.parameters.aiEngine_plaformVarsOutputElements}}"
+    },
+    {
+      "name": "create_directory",
+      "directory_path": "{{workflow.parameters.aiEngine_plaformVarsOutputModel}}"
+    },
+    {
+      "name": "download_user_vars",
+      "user_vars_url": "http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/download_user_vars/?descriptor=main-ai-engine",
+      "output_path": "{{workflow.parameters.aiEngine_plaformVarsInputUserVars}}"
+    }
+  ]
+}

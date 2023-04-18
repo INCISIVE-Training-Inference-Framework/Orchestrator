@@ -25,7 +25,7 @@ def retrieve_container_information(ai_engine_version_id):
         r = requests.get(get_maas_url('ai_engine_version', ai_engine_version_id), headers=headers)
         if r.status_code == 500:
             message = 'Internal error while retrieving AI Engine Version from MaaS'
-            raise InternalError(f'{message}. Status code {r.status_code}', message)
+            raise InternalError(f'{message}. Status code {r.status_code}', None)
         elif r.status_code != 200:
             try:
                 message = r.json()
@@ -36,7 +36,7 @@ def retrieve_container_information(ai_engine_version_id):
         container_version = response['container_version']
     except Exception as e:
         if not isinstance(e, serializers.ValidationError):
-            raise InternalError(f'Error while retrieving AI Engine Version from MaaS. {e}', 'Error while retrieving AI Engine Version from MaaS.')
+            raise InternalError(f'Error while retrieving AI Engine Version from MaaS. {e}', e)
         else:
             raise e
 
@@ -47,7 +47,7 @@ def retrieve_container_information(ai_engine_version_id):
         r = requests.get(ai_engine_url, headers=headers)
         if r.status_code == 500:
             message = 'Internal error while retrieving AI Engine from MaaS'
-            raise InternalError(f'{message}. Status code {r.status_code}', message)
+            raise InternalError(f'{message}. Status code {r.status_code}', None)
         elif r.status_code != 200:
             try:
                 message = r.json()
@@ -57,7 +57,7 @@ def retrieve_container_information(ai_engine_version_id):
         container_name = r.json()['container_name']
     except Exception as e:
         if not isinstance(e, serializers.ValidationError):
-            raise InternalError(f'Error while retrieving AI Engine from MaaS. {e}', 'Error while retrieving AI Engine from MaaS.')
+            raise InternalError(f'Error while retrieving AI Engine from MaaS. {e}', e)
         else:
             raise e
 

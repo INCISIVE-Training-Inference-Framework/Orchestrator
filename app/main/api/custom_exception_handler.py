@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 
 import logging
+import traceback
 
 from rest_framework import status
 from rest_framework.views import Response, exception_handler
@@ -13,10 +14,10 @@ logger = logging.getLogger(__name__)
 def custom_exception_handler(exc, context):
     response = exception_handler(exc, context)
     if isinstance(exc, InternalError) and not response:
-        logger.error(exc.internal_message)
+        traceback.print_exception(type(exc.get_exception()), exc.get_exception(), exc.get_exception().__traceback__)
         response = Response(
             {
-                f'{exc.public_message}'
+                f'{exc.get_message()}'
             },
             status=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
@@ -27,8 +28,8 @@ def custom_exception_handler(exc, context):
             },
             status=status.HTTP_400_BAD_REQUEST
         )
-    if response is None:
-        logger.error(exc)
+    elif response is None:
+        traceback.print_exception(type(exc), exc, exc.__traceback__)
         response = Response(
             {
                 f'Unexpected internal error'

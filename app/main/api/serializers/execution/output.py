@@ -1,9 +1,9 @@
-from .maas_methods import get_maas_url
 from rest_framework import serializers
 
 from main.models import \
     Execution, \
     ExecutionStatus
+from .maas_methods import get_maas_url
 
 
 class ExecutionOutputSerializer(serializers.ModelSerializer):

@@ -4,6 +4,8 @@ from django.conf import settings
 from rest_framework import serializers
 
 from main.api.serializers.execution.output import ExecutionOutputSerializer
+from main.domain import Domain
+from main.exceptions import InternalError
 from main.models import \
     Execution, \
     ExecutionState, \
@@ -13,9 +15,7 @@ from main.models import \
     ExecutionInputAIEngine, \
     ExecutionInputAIModel, \
     ExecutionOutputAIModel
-from main.exceptions import InternalError
 from .maas_methods import retrieve_container_information
-from main.domain import Domain
 
 
 # TODO implement validate methods
@@ -68,8 +68,19 @@ class ExecutionInputSerializerPlatformData(serializers.Serializer):
     data_partners_patients = serializers.DictField(required=False, allow_empty=False)
 
     def validate_data_partners_patients(self, value):
-        # TODO validate only one if not federated, more than in the opposite case
         return validate_data_partners_patients(value)
+
+    @classmethod
+    def validate_with_federated(cls, validated_data):
+        if len(validated_data['data_partners_patients']) < 2:
+            raise serializers.ValidationError(f'The data partners patients must contain more than one element in the federated scenario')
+        return validated_data
+
+    @classmethod
+    def validate_without_federated(cls, validated_data):
+        if len(validated_data['data_partners_patients']) > 1:
+            raise serializers.ValidationError(f'The data partners patients must contain only one element outside of the federated scenario')
+        return validated_data
 
     def create(self, validated_data):
         pass
@@ -151,6 +162,12 @@ class ExecutionInputSerializerInputElements(serializers.Serializer):
             raise serializers.ValidationError(f'schema \"{schema.name}\" requires a federated learning configuration')
         if not schema.requires_input_elements_federated_learning_configuration() and 'federated_learning_configuration' in validated_data:
             raise serializers.ValidationError(f'schema \"{schema.name}\" does not require a federated learning configuration')
+
+        if schema.requires_input_elements_platform_data():
+            if schema.requires_input_elements_federated_learning_configuration():
+                ExecutionInputSerializerPlatformData.validate_with_federated(validated_data['platform_data'])
+            else:
+                ExecutionInputSerializerPlatformData.validate_without_federated(validated_data['platform_data'])
 
         return validated_data
 
@@ -332,14 +349,18 @@ class ExecutionInputSerializer(serializers.ModelSerializer):
             ExecutionInputSerializerInputElements().assign(execution_instance, input_elements)
             ExecutionInputSerializerAIElements().assign(execution_instance, ai_elements)
             ExecutionInputSerializerOutputElements().assign(execution_instance, output_elements)
-            Domain.start_schema_execution(execution_instance)
+
+            request = self.context.get('request')
+            if 'debug' not in request.query_params or not request.query_params['debug'] == 'true':
+                Domain.start_schema_execution(execution_instance)
+
             return execution_instance
+        except InternalError as e:
+            execution_instance.delete()
+            raise e
         except Exception as e:
             execution_instance.delete()
-            raise InternalError(
-                f'Internal error while creating execution: {e}',
-                'Internal error while creating execution'
-            )
+            raise InternalError(f'Internal error while creating execution', e)
 
     def to_representation(self, instance):
         instance = ExecutionOutputSerializer(context=self.context).to_representation(instance)

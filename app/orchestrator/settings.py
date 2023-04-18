@@ -27,11 +27,9 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.staticfiles'
+    'django.contrib.staticfiles',
+    'django_cleanup.apps.CleanupConfig'
 ]
-if not DEBUG:
-    INSTALLED_APPS += ['django_apscheduler']
-INSTALLED_APPS += ['django_cleanup.apps.CleanupConfig']
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -182,8 +180,6 @@ if not DEBUG:
 # Domain
 MAAS_API_HOSTNAME = os.getenv('MAAS_API_HOSTNAME', 'maas-service:8000')
 ORCHESTRATOR_API_HOSTNAME = os.getenv('ORCHESTRATOR_API_HOSTNAME', 'orchestrator-service:8000')
-AI_ENGINE_IMAGES_REGISTRY = os.getenv('AI_ENGINE_IMAGES_REGISTRY', 'localhost:5000')
-COMPONENT_IMAGES_REGISTRY = os.getenv('COMPONENT_IMAGES_REGISTRY', 'localhost:5000')
 
 VALID_DATA_PARTNERS = os.getenv('VALID_DATA_PARTNERS', 'data-partner-1,data-partner-2').split(',')
 VALID_DATA_PARTNERS = set(VALID_DATA_PARTNERS)
@@ -205,6 +201,8 @@ PROCESSOR_RESOURCE_MANAGER_VERSION = os.getenv('PROCESSOR_RESOURCE_MANAGER_VERSI
 PROCESSOR_RESOURCE_MANAGER_API_HOST = os.getenv('PROCESSOR_RESOURCE_MANAGER_API_HOST', '127.0.0.1:8000')
 PROCESSOR_RESOURCE_MANAGER_CALLBACK_URL = os.getenv('PROCESSOR_RESOURCE_MANAGER_CALLBACK_URL', '/api/callback')
 
+FEDERATED_LEARNING_MANAGER_VERSION = os.getenv('FEDERATED_LEARNING_MANAGER_VERSION', '2.0.0')
+
 AI_ENGINE_PLATFORM_VARS_INPUT_ELEMENTS = os.getenv('AI_ENGINE_PLATFORM_VARS_INPUT_ELEMENTS', '/tmp/input_elements/')
 AI_ENGINE_PLATFORM_VARS_INPUT_DATA_TRAINING = os.getenv('AI_ENGINE_PLATFORM_VARS_INPUT_DATA_TRAINING', '/tmp/input_elements/platform_data/')
 AI_ENGINE_PLATFORM_VARS_INPUT_DATA_EVALUATION = os.getenv('AI_ENGINE_PLATFORM_VARS_INPUT_DATA_EVALUATION', '/tmp/input_elements/platform_data/')
@@ -221,8 +219,11 @@ AI_ENGINE_PLATFORM_VARS_API_PING_URL = os.getenv('AI_ENGINE_PLATFORM_VARS_API_PI
 AI_ENGINE_PLATFORM_VARS_API_RUN_URL = os.getenv('AI_ENGINE_PLATFORM_VARS_API_RUN_URL', '/api/run')
 AI_ENGINE_PLATFORM_VARS_API_HOST = os.getenv('AI_ENGINE_PLATFORM_VARS_API_HOST', '127.0.0.1:8001')
 
+# Container manager
 ARGO_WORKFLOWS_API_HOST = os.getenv('ARGO_WORKFLOWS_API_HOST', 'https://localhost:2746')
 ARGO_WORKFLOWS_NAMESPACE = os.getenv('ARGO_WORKFLOWS_NAMESPACE', 'incisive-dev')
 
-# tasks
-UPDATE_STATUS_SECONDS_TIMER = int(os.getenv('UPDATE_STATUS_MINUTES_TIMER', 2))
+# Communication adapter
+COMMUNICATION_ADAPTER = os.getenv('COMMUNICATION_ADAPTER', 'kafka')
+KAFKA_BOOTSTRAP_SERVERS = os.getenv('KAFKA_BOOTSTRAP_SERVERS', 'localhost:9092')
+KAFKA_MAX_MODEL_SIZE = os.getenv('KAFKA_MAX_MODEL_SIZE', '10000')  # KB
