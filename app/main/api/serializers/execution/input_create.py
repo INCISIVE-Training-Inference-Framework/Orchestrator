@@ -299,7 +299,7 @@ class ExecutionInputSerializerOutputAIModel(serializers.Serializer):
         ExecutionOutputAIModel.objects.create(**{
             'name': validated_data['name'],
             'description': validated_data['description'],
-            'merge_type': validated_data['merge_type'],
+            'merge_type': validated_data['merge_type'] if 'merge_type' in validated_data else None,
             'execution': execution_instance
         })
 

@@ -51,8 +51,8 @@ class ContainerManagerArgoWorkflows(ContainerManagerInterface):
             parameters = ContainerManagerArgoWorkflows._get_parameters(execution)
 
             # perform additional actions in case of federated
-            # if execution.schema.requires_input_elements_federated_learning_configuration():
-            #     parameters['execution_communicationAdapterId'] = communication_adapter.prepare_execution(execution)
+            if execution.schema.requires_input_elements_federated_learning_configuration():
+                parameters['execution_communicationAdapterId'] = communication_adapter.prepare_execution(execution)
 
             # insert params into schema
             final_parameters = []
