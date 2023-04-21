@@ -21,9 +21,11 @@ spec:
     emptyDir: {}
   - name: output-elements
     emptyDir: {}
-  - name: platform-vars
+  - name: raw-platform-vars
     configMap:
       name: ai-engine-config-2nd-prototype
+  - name: platform-vars
+    emptyDir: {}
       
   templates:
   - name: main
@@ -61,9 +63,18 @@ spec:
           default: "Unexpected error"
           path: /usr/application/error_message.txt
         globalName: main-error-message
+    initContainers:
+    - name: config-changer
+      image: "incisive.azurecr.io/processor-resource-manager:{{inputs.parameters.platform_processorResourceManagerVersion}}"
+      args: ["{\"actions\":[{\"name\":\"change_api_host_and_port\",\"read_file_path\":\"/platform_vars.json\",\"write_file_path\":\"/tmp/config_changer/platform_vars.json\",\"api_host_and_port\":\"{{inputs.parameters.aiEngine_plaformVarsApiHost}}\"}]}"]
+      volumeMounts:
+      - name: raw-platform-vars
+        mountPath: /platform_vars.json
+        subPath: platform_vars.json  
+      - name: platform-vars
+        mountPath: /tmp/config_changer
     container:
       image: "incisive.azurecr.io/processor-resource-manager:{{inputs.parameters.platform_processorResourceManagerVersion}}"
-      command: [java, -jar, processor_resource_manager.jar]
       args: ["{\"actions\":[{\"name\":\"update_to_running\",\"update_status_url\":\"http://{{inputs.parameters.platform_orchestratorApiHostname}}/api/executions/{{inputs.parameters.execution_id}}/update_to_running/\"},{\"name\":\"create_directory\",\"directory_path\":\"{{inputs.parameters.aiEngine_plaformVarsInputAIElements}}\"},{\"name\":\"create_directory\",\"directory_path\":\"{{inputs.parameters.aiEngine_plaformVarsInputModel}}\"},{\"name\":\"create_directory\",\"directory_path\":\"{{inputs.parameters.aiEngine_plaformVarsOutputElements}}\"},{\"name\":\"download_user_vars\",\"user_vars_url\":\"http://{{inputs.parameters.platform_orchestratorApiHostname}}/api/executions/{{inputs.parameters.execution_id}}/download_user_vars/?descriptor=main-ai-engine\",\"output_path\":\"{{inputs.parameters.aiEngine_plaformVarsInputUserVars}}\"},{\"name\":\"download_ai_model\",\"ai_model_url\":\"http://{{inputs.parameters.platform_maasApiHostname}}/api/ai_models/{{inputs.parameters.execution_main-ai-engine-ai-model}}/download_contents/\",\"output_path\":\"{{inputs.parameters.aiEngine_plaformVarsInputModel}}\"},{\"name\":\"run_ai_engine\",\"use_case\":\"evaluating_from_pretrained_model\",\"max_iteration_time\":1200,\"max_initialization_time\":600,\"client_host\":\"{{inputs.parameters.aiEngine_plaformVarsApiHost}}\",\"server_host\":\"{{inputs.parameters.platform_processorResourceManagerApiHost}}\",\"ping_url\":\"{{inputs.parameters.aiEngine_plaformVarsApiPingUrl}}\",\"run_url\":\"{{inputs.parameters.aiEngine_plaformVarsApiRunUrl}}\",\"callback_url\":\"{{inputs.parameters.platform_processorResourceManagerCallbackUrl}}\"},{\"name\":\"update_to_succeeded\",\"update_status_url\":\"http://{{inputs.parameters.platform_orchestratorApiHostname}}/api/executions/{{inputs.parameters.execution_id}}/update_to_succeeded/\",\"upload_ai_model\":false,\"upload_evaluation_metrics\":true,\"upload_generic_file\":false,\"evaluation_metrics_ai_model\":{{inputs.parameters.execution_main-ai-engine-ai-model}},\"evaluation_metrics_upload_url\":\"http://{{inputs.parameters.platform_maasApiHostname}}/api/evaluation_metrics/update_or_create/\",\"evaluation_metrics_delete_url\":\"http://{{inputs.parameters.platform_maasApiHostname}}/api/evaluation_metrics/\",\"evaluation_metrics_upload_path\":\"{{inputs.parameters.aiEngine_plaformVarsOutputEvaluationMetrics}}\",\"evaluation_metrics_upload_metadata\":{\"data_partners_patients\":{{inputs.parameters.execution_dataPartnerPatients}}}}]}"]
       volumeMounts:
       - name: input-elements
@@ -95,5 +106,4 @@ spec:
         inline:
           container:
             image: "incisive.azurecr.io/processor-resource-manager:{{workflow.parameters.platform_processorResourceManagerVersion}}"
-            command: [java, -jar, processor_resource_manager.jar]
             args: ["{\"actions\":[{\"name\":\"update_to_failed\", \"message\":\"{{io.argoproj.workflow.v1alpha1.outputs.parameters.main-error-message}}\", \"update_status_url\":\"http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/update_to_failed/\"}]}"]

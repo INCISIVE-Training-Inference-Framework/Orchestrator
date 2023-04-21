@@ -1,5 +1,7 @@
 import json
 import logging
+from datetime import datetime
+import random
 
 import argo_workflows
 from argo_workflows.api import workflow_service_api
@@ -168,5 +170,19 @@ class ContainerManagerArgoWorkflows(ContainerManagerInterface):
                 parameters['execution_outputAIModelMergeType'] = merge_type
             else:
                 parameters['execution_outputAIModelMergeType'] = "default"
+
+        # START - hostNetwork bug patch
+        port_range = [49152, 65535]  # length must be > 7200 ports
+        second_port_range_length = (port_range[1] - port_range[0]) // 7200 * 2
+        current_time = datetime.now()
+        initial_port = (current_time.minute * 60 + current_time.second) * second_port_range_length + port_range[0]
+        initial_port = initial_port + 2 * random.randint(0, second_port_range_length // 2 - 1)
+        parameters['platform_processorResourceManagerApiHost'] = f'127.0.0.1:{initial_port}'
+        parameters['aiEngine_plaformVarsApiHost'] = f'127.0.0.1:{initial_port + 1}'
+
+        ai_engines = execution.get_ai_elements_ai_engines()
+        for index, ai_engine in enumerate(ai_engines):
+            parameters[f'execution_{ai_engine.descriptor}-plaform-vars-api-host'] = f'127.0.0.1:{initial_port + index}'
+        # END - hostNetwork bug patch
 
         return parameters
