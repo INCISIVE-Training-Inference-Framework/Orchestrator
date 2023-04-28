@@ -39,7 +39,6 @@ spec:
       - name: platform_orchestratorApiHostname
       - name: platform_processorResourceManagerVersion
       - name: platform_processorResourceManagerCallbackUrl
-      - name: platform_processorResourceManagerApiHost
       - name: aiEngine_plaformVarsInputElements
       - name: aiEngine_plaformVarsInputAIElements
       - name: aiEngine_plaformVarsInputUserVars
@@ -48,13 +47,15 @@ spec:
       - name: aiEngine_plaformVarsOutputEvaluationMetrics
       - name: aiEngine_plaformVarsApiPingUrl
       - name: aiEngine_plaformVarsApiRunUrl
-      - name: aiEngine_plaformVarsApiHost
+      - name: aiEngine_plaformVarsApiEndUrl
       - name: execution_id
       - name: execution_dataPartner
       - name: execution_dataPartnerPatients
       - name: execution_main-ai-engine-version
       - name: execution_main-ai-engine-container-name
       - name: execution_main-ai-engine-container-version
+      - name: execution_main-ai-engine-prm-api-host
+      - name: execution_main-ai-engine-plaform-vars-api-host
       - name: execution_outputAIModelName
       - name: execution_outputAIModelDescription
       - name: execution_outputAIModelMergeType
@@ -68,38 +69,30 @@ spec:
     initContainers:
     - name: config-changer
       image: "incisive.azurecr.io/processor-resource-manager:{{inputs.parameters.platform_processorResourceManagerVersion}}"
-      args: ["{\"actions\":[{\"name\":\"change_api_host_and_port\",\"read_file_path\":\"/platform_vars.json\",\"write_file_path\":\"/tmp/config_changer/platform_vars.json\",\"api_host_and_port\":\"{{inputs.parameters.aiEngine_plaformVarsApiHost}}\"}]}"]
+      args: ["{\"actions\":[{\"name\":\"change_api_host_and_port\",\"read_file_path\":\"/platform_vars.json\",\"write_file_path\":\"/tmp/config_changer/platform_vars.json\",\"api_host_and_port\":\"{{inputs.parameters.execution_main-ai-engine-plaform-vars-api-host}}\"}]}"]
       volumeMounts:
       - name: raw-platform-vars
         mountPath: /platform_vars.json
         subPath: platform_vars.json  
       - name: platform-vars
         mountPath: /tmp/config_changer
-    container:
-      image: "incisive.azurecr.io/processor-resource-manager:{{inputs.parameters.platform_processorResourceManagerVersion}}"
-      args: ["{\"actions\":[{\"name\":\"update_to_running\",\"update_status_url\":\"http://{{inputs.parameters.platform_orchestratorApiHostname}}/api/executions/{{inputs.parameters.execution_id}}/update_to_running/\"},{\"name\":\"create_directory\",\"directory_path\":\"{{inputs.parameters.aiEngine_plaformVarsInputAIElements}}\"},{\"name\":\"create_directory\",\"directory_path\":\"{{inputs.parameters.aiEngine_plaformVarsOutputElements}}\"},{\"name\":\"create_directory\",\"directory_path\":\"{{inputs.parameters.aiEngine_plaformVarsOutputModel}}\"},{\"name\":\"download_user_vars\",\"user_vars_url\":\"http://{{inputs.parameters.platform_orchestratorApiHostname}}/api/executions/{{inputs.parameters.execution_id}}/download_user_vars/?descriptor=main-ai-engine\",\"output_path\":\"{{inputs.parameters.aiEngine_plaformVarsInputUserVars}}\"},{\"name\":\"run_ai_engine\",\"use_case\":\"training_from_scratch\",\"max_iteration_time\":1200,\"max_initialization_time\":600,\"client_host\":\"{{inputs.parameters.aiEngine_plaformVarsApiHost}}\",\"server_host\":\"{{inputs.parameters.platform_processorResourceManagerApiHost}}\",\"ping_url\":\"{{inputs.parameters.aiEngine_plaformVarsApiPingUrl}}\",\"run_url\":\"{{inputs.parameters.aiEngine_plaformVarsApiRunUrl}}\",\"callback_url\":\"{{inputs.parameters.platform_processorResourceManagerCallbackUrl}}\"},{\"name\":\"update_to_succeeded\",\"update_status_url\":\"http://{{inputs.parameters.platform_orchestratorApiHostname}}/api/executions/{{inputs.parameters.execution_id}}/update_to_succeeded/\",\"upload_ai_model\":true,\"upload_evaluation_metrics\":true,\"upload_generic_file\":false,\"ai_model_upload_url\":\"http://{{inputs.parameters.platform_maasApiHostname}}/api/ai_models/update_or_create/\",\"ai_model_delete_url\":\"http://{{inputs.parameters.platform_maasApiHostname}}/api/ai_models/\",\"ai_model_upload_path\":\"{{inputs.parameters.aiEngine_plaformVarsOutputModel}}\",\"ai_model_user_vars_path\":\"{{inputs.parameters.aiEngine_plaformVarsInputUserVars}}\",\"ai_model_upload_metadata\":{\"ai_engine_version\":{{inputs.parameters.execution_main-ai-engine-version}},\"name\":\"{{inputs.parameters.execution_outputAIModelName}}\",\"data_partners_patients\":{{inputs.parameters.execution_dataPartnerPatients}},\"description\":\"{{inputs.parameters.execution_outputAIModelDescription}}\",\"merge_type\":\"{{inputs.parameters.execution_outputAIModelMergeType}}\"},\"evaluation_metrics_upload_url\":\"http://{{inputs.parameters.platform_maasApiHostname}}/api/evaluation_metrics/update_or_create/\",\"evaluation_metrics_delete_url\":\"http://{{inputs.parameters.platform_maasApiHostname}}/api/evaluation_metrics/\",\"evaluation_metrics_upload_path\":\"{{inputs.parameters.aiEngine_plaformVarsOutputEvaluationMetrics}}\",\"evaluation_metrics_upload_metadata\":{\"data_partners_patients\":{{inputs.parameters.execution_dataPartnerPatients}}}}]}"]
+    containerSet:
       volumeMounts:
       - name: input-elements
         mountPath: "{{inputs.parameters.aiEngine_plaformVarsInputElements}}"
       - name: ai-elements
         mountPath: "{{inputs.parameters.aiEngine_plaformVarsInputAIElements}}"
-      - name: output-elements
-        mountPath: "{{inputs.parameters.aiEngine_plaformVarsOutputElements}}"
-    sidecars:
-    - name: main-ai-engine
-      image: "incisive.azurecr.io/{{inputs.parameters.execution_main-ai-engine-container-name}}:{{inputs.parameters.execution_main-ai-engine-container-version}}"
-      volumeMounts:
-      - name: input-elements
-        mountPath: "{{inputs.parameters.aiEngine_plaformVarsInputElements}}"
-        readOnly: true
-      - name: ai-elements
-        mountPath: "{{inputs.parameters.aiEngine_plaformVarsInputAIElements}}"
-        readOnly: true
       - name: output-elements
         mountPath: "{{inputs.parameters.aiEngine_plaformVarsOutputElements}}"
       - name: platform-vars
         mountPath: /platform_vars.json
         subPath: platform_vars.json
+      containers:
+        - name: main
+          image: "incisive.azurecr.io/processor-resource-manager:{{inputs.parameters.platform_processorResourceManagerVersion}}"
+          args: ["{\"actions\":[{\"name\":\"update_to_running\",\"update_status_url\":\"http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/update_to_running/\"},{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputAIElements}}\"},{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsOutputElements}}\"},{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsOutputModel}}\"},{\"name\":\"download_user_vars\",\"user_vars_url\":\"http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/download_user_vars/?descriptor=main-ai-engine\",\"output_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputUserVars}}\"},{\"name\":\"run_ai_engine\",\"use_case\":\"training_from_scratch\",\"max_iteration_time\":1200,\"max_initialization_time\":600,\"client_host\":\"{{workflow.parameters.execution_main-ai-engine-plaform-vars-api-host}}\",\"server_host\":\"{{workflow.parameters.execution_main-ai-engine-prm-api-host}}\",\"ping_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiPingUrl}}\",\"run_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiRunUrl}}\",\"callback_url\":\"{{workflow.parameters.platform_processorResourceManagerCallbackUrl}}\"},{\"name\":\"end_ai_engine\",\"max_finalization_time\":30,\"max_finalization_retries\":4,\"client_host\":\"{{workflow.parameters.execution_main-ai-engine-plaform-vars-api-host}}\",\"ping_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiPingUrl}}\",\"end_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiEndUrl}}\"},{\"name\":\"update_to_succeeded\",\"update_status_url\":\"http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/update_to_succeeded/\",\"upload_ai_model\":true,\"upload_evaluation_metrics\":true,\"upload_generic_file\":false,\"ai_model_upload_url\":\"http://{{workflow.parameters.platform_maasApiHostname}}/api/ai_models/update_or_create/\",\"ai_model_delete_url\":\"http://{{workflow.parameters.platform_maasApiHostname}}/api/ai_models/\",\"ai_model_upload_path\":\"{{workflow.parameters.aiEngine_plaformVarsOutputModel}}\",\"ai_model_user_vars_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputUserVars}}\",\"ai_model_upload_metadata\":{\"ai_engine_version\":{{workflow.parameters.execution_main-ai-engine-version}},\"name\":\"{{workflow.parameters.execution_outputAIModelName}}\",\"data_partners_patients\":{{workflow.parameters.execution_dataPartnerPatients}},\"description\":\"{{workflow.parameters.execution_outputAIModelDescription}}\",\"merge_type\":\"{{workflow.parameters.execution_outputAIModelMergeType}}\"},\"evaluation_metrics_upload_url\":\"http://{{workflow.parameters.platform_maasApiHostname}}/api/evaluation_metrics/update_or_create/\",\"evaluation_metrics_delete_url\":\"http://{{workflow.parameters.platform_maasApiHostname}}/api/evaluation_metrics/\",\"evaluation_metrics_upload_path\":\"{{workflow.parameters.aiEngine_plaformVarsOutputEvaluationMetrics}}\",\"evaluation_metrics_upload_metadata\":{\"data_partners_patients\":{{workflow.parameters.execution_dataPartnerPatients}}}}]}", "--failure-actions", "{\"actions\":[{\"name\":\"end_ai_engine\",\"max_finalization_time\":30,\"max_finalization_retries\":4,\"client_host\":\"{{workflow.parameters.execution_main-ai-engine-plaform-vars-api-host}}\",\"ping_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiPingUrl}}\",\"end_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiEndUrl}}\"}]}"]
+        - name: main-ai-engine
+          image: "incisive.azurecr.io/{{inputs.parameters.execution_main-ai-engine-container-name}}:{{inputs.parameters.execution_main-ai-engine-container-version}}"
         
   - name: exit-handler
     steps:

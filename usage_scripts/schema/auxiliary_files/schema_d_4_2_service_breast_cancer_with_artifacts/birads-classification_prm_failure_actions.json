@@ -1,0 +1,12 @@
+{
+  "actions": [
+    {
+      "name": "end_ai_engine",
+      "max_finalization_time": 30,
+      "max_finalization_retries": 4,
+      "client_host": "{{workflow.parameters.execution_birads-classification-plaform-vars-api-host}}",
+      "ping_url": "{{workflow.parameters.aiEngine_plaformVarsApiPingUrl}}",
+      "end_url": "{{workflow.parameters.aiEngine_plaformVarsApiEndUrl}}"
+    }
+  ]
+}

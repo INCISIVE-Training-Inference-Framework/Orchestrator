@@ -140,6 +140,7 @@ class ContainerManagerArgoWorkflows(ContainerManagerInterface):
             'aiEngine_plaformVarsOutputInferenceResults': settings.AI_ENGINE_PLATFORM_VARS_OUTPUT_INFERENCE_RESULTS,
             'aiEngine_plaformVarsApiPingUrl': settings.AI_ENGINE_PLATFORM_VARS_API_PING_URL,
             'aiEngine_plaformVarsApiRunUrl': settings.AI_ENGINE_PLATFORM_VARS_API_RUN_URL,
+            'aiEngine_plaformVarsApiEndUrl': settings.AI_ENGINE_PLATFORM_VARS_API_END_URL,
             'aiEngine_plaformVarsApiHost': settings.AI_ENGINE_PLATFORM_VARS_API_HOST,
             'execution_id': execution.id
         }
@@ -171,18 +172,27 @@ class ContainerManagerArgoWorkflows(ContainerManagerInterface):
             else:
                 parameters['execution_outputAIModelMergeType'] = "default"
 
-        # START - hostNetwork bug patch
-        port_range = [49152, 65535]  # length must be > 7200 ports
-        second_port_range_length = (port_range[1] - port_range[0]) // 7200 * 2
-        current_time = datetime.now()
-        initial_port = (current_time.minute * 60 + current_time.second) * second_port_range_length + port_range[0]
-        initial_port = initial_port + 2 * random.randint(0, second_port_range_length // 2 - 1)
-        parameters['platform_processorResourceManagerApiHost'] = f'127.0.0.1:{initial_port}'
-        parameters['aiEngine_plaformVarsApiHost'] = f'127.0.0.1:{initial_port + 1}'
-
+        # START - hostNetwork bug patch - 1
+        port_range = [49152, 65535]  # start and end included
+        used_ports = set()
         ai_engines = execution.get_ai_elements_ai_engines()
         for index, ai_engine in enumerate(ai_engines):
-            parameters[f'execution_{ai_engine.descriptor}-plaform-vars-api-host'] = f'127.0.0.1:{initial_port + index}'
-        # END - hostNetwork bug patch
+            new_port, used_ports = ContainerManagerArgoWorkflows.__get_port(port_range, used_ports)
+            parameters[f'execution_{ai_engine.descriptor}-prm-api-host'] = f'127.0.0.1:{new_port}'
+            new_port, used_ports = ContainerManagerArgoWorkflows.__get_port(port_range, used_ports)
+            parameters[f'execution_{ai_engine.descriptor}-plaform-vars-api-host'] = f'127.0.0.1:{new_port}'
+        # END - hostNetwork bug patch - 1
 
         return parameters
+
+    # START - hostNetwork bug patch - 2
+    @staticmethod
+    def __get_port(port_range: list, used_ports: set):
+        output_port = None
+        while not output_port:  # TODO add option to exit
+            aux = random.randint(port_range[0], port_range[1])
+            if aux not in used_ports:
+                output_port = aux
+        used_ports.add(output_port)
+        return output_port, used_ports
+    # END - hostNetwork bug patch - 2
