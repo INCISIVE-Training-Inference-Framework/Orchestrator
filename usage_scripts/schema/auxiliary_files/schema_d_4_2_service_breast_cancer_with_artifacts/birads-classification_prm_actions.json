@@ -5,6 +5,10 @@
       "update_status_url": "http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/update_to_running/"
     },
     {
+      "name": "create_directory",
+      "directory_path": "{{workflow.parameters.aiEngine_plaformVarsInputDataInference}}"
+    },
+    {
       "name": "download_external_data",
       "external_data_url": "http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/download_external_data/",
       "output_path": "{{workflow.parameters.aiEngine_plaformVarsInputDataInference}}"
