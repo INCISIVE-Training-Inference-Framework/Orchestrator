@@ -88,9 +88,23 @@ spec:
       containers:
         - name: main
           image: "incisive.azurecr.io/processor-resource-manager:{{inputs.parameters.platform_processorResourceManagerVersion}}"
+          resources:
+            requests:
+              cpu: 250m
+              memory: 256Mi
+            limits:
+              cpu: 1000m
+              memory: 256Mi
           args: ["{\"actions\":[{\"name\":\"update_to_running\",\"update_status_url\":\"http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/update_to_running/\"},{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputAIElements}}\"},{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputModel}}\"},{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsOutputElements}}\"},{\"name\":\"download_user_vars\",\"user_vars_url\":\"http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/download_user_vars/?descriptor=main-ai-engine\",\"output_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputUserVars}}\"},{\"name\":\"download_ai_model\",\"ai_model_url\":\"http://{{workflow.parameters.platform_maasApiHostname}}/api/ai_models/{{workflow.parameters.execution_main-ai-engine-ai-model}}/download_contents/\",\"output_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputModel}}\"},{\"name\":\"run_ai_engine\",\"use_case\":\"evaluating_from_pretrained_model\",\"max_iteration_time\":1200,\"max_initialization_time\":600,\"client_host\":\"{{workflow.parameters.execution_main-ai-engine-plaform-vars-api-host}}\",\"server_host\":\"{{workflow.parameters.execution_main-ai-engine-prm-api-host}}\",\"ping_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiPingUrl}}\",\"run_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiRunUrl}}\",\"callback_url\":\"{{workflow.parameters.platform_processorResourceManagerCallbackUrl}}\"},{\"name\":\"end_ai_engine\",\"max_finalization_time\":30,\"max_finalization_retries\":4,\"client_host\":\"{{workflow.parameters.execution_main-ai-engine-plaform-vars-api-host}}\",\"ping_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiPingUrl}}\",\"end_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiEndUrl}}\"},{\"name\":\"update_to_succeeded\",\"update_status_url\":\"http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/update_to_succeeded/\",\"upload_ai_model\":false,\"upload_evaluation_metrics\":true,\"upload_generic_file\":false,\"evaluation_metrics_ai_model\":{{workflow.parameters.execution_main-ai-engine-ai-model}},\"evaluation_metrics_upload_url\":\"http://{{workflow.parameters.platform_maasApiHostname}}/api/evaluation_metrics/update_or_create/\",\"evaluation_metrics_delete_url\":\"http://{{workflow.parameters.platform_maasApiHostname}}/api/evaluation_metrics/\",\"evaluation_metrics_upload_path\":\"{{workflow.parameters.aiEngine_plaformVarsOutputEvaluationMetrics}}\",\"evaluation_metrics_upload_metadata\":{\"data_partners_patients\":{{workflow.parameters.execution_dataPartnerPatients}}}}]}", "--failure-actions", "{\"actions\":[{\"name\":\"end_ai_engine\",\"max_finalization_time\":30,\"max_finalization_retries\":4,\"client_host\":\"{{workflow.parameters.execution_main-ai-engine-plaform-vars-api-host}}\",\"ping_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiPingUrl}}\",\"end_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiEndUrl}}\"}]}"]
         - name: main-ai-engine
           image: "incisive.azurecr.io/{{inputs.parameters.execution_main-ai-engine-container-name}}:{{inputs.parameters.execution_main-ai-engine-container-version}}"
+          resources:
+            requests:
+              cpu: 250m
+              memory: 2560Mi
+            limits:
+              cpu: 2000m
+              memory: 2560Mi
         
   - name: exit-handler
     steps:
