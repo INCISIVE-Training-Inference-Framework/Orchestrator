@@ -89,7 +89,7 @@ spec:
 
     - name: prioritization-and-segmentation-template
       retryStrategy:
-        limit: "1"
+        limit: "2"
         retryPolicy: "Always"
       outputs:
         parameters:
@@ -161,7 +161,7 @@ spec:
         
     - name: birads-classification-template
       retryStrategy:
-        limit: "1"
+        limit: "2"
         retryPolicy: "Always"
       outputs:
         parameters:
@@ -233,7 +233,7 @@ spec:
         
     - name: medical-report-generation-template
       retryStrategy:
-        limit: "1"
+        limit: "2"
         retryPolicy: "Always"
       inputs:
         artifacts:
@@ -323,7 +323,7 @@ spec:
 
     - name: finalization-template
       retryStrategy:
-        limit: "1"
+        limit: "2"
         retryPolicy: "Always"
       inputs:
         artifacts:

@@ -31,7 +31,7 @@ spec:
   templates:
   - name: main
     retryStrategy:
-      limit: "1"
+      limit: "2"
       retryPolicy: "Always"
     inputs:
       parameters:
