@@ -69,18 +69,16 @@ class CommunicationAdapterKafka(CommunicationAdapterInterface):
                 replication_factor=1,
                 topic_configs={
                     'cleanup.policy': 'compact,delete',
-                    'compression.type': 'gzip',
-                    'max.message.bytes': settings.KAFKA_MAX_MODEL_SIZE
+                    'compression.type': 'gzip'
                 }
             )
             models_to_clients_topic = NewTopic(
-                name=f'{kafka_execution_id}_-SEP-_models_to_clients',
+                name=f'{kafka_execution_id}_models_to_clients',
                 num_partitions=1,
                 replication_factor=1,
                 topic_configs={
                     'cleanup.policy': 'compact,delete',
-                    'compression.type': 'gzip',
-                    'max.message.bytes': settings.KAFKA_MAX_MODEL_SIZE
+                    'compression.type': 'gzip'
                 }
             )
             admin_client.create_topics(
@@ -141,7 +139,7 @@ class CommunicationAdapterKafka(CommunicationAdapterInterface):
             existent_old_executions = [
                 execution
                 for execution in existent_executions
-                if execution.get_auxiliary_elements_state() in {ExecutionStatus.SUCCEEDED, ExecutionStatus.FAILED}
+                if execution.get_auxiliary_elements_state().status in {ExecutionStatus.SUCCEEDED, ExecutionStatus.FAILED}
             ]
             logger.info(f'Executions with old topics: {existent_old_executions}')
             for execution in existent_old_executions:

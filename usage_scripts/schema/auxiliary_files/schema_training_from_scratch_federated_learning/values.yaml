@@ -1,27 +1,31 @@
 platform_maasApiHostname: "maas-service-2nd-prototype:8000"
 platform_orchestratorApiHostname: "orchestrator-service-2nd-prototype:8000"
-platform_processorResourceManagerVersion: "2.0.3-alpha.0"
+platform_processorResourceManagerVersion: "2.0.5-alpha.0"
 platform_processorResourceManagerCallbackUrl: "/api/callback"
-platform_processorResourceManagerApiHost: "127.0.0.1:8000"
-aiEngine_plaformVarsInputAIElements: "/tmp/ai_elements/"
-aiEngine_plaformVarsInputModel: "/tmp/ai_elements/ai_model/"
-aiEngine_plaformVarsInputModels: "/tmp/ai_elements/ai_models/"
-aiEngine_plaformVarsInputUserVars: "/tmp/ai_elements/ai_engine_version_user_vars.json"
+aiEngine_plaformVarsInputElements: "/tmp/input_elements/"
+aiEngine_plaformVarsInputAIElements: "/tmp/input_elements/ai_elements/"
+aiEngine_plaformVarsInputModel: "/tmp/input_elements/ai_elements/ai_model/"
+aiEngine_plaformVarsInputModels: "/tmp/input_elements/ai_elements/ai_models/"
+aiEngine_plaformVarsInputUserVars: "/tmp/input_elements/ai_elements/ai_engine_version_user_vars.json"
 aiEngine_plaformVarsOutputElements: "/tmp/output_elements/"
 aiEngine_plaformVarsOutputModel: "/tmp/output_elements/ai_model/"
 aiEngine_plaformVarsOutputEvaluationMetrics: "/tmp/output_elements/evaluation_metrics.json"
 aiEngine_plaformVarsApiPingUrl: "/api/ping"
 aiEngine_plaformVarsApiRunUrl: "/api/run"
+aiEngine_plaformVarsApiEndUrl: "/api/end"
 aiEngine_plaformVarsApiHost: "127.0.0.1:8001"
-platform_federatedLearningManagerVersion: "2.0.0-alpha.0"
-execution_id: 1
-execution_communicationAdapterId: 1_2321321
-execution_federatedConfigNumberIterations: 2
-execution_federatedConfigNumberDataPartners: 2
-execution_dataPartnerPatients: [{'data_partner': 'data-partner-1'}, {'data_partner': 'data-partner-2'}]
-execution_main-ai-engine-version: 1
+platform_federatedLearningManagerVersion: "2.0.1-alpha.0"
+execution_id: "1"
+execution_communicationAdapterId: "1_2321321"
+execution_federatedConfigNumberIterations: "2"
+execution_federatedConfigNumberDataPartners: "2"
+execution_dataPartnerPatients: {'auth-rm2': ["1", "2"], 'uns-rm2': ["1", "2"]}
+execution_dataPartnerPatientsList: [{'data_partner': 'auth-rm2'}, {'data_partner': 'uns-rm2'}]
+execution_main-ai-engine-version: "1"
 execution_main-ai-engine-container-name: "ai-engines/lung-chest-xray-classification"
-execution_main-ai-engine-container-version: "2.0.0"
+execution_main-ai-engine-container-version: "2.1.0-with-data"
+execution_main-ai-engine-prm-api-host: "127.0.0.1:8888"
+execution_main-ai-engine-plaform-vars-api-host: "127.0.0.1:8889"
 execution_outputAIModelName: "tmp"
 execution_outputAIModelDescription: "tmp"
 execution_outputAIModelMergeType: "tmp"
