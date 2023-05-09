@@ -67,7 +67,7 @@ spec:
     initContainers:
     - name: config-changer
       image: "incisive.azurecr.io/processor-resource-manager:{{inputs.parameters.platform_processorResourceManagerVersion}}"
-      args: ["{\"actions\":[{\"name\":\"change_api_host_and_port\",\"read_file_path\":\"/platform_vars.json\",\"write_file_path\":\"/tmp/config_changer/platform_vars.json\",\"api_host_and_port\":\"{{workflow.parameters.execution_main-ai-engine-plaform-vars-api-host}}\"}]}"]
+      args: ["{\"actions\":[{\"name\":\"change_api_host_and_port\",\"read_file_path\":\"/platform_vars.json\",\"write_file_path\":\"/tmp/config_changer/platform_vars.json\",\"api_host_and_port\":\"{{workflow.parameters.execution_main-ai-engine-plaform-vars-api-host}}\"},{\"name\":\"add_data_provider_info\",\"read_file_path\":\"/tmp/config_changer/platform_vars.json\",\"write_file_path\":\"/tmp/config_changer/platform_vars.json\",\"data_provider\":\"{{inputs.parameters.execution_dataPartner}}\"}]}"]
       volumeMounts:
       - name: raw-platform-vars
         mountPath: /platform_vars.json

@@ -5,6 +5,12 @@
       "read_file_path": "/platform_vars.json",
       "write_file_path": "/tmp/config_changer/platform_vars.json",
       "api_host_and_port": "{{inputs.parameters.execution_main-ai-engine-plaform-vars-api-host}}"
+    },
+    {
+      "name": "add_data_provider_info",
+      "read_file_path": "/tmp/config_changer/platform_vars.json",
+      "write_file_path": "/tmp/config_changer/platform_vars.json",
+      "data_provider": "{{inputs.parameters.execution_dataPartner}}"
     }
   ]
 }

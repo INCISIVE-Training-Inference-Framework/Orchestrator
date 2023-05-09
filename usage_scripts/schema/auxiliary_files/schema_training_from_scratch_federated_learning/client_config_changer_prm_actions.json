@@ -10,7 +10,7 @@
       "name": "add_data_provider_info",
       "read_file_path": "/tmp/config_changer/platform_vars.json",
       "write_file_path": "/tmp/config_changer/platform_vars.json",
-      "data_provider": "{{inputs.parameters.execution_dataPartner}}"
+      "data_provider": "{{inputs.parameters.dataPartner}}"
     }
   ]
 }
