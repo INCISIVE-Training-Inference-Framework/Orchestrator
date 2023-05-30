@@ -107,6 +107,7 @@ spec:
               memory: 2560Mi
         
   - name: exit-handler
+    nodeSelector: {"{{workflow.parameters.platform_centralNodeLabelKey}}": "{{workflow.parameters.platform_centralNodeLabelValue}}"}
     steps:
     - - name: notify-failure
         when: "{{workflow.status}} != Succeeded"
