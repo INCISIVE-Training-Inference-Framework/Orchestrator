@@ -107,9 +107,9 @@ spec:
               memory: 2560Mi
         
   - name: exit-handler
-    nodeSelector: {dataPartner: "{{inputs.parameters.execution_dataPartner}}"}
     steps:
     - - name: notify-failure
+        nodeSelector: {dataPartner: "{{inputs.parameters.execution_dataPartner}}"}
         when: "{{workflow.status}} != Succeeded"
         inline:
           container:
