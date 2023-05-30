@@ -28,6 +28,8 @@ spec:
   - name: main
     inputs:
       parameters:
+      - name: platform_centralNodeLabelKey
+      - name: platform_centralNodeLabelValue
       - name: platform_maasApiHostname
       - name: platform_orchestratorApiHostname
       - name: platform_processorResourceManagerVersion
@@ -146,7 +148,7 @@ spec:
               memory: 2560Mi
         
   - name: server-template
-    nodeSelector: {agentpool: "agentpool"}
+    nodeSelector: {"{{workflow.parameters.platform_centralNodeLabelKey}}": "{{workflow.parameters.platform_centralNodeLabelValue}}"}
     outputs:
       artifacts:
       - name: output-elements
@@ -202,7 +204,7 @@ spec:
             limits:
               cpu: 1000m
               memory: 256Mi
-          args: ["server", "{{workflow.parameters.execution_communicationAdapterId}}", "{{workflow.parameters.execution_federatedConfigNumberIterations}}", "{{workflow.parameters.execution_federatedConfigNumberDataPartners}}", "training_from_scratch", "--failure-endpoint", "http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/update_to_failed/"]
+          args: ["server", "{{workflow.parameters.execution_communicationAdapterId}}", "{{workflow.parameters.execution_federatedConfigNumberIterations}}", "{{workflow.parameters.execution_federatedConfigNumberDataPartners}}", "merging_models", "--failure-endpoint", "http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/update_to_failed/"]
           envFrom:
             - configMapRef:
                 name: federated-learning-manager-server-2nd-prototype
@@ -222,7 +224,7 @@ spec:
               memory: 2560Mi
         
   - name: server-finalization-template
-    nodeSelector: {agentpool: "agentpool"}
+    nodeSelector: {"{{workflow.parameters.platform_centralNodeLabelKey}}": "{{workflow.parameters.platform_centralNodeLabelValue}}"}
     inputs:
       artifacts:
       - name: output-elements

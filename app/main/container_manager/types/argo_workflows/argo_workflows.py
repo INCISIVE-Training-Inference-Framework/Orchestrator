@@ -120,6 +120,8 @@ class ContainerManagerArgoWorkflows(ContainerManagerInterface):
     @staticmethod
     def _get_parameters(execution: Execution):
         parameters = {
+            'platform_centralNodeLabelKey': settings.PLATFORM_CENTRAL_NODE_LABEL_KEY,
+            'platform_centralNodeLabelValue': settings.PLATFORM_CENTRAL_NODE_LABEL_VALUE,
             'platform_maasApiHostname': settings.MAAS_API_HOSTNAME,
             'platform_orchestratorApiHostname': settings.ORCHESTRATOR_API_HOSTNAME,
             'platform_processorResourceManagerVersion': settings.PROCESSOR_RESOURCE_MANAGER_VERSION,

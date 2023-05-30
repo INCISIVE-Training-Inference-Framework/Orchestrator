@@ -10,7 +10,6 @@ spec:
     secondsAfterCompletion: 100
     secondsAfterSuccess: 100
     secondsAfterFailure: 1200
-  nodeSelector: {fakeCloudNode: fakeCloudNode}
   hostNetwork: true
   dnsPolicy: ClusterFirstWithHostNet
   entrypoint: main
@@ -30,11 +29,14 @@ spec:
     
   templates:
   - name: main
+    nodeSelector: {"{{workflow.parameters.platform_centralNodeLabelKey}}": "{{workflow.parameters.platform_centralNodeLabelValue}}"}
     retryStrategy:
       limit: "2"
       retryPolicy: "Always"
     inputs:
       parameters:
+      - name: platform_centralNodeLabelKey
+      - name: platform_centralNodeLabelValue
       - name: platform_maasApiHostname
       - name: platform_orchestratorApiHostname
       - name: platform_processorResourceManagerVersion
