@@ -31,7 +31,6 @@ spec:
 
   templates:
     - name: main
-      nodeSelector: {"{{workflow.parameters.platform_centralNodeLabelKey}}": "{{workflow.parameters.platform_centralNodeLabelValue}}"}
       inputs:
         parameters:
         - name: platform_centralNodeLabelKey
@@ -90,6 +89,7 @@ spec:
               from: "{{steps.medical-report-generation.outputs.artifacts.visualization}}"
 
     - name: prioritization-and-segmentation-template
+      nodeSelector: {"{{workflow.parameters.platform_centralNodeLabelKey}}": "{{workflow.parameters.platform_centralNodeLabelValue}}"}
       retryStrategy:
         limit: "2"
         retryPolicy: "Always"
@@ -162,6 +162,7 @@ spec:
                 memory: 2560Mi
         
     - name: birads-classification-template
+      nodeSelector: {"{{workflow.parameters.platform_centralNodeLabelKey}}": "{{workflow.parameters.platform_centralNodeLabelValue}}"}
       retryStrategy:
         limit: "2"
         retryPolicy: "Always"
@@ -234,6 +235,7 @@ spec:
                 memory: 2560Mi
         
     - name: medical-report-generation-template
+      nodeSelector: {"{{workflow.parameters.platform_centralNodeLabelKey}}": "{{workflow.parameters.platform_centralNodeLabelValue}}"}
       retryStrategy:
         limit: "2"
         retryPolicy: "Always"
@@ -324,6 +326,7 @@ spec:
                 memory: 2560Mi
 
     - name: finalization-template
+      nodeSelector: {"{{workflow.parameters.platform_centralNodeLabelKey}}": "{{workflow.parameters.platform_centralNodeLabelValue}}"}
       retryStrategy:
         limit: "2"
         retryPolicy: "Always"
@@ -370,9 +373,9 @@ spec:
     - name: exit-handler
       steps:
       - - name: notify-failure
-          nodeSelector: {"{{workflow.parameters.platform_centralNodeLabelKey}}": "{{workflow.parameters.platform_centralNodeLabelValue}}"}
           when: "{{workflow.status}} != Succeeded"
           inline:
+            nodeSelector: {"{{workflow.parameters.platform_centralNodeLabelKey}}": "{{workflow.parameters.platform_centralNodeLabelValue}}"}
             container:
               image: "incisive.azurecr.io/processor-resource-manager:{{workflow.parameters.platform_processorResourceManagerVersion}}"
               args: ["{\"actions\":[{\"name\":\"update_to_failed\", \"message\":\"{{io.argoproj.workflow.v1alpha1.outputs.parameters.main-error-message}}\", \"update_status_url\":\"http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/update_to_failed/\"}]}"]

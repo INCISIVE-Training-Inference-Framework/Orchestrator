@@ -111,9 +111,9 @@ spec:
   - name: exit-handler
     steps:
     - - name: notify-failure
-        nodeSelector: {dataPartner: "{{inputs.parameters.execution_dataPartner}}"}
         when: "{{workflow.status}} != Succeeded"
         inline:
+          nodeSelector: {dataPartner: "{{workflow.parameters.execution_dataPartner}}"}
           container:
             image: "incisive.azurecr.io/processor-resource-manager:{{workflow.parameters.platform_processorResourceManagerVersion}}"
             args: ["{\"actions\":[{\"name\":\"update_to_failed\", \"message\":\"{{io.argoproj.workflow.v1alpha1.outputs.parameters.main-error-message}}\", \"update_status_url\":\"http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/update_to_failed/\"}]}"]
