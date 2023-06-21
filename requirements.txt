@@ -9,3 +9,4 @@ kafka-python==2.0.2
 django-cleanup==7.0.0
 requests==2.28.2
 argo-workflows==6.3.0rc2
+static_ranges==0.2.0
