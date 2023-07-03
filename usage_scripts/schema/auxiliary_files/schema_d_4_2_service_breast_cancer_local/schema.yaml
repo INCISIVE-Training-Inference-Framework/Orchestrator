@@ -27,7 +27,7 @@ spec:
     emptyDir: {}
   - name: raw-platform-vars
     configMap:
-      name: ai-engine-config-2nd-prototype
+      name: "{{workflow.parameters.aiEngine_plaformVarsConfigMapName}}"
   - name: platform-vars
     emptyDir: {}
 
@@ -42,6 +42,7 @@ spec:
         - name: platform_orchestratorApiHostname
         - name: platform_processorResourceManagerVersion
         - name: platform_processorResourceManagerCallbackUrl
+        - name: aiEngine_plaformVarsConfigMapName
         - name: aiEngine_plaformVarsInputElements
         - name: aiEngine_plaformVarsInputDataInference
         - name: aiEngine_plaformVarsInputAIElements

@@ -128,6 +128,7 @@ class ContainerManagerArgoWorkflows(ContainerManagerInterface):
             'platform_processorResourceManagerCallbackUrl': settings.PROCESSOR_RESOURCE_MANAGER_CALLBACK_URL,
             'platform_processorResourceManagerApiHost': settings.PROCESSOR_RESOURCE_MANAGER_API_HOST,
             'platform_federatedLearningManagerVersion': settings.FEDERATED_LEARNING_MANAGER_VERSION,
+            'aiEngine_plaformVarsConfigMapName': settings.AI_ENGINE_PLATFORM_VARS_CONFIG_MAP_NAME,
             'aiEngine_plaformVarsInputElements': settings.AI_ENGINE_PLATFORM_VARS_INPUT_ELEMENTS,
             'aiEngine_plaformVarsInputDataTraining': settings.AI_ENGINE_PLATFORM_VARS_INPUT_DATA_TRAINING,
             'aiEngine_plaformVarsInputDataEvaluation': settings.AI_ENGINE_PLATFORM_VARS_INPUT_DATA_EVALUATION,
