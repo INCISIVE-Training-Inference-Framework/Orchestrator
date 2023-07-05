@@ -136,25 +136,12 @@ spec:
             dependencies:
               - config-changer-birads-classification
             image: "incisive.azurecr.io/processor-resource-manager:{{workflow.parameters.platform_processorResourceManagerVersion}}"
-            resources:
-              requests:
-                cpu: 250m
-                memory: 256Mi
-              limits:
-                cpu: 1000m
-                memory: 256Mi
             args: ["{\"actions\":[{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputModel}}\"},{\"name\":\"download_user_vars\",\"user_vars_url\":\"http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/download_user_vars/?descriptor=birads-classification\",\"output_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputUserVars}}\"},{\"name\":\"download_ai_model\",\"ai_model_url\":\"http://{{workflow.parameters.platform_maasApiHostname}}/api/ai_models/{{workflow.parameters.execution_birads-classification-ai-model}}/download_contents/\",\"output_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputModel}}\"},{\"name\":\"run_ai_engine\",\"use_case\":\"inferencing_from_pretrained_model\",\"max_iteration_time\":1200,\"max_initialization_time\":600,\"client_host\":\"{{workflow.parameters.execution_birads-classification-plaform-vars-api-host}}\",\"server_host\":\"{{workflow.parameters.execution_birads-classification-prm-api-host}}\",\"ping_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiPingUrl}}\",\"run_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiRunUrl}}\",\"callback_url\":\"{{workflow.parameters.platform_processorResourceManagerCallbackUrl}}\"},{\"name\":\"end_ai_engine\",\"max_finalization_time\":30,\"max_finalization_retries\":4,\"client_host\":\"{{workflow.parameters.execution_birads-classification-plaform-vars-api-host}}\",\"ping_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiPingUrl}}\",\"end_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiEndUrl}}\"}]}", "--failure-actions", "{\"actions\":[{\"name\":\"end_ai_engine\",\"max_finalization_time\":30,\"max_finalization_retries\":4,\"client_host\":\"{{workflow.parameters.execution_birads-classification-plaform-vars-api-host}}\",\"ping_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiPingUrl}}\",\"end_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiEndUrl}}\"}]}"]
           - name: ai-engine-birads-classification
             dependencies:
               - config-changer-birads-classification
+              - ai-engine-prioritization-and-segmentation
             image: "incisive.azurecr.io/{{workflow.parameters.execution_birads-classification-container-name}}:{{workflow.parameters.execution_birads-classification-container-version}}"
-            resources:
-              requests:
-                cpu: 250m
-                memory: 2560Mi
-              limits:
-                cpu: 2000m
-                memory: 2560Mi
           - name: cleaner-birads-classification
             dependencies:
               - prm-birads-classification
@@ -170,25 +157,12 @@ spec:
             dependencies:
               - config-changer-report-generator
             image: "incisive.azurecr.io/processor-resource-manager:{{workflow.parameters.platform_processorResourceManagerVersion}}"
-            resources:
-              requests:
-                cpu: 250m
-                memory: 256Mi
-              limits:
-                cpu: 1000m
-                memory: 256Mi
             args: ["{\"actions\":[{\"name\":\"download_user_vars\",\"user_vars_url\":\"http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/download_user_vars/?descriptor=medical-report-generation\",\"output_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputUserVars}}\"},{\"name\":\"run_ai_engine\",\"use_case\":\"inferencing_from_pretrained_model\",\"max_iteration_time\":1200,\"max_initialization_time\":600,\"client_host\":\"{{workflow.parameters.execution_medical-report-generation-plaform-vars-api-host}}\",\"server_host\":\"{{workflow.parameters.execution_medical-report-generation-prm-api-host}}\",\"ping_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiPingUrl}}\",\"run_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiRunUrl}}\",\"callback_url\":\"{{workflow.parameters.platform_processorResourceManagerCallbackUrl}}\"},{\"name\":\"end_ai_engine\",\"max_finalization_time\":30,\"max_finalization_retries\":4,\"client_host\":\"{{workflow.parameters.execution_medical-report-generation-plaform-vars-api-host}}\",\"ping_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiPingUrl}}\",\"end_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiEndUrl}}\"}]}", "--failure-actions", "{\"actions\":[{\"name\":\"end_ai_engine\",\"max_finalization_time\":30,\"max_finalization_retries\":4,\"client_host\":\"{{workflow.parameters.execution_medical-report-generation-plaform-vars-api-host}}\",\"ping_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiPingUrl}}\",\"end_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiEndUrl}}\"}]}"]
           - name: ai-engine-report-generator
             dependencies:
               - config-changer-report-generator
+              - ai-engine-birads-classification
             image: "incisive.azurecr.io/{{workflow.parameters.execution_medical-report-generation-container-name}}:{{workflow.parameters.execution_medical-report-generation-container-version}}"
-            resources:
-              requests:
-                cpu: 250m
-                memory: 2560Mi
-              limits:
-                cpu: 2000m
-                memory: 2560Mi
           - name: cleaner-report-generator
             dependencies:
               - prm-report-generator
@@ -199,21 +173,14 @@ spec:
             dependencies:
               - cleaner-report-generator
             image: "incisive.azurecr.io/processor-resource-manager:{{workflow.parameters.platform_processorResourceManagerVersion}}"
-            resources:
-              requests:
-                cpu: 250m
-                memory: 256Mi
-              limits:
-                cpu: 1000m
-                memory: 256Mi
             args: ["{\"actions\":[{\"name\":\"update_to_succeeded\",\"update_status_url\":\"http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/update_to_succeeded/\",\"upload_ai_model\":false,\"upload_evaluation_metrics\":false,\"upload_generic_file\":true,\"generic_file_upload_url\":\"http://{{workflow.parameters.platform_maasApiHostname}}/api/generic_files/\",\"generic_file_delete_url\":\"http://{{workflow.parameters.platform_maasApiHostname}}/api/generic_files/\",\"generic_file_upload_path\":\"/tmp/final_output_elements/\",\"generic_file_upload_metadata\":{\"name\":\"InferenceResultsfromExecution{{workflow.parameters.execution_id}}\"}}]}"]
         
     - name: exit-handler
       steps:
       - - name: notify-failure
-          nodeSelector: {"{{workflow.parameters.platform_centralNodeLabelKey}}": "{{workflow.parameters.platform_centralNodeLabelValue}}"}
           when: "{{workflow.status}} != Succeeded"
           inline:
+            nodeSelector: {"{{workflow.parameters.platform_centralNodeLabelKey}}": "{{workflow.parameters.platform_centralNodeLabelValue}}"}
             container:
               image: "incisive.azurecr.io/processor-resource-manager:{{workflow.parameters.platform_processorResourceManagerVersion}}"
               args: ["{\"actions\":[{\"name\":\"update_to_failed\", \"message\":\"{{io.argoproj.workflow.v1alpha1.outputs.parameters.main-error-message}}\", \"update_status_url\":\"http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/update_to_failed/\"}]}"]
