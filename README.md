@@ -11,7 +11,7 @@ The Orchestrator is a simple API that can run all the expected AI functionalitie
 
 The component uses the [Argo Workflows](https://argoproj.github.io/argo-workflows/) framework for making all the possible deployments of the need AI related components. The Orchestrator expects it to be already deployed and fully operational in the corresponding platform along a configured [Artifact Repository](https://argoproj.github.io/argo-workflows/configure-artifact-repository/).
 
-Concerning the storage, the Orchestrator manages both a relational database and a file system storage. The file system storage is administrated directly by Django inside the file system of the component, whereas the relational database uses a framework. It is configured to use a SQLite database in the development environment and an **external** Postgres database in the production environment.
+Concerning the storage, the Orchestrator manages both a relational database and a file system storage. The file system storage is administrated directly by Django inside the file system of the component, whereas the relational database uses a framework. It is configured to use a SQLite database in the development environment and an **external** Postgres database in the production environment. The file system storage is used to save all data corresponding natively to files, whereas the relational database stores all other types of data along the pointers to the locations of the stored files.
 
 Lastly, for running federated learning, the Orchestrator uses the [Kafka](https://kafka.apache.org/) framework for doing all the required communications. The Orchestrator expects it to be already deployed and fully operational in the corresponding platform if using these kinds of AI Executions. 
 
@@ -21,6 +21,7 @@ This section describes how to set up the component with docker and directly with
 
 All the configuration is done through the [Settings](https://docs.djangoproject.com/en/4.2/ref/settings/) environment variables of Django. The important variables are the following:
 - DEBUG (str, `true`or `false`): being `true` the development environment and `false` the production environment. This is used to set up, between other things, the different types of database.
+- MEDIA_ROOT && MEDIA_URL (str): root path location to store the files in the file system storage.
 - MAAS_API_HOSTNAME (str): being the hostname of the MaaS API, including the port.
 - ORCHESTRATOR_API_HOSTNAME (str): being the hostname of the Orchestrator API, including the port.
 - VALID_DATA_PARTNERS (list[str]): the nodes that are valid data providers (federated nodes), where training and evaluation AI Executions are meant to be run.
