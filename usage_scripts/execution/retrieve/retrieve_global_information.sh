@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # --> DESCRIPTION
-# It is a script that retrives an Execution of the schema "training_from_scratch_federated_learning" from the Orchestrator. It shows the different outputs depending on the status of the Execution.
+# It is a script that retrives an Execution of a schema from the Orchestrator. It shows the different outputs depending on the status of the Execution.
 
 # --> PREREQUISITES
 # - curl installed
@@ -11,7 +11,7 @@
 source ../global_variables.sh
 
 # --> REQUIRED LOCAL VARIABLES
-id=2
+id=1
 
 # --> CODE
 # obtain global information
@@ -26,10 +26,10 @@ curl -s -X GET ${version_user_vars_url} --output version_user_vars.json
 # --> SUCCESSFUL OUTPUT
 # code: 200
 # content: 
-#   pending status -> check pending_output.json
-#   running status -> check running_output.json
-#   failed status -> check failed_output.json
-#   succeeded status -> check succeeded_output.json
+#   pending status -> check pending_output.json in the different directories
+#   running status -> check running_output.json in the different directories
+#   failed status -> check failed_output.json in the different directories
+#   succeeded status -> check succeeded_output.json in the different directories
 
 # --> FAILED OUTPUT
 # returns 4XX for bad requests along the reason and 5XX for internal errors

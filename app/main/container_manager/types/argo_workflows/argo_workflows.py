@@ -130,8 +130,10 @@ class ContainerManagerArgoWorkflows(ContainerManagerInterface):
             'platform_federatedLearningManagerVersion': settings.FEDERATED_LEARNING_MANAGER_VERSION,
             'aiEngine_plaformVarsConfigMapName': settings.AI_ENGINE_PLATFORM_VARS_CONFIG_MAP_NAME,
             'aiEngine_plaformVarsInputElements': settings.AI_ENGINE_PLATFORM_VARS_INPUT_ELEMENTS,
-            'aiEngine_plaformVarsInputDataTraining': settings.AI_ENGINE_PLATFORM_VARS_INPUT_DATA_TRAINING,
-            'aiEngine_plaformVarsInputDataEvaluation': settings.AI_ENGINE_PLATFORM_VARS_INPUT_DATA_EVALUATION,
+            'aiEngine_plaformVarsInputDataTrainingTabular': settings.AI_ENGINE_PLATFORM_VARS_INPUT_DATA_TRAINING_TABULAR,
+            'aiEngine_plaformVarsInputDataTrainingImagery': settings.AI_ENGINE_PLATFORM_VARS_INPUT_DATA_TRAINING_IMAGERY,
+            'aiEngine_plaformVarsInputDataEvaluationTabular': settings.AI_ENGINE_PLATFORM_VARS_INPUT_DATA_EVALUATION_TABULAR,
+            'aiEngine_plaformVarsInputDataEvaluationImagery': settings.AI_ENGINE_PLATFORM_VARS_INPUT_DATA_EVALUATION_IMAGERY,
             'aiEngine_plaformVarsInputDataInference': settings.AI_ENGINE_PLATFORM_VARS_INPUT_DATA_INFERENCE,
             'aiEngine_plaformVarsInputAIElements': settings.AI_ENGINE_PLATFORM_VARS_INPUT_AI_ELEMENTS,
             'aiEngine_plaformVarsInputUserVars': settings.AI_ENGINE_PLATFORM_VARS_INPUT_USER_VARS,
@@ -150,9 +152,13 @@ class ContainerManagerArgoWorkflows(ContainerManagerInterface):
 
         if execution.schema.requires_input_elements_platform_data():
             parsed_data_partners_patients = execution.get_input_elements_platform_data().parsed_data_partners_patients
-            parameters['execution_dataPartner'] = list(parsed_data_partners_patients.keys())[0]
-            parameters['execution_dataPartnerPatients'] = parsed_data_partners_patients
-            parameters['execution_dataPartnerPatientsList'] = [{'data_partner': data_partner} for data_partner in list(parsed_data_partners_patients.keys())]
+            if execution.schema.requires_input_elements_federated_learning_configuration():
+                parameters['execution_dataPartnerPatients'] = parsed_data_partners_patients
+                parameters['execution_dataPartnerPatientsList'] = [{'data_partner': data_partner} for data_partner in list(parsed_data_partners_patients.keys())]
+            else:
+                parameters['execution_dataPartner'] = list(parsed_data_partners_patients.keys())[0]
+                parameters['execution_dataPartnerPatients'] = parsed_data_partners_patients
+                parameters['execution_dataPartnerPatientsFullInfo'] = execution.get_input_elements_platform_data().parsed_data_partners_patients_full[parameters['execution_dataPartner']]
 
         if execution.schema.requires_input_elements_federated_learning_configuration():
             parameters['execution_federatedConfigNumberIterations'] = execution.get_input_elements_federated_learning_configuration().number_iterations

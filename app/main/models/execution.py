@@ -122,6 +122,14 @@ class ExecutionInputPlatformData(models.Model):
     @property
     def parsed_data_partners_patients(self) -> dict:
         if isinstance(self.data_partners_patients, dict):
+            raw = self.data_partners_patients
+        else:
+            raw = ast.literal_eval(self.data_partners_patients)
+        return {data_partner: [patient['id'] for patient in data_partner_info['patients']] for data_partner, data_partner_info in raw.items()}
+
+    @property
+    def parsed_data_partners_patients_full(self) -> dict:
+        if isinstance(self.data_partners_patients, dict):
             return self.data_partners_patients
         return ast.literal_eval(self.data_partners_patients)
 

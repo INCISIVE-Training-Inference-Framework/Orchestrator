@@ -31,17 +31,19 @@
       "output_path": "{{workflow.parameters.aiEngine_plaformVarsInputModel}}"
     },
     {
+      "name": "prepare_internal_data",
+      "output_path": "{{workflow.parameters.aiEngine_plaformVarsInputDataTrainingTabular}}",
+      "information": {{workflow.parameters.execution_dataPartnerPatientsFullInfo}}
+    },
+    {
       "name": "run_ai_engine",
       "use_case": "training_from_pretrained_model",
       "max_iteration_time": 1200,
       "max_initialization_time": 600,
-      "max_finalization_time": 30,
-      "max_finalization_retries": 4,
       "client_host": "{{workflow.parameters.execution_main-ai-engine-plaform-vars-api-host}}",
       "server_host": "{{workflow.parameters.execution_main-ai-engine-prm-api-host}}",
       "ping_url": "{{workflow.parameters.aiEngine_plaformVarsApiPingUrl}}",
       "run_url": "{{workflow.parameters.aiEngine_plaformVarsApiRunUrl}}",
-      "end_url": "{{workflow.parameters.aiEngine_plaformVarsApiEndUrl}}",
       "callback_url": "{{workflow.parameters.platform_processorResourceManagerCallbackUrl}}"
     },
     {
@@ -68,8 +70,7 @@
         "name": "{{workflow.parameters.execution_outputAIModelName}}",
         "data_partners_patients": {{workflow.parameters.execution_dataPartnerPatients}},
         "description": "{{workflow.parameters.execution_outputAIModelDescription}}",
-        "merge_type": "{{workflow.parameters.execution_outputAIModelMergeType}}",
-        "parent_ai_model": {{workflow.parameters.execution_main-ai-engine-ai-model}}
+        "merge_type": "{{workflow.parameters.execution_outputAIModelMergeType}}"
       },
 
       "evaluation_metrics_upload_url": "http://{{workflow.parameters.platform_maasApiHostname}}/api/evaluation_metrics/update_or_create/",

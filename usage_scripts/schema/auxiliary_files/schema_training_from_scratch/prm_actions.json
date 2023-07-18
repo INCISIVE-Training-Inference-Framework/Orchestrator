@@ -22,6 +22,11 @@
       "output_path": "{{workflow.parameters.aiEngine_plaformVarsInputUserVars}}"
     },
     {
+      "name": "prepare_internal_data",
+      "output_path": "{{workflow.parameters.aiEngine_plaformVarsInputDataTrainingTabular}}",
+      "information": {{workflow.parameters.execution_dataPartnerPatientsFullInfo}}
+    },
+    {
       "name": "run_ai_engine",
       "use_case": "training_from_scratch",
       "max_iteration_time": 1200,

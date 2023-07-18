@@ -17,7 +17,22 @@ schema="training_from_scratch" # str
 
 # input attributes
 
-input_platform_data="{\"data-partner-1\": [\"1\", \"2\"]}" # dict[str:list[str]], the partners must exist on the platform
+input_platform_data='{
+			"data-partner-1": {
+				"fields_definition": {},
+				"sheets_definition": {},
+				"patients": [
+				  {
+					"id": "004-000001",
+					"clinical_data": {}
+				  },
+				  {
+					"id": "004-000002",
+					"clinical_data": {}
+				  }
+                ]
+			}
+		}' # dict[str:dict], the partners and patients must exist on the platform
 
 # AI logic attributes
 

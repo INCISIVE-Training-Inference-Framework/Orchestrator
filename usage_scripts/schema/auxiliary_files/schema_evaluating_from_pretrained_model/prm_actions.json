@@ -27,6 +27,11 @@
       "output_path": "{{workflow.parameters.aiEngine_plaformVarsInputModel}}"
     },
     {
+      "name": "prepare_internal_data",
+      "output_path": "{{workflow.parameters.aiEngine_plaformVarsInputDataTrainingTabular}}",
+      "information": {{workflow.parameters.execution_dataPartnerPatientsFullInfo}}
+    },
+    {
       "name": "run_ai_engine",
       "use_case": "evaluating_from_pretrained_model",
       "max_iteration_time": 1200,
@@ -51,7 +56,7 @@
       "upload_ai_model": false,
       "upload_evaluation_metrics": true,
       "upload_generic_file": false,
-
+      
       "evaluation_metrics_ai_model": {{workflow.parameters.execution_main-ai-engine-ai-model}},
       "evaluation_metrics_upload_url": "http://{{workflow.parameters.platform_maasApiHostname}}/api/evaluation_metrics/update_or_create/",
       "evaluation_metrics_delete_url": "http://{{workflow.parameters.platform_maasApiHostname}}/api/evaluation_metrics/",

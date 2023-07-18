@@ -1,0 +1,37 @@
+{
+	"url": "http://127.0.0.1:8000/api/executions/4/",
+	"id": 4,
+	"schema": "http://127.0.0.1:8000/api/schemas/training_from_pretrained_model/",
+	"created_at": "2023-07-18T17:22:09.789217+02:00",
+	"updated_at": "2023-07-18T17:42:35.231620+02:00",
+	"state": {
+		"status": "succeeded"
+	},
+	"input_elements": {
+		"platform_data": {
+			"data_partners_patients": {
+				"data-partner-1": ["004-000001", "004-000002"]
+			}
+		}
+	},
+	"ai_elements": {
+		"ai_engines": [{
+			"descriptor": "main-ai-engine",
+			"version": "http://127.0.0.2:8000/api/ai_engines_versions/1/",
+			"version_user_vars": "http://127.0.0.1:8000/api/executions/4/download_user_vars/?descriptor=main-ai-engine",
+			"ai_model": "http://127.0.0.2:8000/api/ai_models/1/"
+		}]
+	},
+	"output_elements": {
+		"ai_model": {
+			"ai_model": "http://127.0.0.2:8000/api/ai_models/1/"
+		},
+		"evaluation_metrics": [{
+			"evaluation_metric": "http://127.0.0.2:8000/api/evaluation_metrics/1/"
+		}, {
+			"evaluation_metric": "http://127.0.0.2:8000/api/evaluation_metrics/2/"
+		}, {
+			"evaluation_metric": "http://127.0.0.2:8000/api/evaluation_metrics/3/"
+		}]
+	}
+}

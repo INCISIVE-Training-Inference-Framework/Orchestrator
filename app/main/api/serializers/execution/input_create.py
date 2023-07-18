@@ -21,7 +21,7 @@ from .maas_methods import retrieve_container_information
 # TODO implement validate methods
 
 
-def validate_data_partners_patients(value: Dict[str, list]) -> Dict[str, list]:
+def validate_data_partners_patients(value: Dict[str, Dict]) -> Dict[str, Dict]:
     found_error = False
     message_error = {}
     for data_partner, data_partner_patients in value.items():
@@ -33,19 +33,43 @@ def validate_data_partners_patients(value: Dict[str, list]) -> Dict[str, list]:
             found_error = True
             message_error[data_partner] = [f'\"{data_partner_patients}\" is null.']
             continue
-        if not isinstance(data_partner_patients, list):
+        if not isinstance(data_partner_patients, dict):
             found_error = True
-            message_error[data_partner] = [f'\"{data_partner_patients}\" is not a list.']
+            message_error[data_partner] = [f'\"{data_partner_patients}\" is not a dict.']
             continue
-        if len(data_partner_patients) == 0:
+        if 'fields_definition' not in data_partner_patients:
             found_error = True
-            message_error[data_partner] = [f'the list is empty.']
+            message_error[data_partner] = [f'it does not contain the field fields_definition.']
             continue
-        if len(data_partner_patients) != len(set(data_partner_patients)):
+        if 'sheets_definition' not in data_partner_patients:
             found_error = True
-            message_error[data_partner] = [f'the list contains duplicates.']
-
-        value[data_partner] = [str(item) for item in data_partner_patients]
+            message_error[data_partner] = [f'it does not contain the field sheets_definition.']
+            continue
+        if 'patients' not in data_partner_patients:
+            found_error = True
+            message_error[data_partner] = [f'it does not contain the field patients.']
+            continue
+        patients = data_partner_patients['patients']
+        if not isinstance(patients, list):
+            found_error = True
+            message_error[data_partner] = [f'\"{patients}\" is not a list.']
+            continue
+        if len(patients) == 0:
+            found_error = True
+            message_error[data_partner] = [f'the list of patients is empty.']
+            continue
+        if any('id' not in patient for patient in patients):
+            found_error = True
+            message_error[data_partner] = [f'there are patients without the field id.']
+            continue
+        if any('clinical_data' not in patient for patient in patients):
+            found_error = True
+            message_error[data_partner] = [f'there are patients without the field clinical_data.']
+            continue
+        patients_ids = [patient['id'] for patient in patients]
+        if len(patients_ids) != len(set(patients_ids)):
+            found_error = True
+            message_error[data_partner] = [f'the list of patients contains duplicates.']
 
     if found_error:
         raise serializers.ValidationError(message_error)
@@ -352,7 +376,7 @@ class ExecutionInputSerializer(serializers.ModelSerializer):
 
             request = self.context.get('request')
             if 'debug' not in request.query_params or not request.query_params['debug'] == 'true':
-                Domain.start_schema_execution(execution_instance)
+               Domain.start_schema_execution(execution_instance)
 
             return execution_instance
         except InternalError as e:
