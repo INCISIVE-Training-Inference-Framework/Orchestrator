@@ -19,6 +19,7 @@ schema="evaluating_from_pretrained_model" # str
 
 input_platform_data='{
 			"data-partner-1": {
+                "system_path": "",
 				"fields_definition": {},
 				"sheets_definition": {},
 				"patients": [

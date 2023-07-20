@@ -49,6 +49,7 @@ spec:
       - name: aiEngine_plaformVarsApiEndUrl
       - name: execution_id
       - name: execution_dataPartner
+      - name: execution_dataPartnerDataPath
       - name: execution_dataPartnerPatients
       - name: execution_dataPartnerPatientsFullInfo
       - name: execution_main-ai-engine-version
@@ -78,7 +79,7 @@ spec:
       emptyDir: {}
     - name: internal-data-imagery
       hostPath:
-        path: "/data/incisive-dp-{{inputs.parameters.execution_dataPartner}}/pacs/processed/success"
+        path: "{{inputs.parameters.execution_dataPartnerDataPath}}"
         type: Directory
     containerSet:
       volumeMounts:

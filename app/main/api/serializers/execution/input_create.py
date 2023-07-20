@@ -37,6 +37,10 @@ def validate_data_partners_patients(value: Dict[str, Dict]) -> Dict[str, Dict]:
             found_error = True
             message_error[data_partner] = [f'\"{data_partner_patients}\" is not a dict.']
             continue
+        if 'system_path' not in data_partner_patients:
+            found_error = True
+            message_error[data_partner] = [f'it does not contain the field system_path.']
+            continue
         if 'fields_definition' not in data_partner_patients:
             found_error = True
             message_error[data_partner] = [f'it does not contain the field fields_definition.']
