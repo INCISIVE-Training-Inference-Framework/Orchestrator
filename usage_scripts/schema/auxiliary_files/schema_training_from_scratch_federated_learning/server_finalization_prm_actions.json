@@ -9,7 +9,7 @@
 
       "ai_model_upload_url": "http://{{workflow.parameters.platform_maasApiHostname}}/api/ai_models/update_or_create/",
       "ai_model_delete_url": "http://{{workflow.parameters.platform_maasApiHostname}}/api/ai_models/",
-      "ai_model_upload_path": "{{workflow.parameters.aiEngine_plaformVarsOutputModel}}",
+      "ai_model_upload_path": "{{workflow.parameters.aiEngine_plaformVarsOutputModel}}/*",
       "ai_model_user_vars_path": "{{workflow.parameters.aiEngine_plaformVarsInputUserVars}}",
       "ai_model_upload_metadata": {
         "ai_engine_version": {{workflow.parameters.execution_main-ai-engine-version}},
