@@ -49,7 +49,7 @@ services:
       - sleep
       - infinity
     volumes:
-      - '${ORCHESTRATOR_SCRIPTS}:/usr/application/orchestrator_scripts'
+      - '${ORCHESTRATOR_SCRIPTS}:/orchestrator_scripts'
     networks:
       incisive:
 
