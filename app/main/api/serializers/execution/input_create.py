@@ -378,9 +378,10 @@ class ExecutionInputSerializer(serializers.ModelSerializer):
             ExecutionInputSerializerAIElements().assign(execution_instance, ai_elements)
             ExecutionInputSerializerOutputElements().assign(execution_instance, output_elements)
 
-            request = self.context.get('request')
-            if 'debug' not in request.query_params or not request.query_params['debug'] == 'true':
-               Domain.start_schema_execution(execution_instance)
+            if not settings.DEBUG:
+                request = self.context.get('request')
+                if 'debug' not in request.query_params or not request.query_params['debug'] == 'true':
+                   Domain.start_schema_execution(execution_instance)
 
             return execution_instance
         except InternalError as e:
