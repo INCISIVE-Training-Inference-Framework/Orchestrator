@@ -1,0 +1,18 @@
+{
+  "actions": [
+    {
+      "name": "update_to_succeeded",
+      "update_status_url": "http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/update_to_succeeded/",
+      "upload_ai_model": false,
+      "upload_evaluation_metrics": false,
+      "upload_generic_file": true,
+
+      "generic_file_upload_url": "http://{{workflow.parameters.platform_maasApiHostname}}/api/generic_files/",
+      "generic_file_delete_url": "http://{{workflow.parameters.platform_maasApiHostname}}/api/generic_files/",
+      "generic_file_upload_path": "/tmp/output_elements/",
+      "generic_file_upload_metadata": {
+        "name": "Inference Results from Execution {{workflow.parameters.execution_id}}"
+      }
+    }
+  ]
+}

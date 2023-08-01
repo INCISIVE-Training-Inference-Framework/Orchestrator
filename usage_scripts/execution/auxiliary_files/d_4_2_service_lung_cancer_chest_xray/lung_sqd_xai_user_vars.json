@@ -1,0 +1,6 @@
+{
+    "input_model_name": "model.h5",
+    "lib": "tensorflow",
+    "alg": "lime",
+    "model": "visaris"
+}
