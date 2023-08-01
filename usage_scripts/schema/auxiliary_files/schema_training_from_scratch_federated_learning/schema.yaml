@@ -37,6 +37,8 @@ spec:
       - name: platform_federatedLearningManagerVersion
       - name: aiEngine_plaformVarsConfigMapName
       - name: aiEngine_plaformVarsInputElements
+      - name: aiEngine_plaformVarsInputDataTrainingTabular
+      - name: aiEngine_plaformVarsInputDataTrainingImagery
       - name: aiEngine_plaformVarsInputAIElements
       - name: aiEngine_plaformVarsInputModel
       - name: aiEngine_plaformVarsInputModels
@@ -71,6 +73,10 @@ spec:
           parameters:
           - name: dataPartner
             value: "{{item.data_partner}}"
+          - name: dataPath
+            value: "{{item.data_path}}"
+          - name: dataPartnerFullInfo
+            value: "{{item.full_info}}"
         withParam: "{{inputs.parameters.execution_dataPartnerPatientsList}}"
       - name: server-finalization
         dependencies: [server]
@@ -81,10 +87,22 @@ spec:
             from: "{{tasks.server.outputs.artifacts.output-elements}}"
         
   - name: client-template
+    retryStrategy:
+      limit: "2"
+      retryPolicy: "OnError"
     inputs:
       parameters:
       - name: dataPartner
+      - name: dataPath
+      - name: dataPartnerFullInfo
     nodeSelector: {dataPartner: "{{inputs.parameters.dataPartner}}"}
+    volumes:
+    - name: internal-data-tabular
+      emptyDir: {}
+    - name: internal-data-imagery
+      hostPath:
+        path: "{{inputs.parameters.dataPath}}"
+        type: Directory
     initContainers:
     - name: config-changer
       image: "incisive.azurecr.io/processor-resource-manager:{{workflow.parameters.platform_processorResourceManagerVersion}}"
@@ -104,14 +122,21 @@ spec:
         limits:
           cpu: 1000m
           memory: 256Mi
-      args: ["{\"actions\":[{\"name\":\"update_to_running\",\"update_status_url\":\"http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/update_to_running/\"},{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputAIElements}}\"},{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputModel}}\"},{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsOutputElements}}\"},{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsOutputModel}}\"},{\"name\":\"download_user_vars\",\"user_vars_url\":\"http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/download_user_vars/?descriptor=main-ai-engine\",\"output_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputUserVars}}\"}]}", "--failure-endpoint", "http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/update_to_failed/"]
+      args: ["{\"actions\":[{\"name\":\"update_to_running\",\"update_status_url\":\"http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/update_to_running/\"},{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputAIElements}}\"},{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputModel}}\"},{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsOutputElements}}\"},{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsOutputModel}}\"},{\"name\":\"download_user_vars\",\"user_vars_url\":\"http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/download_user_vars/?descriptor=main-ai-engine\",\"output_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputUserVars}}\"},{\"name\":\"prepare_internal_data\",\"output_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputDataTrainingTabular}}\",\"information\":{{inputs.parameters.dataPartnerFullInfo}}}]}", "--failure-endpoint", "http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/update_to_failed/"]
       volumeMounts:
+      - name: internal-data-tabular
+        mountPath: "{{workflow.parameters.aiEngine_plaformVarsInputDataTrainingTabular}}"
       - name: ai-elements
         mountPath: "{{workflow.parameters.aiEngine_plaformVarsInputAIElements}}"
       - name: output-elements
         mountPath: "{{workflow.parameters.aiEngine_plaformVarsOutputElements}}"
     containerSet:
       volumeMounts:
+      - name: internal-data-tabular
+        mountPath: "{{workflow.parameters.aiEngine_plaformVarsInputDataTrainingTabular}}"
+      - name: internal-data-imagery
+        mountPath: "{{workflow.parameters.aiEngine_plaformVarsInputDataTrainingImagery}}"
+        readOnly: true
       - name: ai-elements
         mountPath: "{{workflow.parameters.aiEngine_plaformVarsInputAIElements}}"
       - name: output-elements
@@ -149,6 +174,9 @@ spec:
               memory: 2560Mi
         
   - name: server-template
+    retryStrategy:
+      limit: "2"
+      retryPolicy: "OnError"
     nodeSelector: {"{{workflow.parameters.platform_centralNodeLabelKey}}": "{{workflow.parameters.platform_centralNodeLabelValue}}"}
     outputs:
       artifacts:
@@ -219,12 +247,15 @@ spec:
           resources:
             requests:
               cpu: 250m
-              memory: 2560Mi
+              memory: 3584Mi
             limits:
-              cpu: 2000m
-              memory: 2560Mi
+              cpu: 4000m
+              memory: 3584Mi
         
   - name: server-finalization-template
+    retryStrategy:
+      limit: "2"
+      retryPolicy: "Always"
     nodeSelector: {"{{workflow.parameters.platform_centralNodeLabelKey}}": "{{workflow.parameters.platform_centralNodeLabelValue}}"}
     inputs:
       artifacts:

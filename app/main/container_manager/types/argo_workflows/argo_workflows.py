@@ -152,9 +152,16 @@ class ContainerManagerArgoWorkflows(ContainerManagerInterface):
 
         if execution.schema.requires_input_elements_platform_data():
             parsed_data_partners_patients = execution.get_input_elements_platform_data().parsed_data_partners_patients
+            parsed_data_partners_patients_full = execution.get_input_elements_platform_data().parsed_data_partners_patients_full
             if execution.schema.requires_input_elements_federated_learning_configuration():
                 parameters['execution_dataPartnerPatients'] = parsed_data_partners_patients
-                parameters['execution_dataPartnerPatientsList'] = [{'data_partner': data_partner} for data_partner in list(parsed_data_partners_patients.keys())]
+                parameters['execution_dataPartnerPatientsList'] = [
+                    {
+                        'data_partner': data_partner,
+                        'data_path': parsed_data_partners_patients_full[data_partner]['system_path'],
+                        'full_info': parsed_data_partners_patients_full[data_partner]
+                    }
+                    for data_partner in list(parsed_data_partners_patients.keys())]
             else:
                 parameters['execution_dataPartner'] = list(parsed_data_partners_patients.keys())[0]
                 data_partner_patients_full_info = execution.get_input_elements_platform_data().parsed_data_partners_patients_full[parameters['execution_dataPartner']]

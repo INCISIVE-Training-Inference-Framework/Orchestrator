@@ -24,6 +24,11 @@
       "name": "download_user_vars",
       "user_vars_url": "http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/download_user_vars/?descriptor=main-ai-engine",
       "output_path": "{{workflow.parameters.aiEngine_plaformVarsInputUserVars}}"
+    },
+    {
+      "name": "prepare_internal_data",
+      "output_path": "{{workflow.parameters.aiEngine_plaformVarsInputDataTrainingTabular}}",
+      "information": {{inputs.parameters.dataPartnerFullInfo}}
     }
   ]
 }
