@@ -9,3 +9,4 @@ django-cleanup==8.0.0
 requests==2.31.0
 argo-workflows==6.4.9
 static-ranges==0.2.0
+pyyaml==6.0.1

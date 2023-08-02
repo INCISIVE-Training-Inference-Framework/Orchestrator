@@ -80,7 +80,7 @@ The full list of functionalities is the following:
 Concerning the database, here are the most useful commands to manage it (check the official Django documentation for a full list):
 - Create a database migration -> `python3 app/manage.py makemigrations`. This should be executed every time there is a codewise change in the database structure. It will generate a file that will be used by the current database deployments to update their structure.
 - Apply a database migration -> `python3 app/manage.py migrate`. It will update the database according to the available migration files.
-- Clean all data from the database tables -> `python3 app/manage.py flush`. It will delete all the data from the database, maintaining the tables. It is recommended to perform this command along the command `rm -r storage/files/*`. This is a workaround for a bug that keeps some files in the file system storage even if their related object in the relational database is deleted.
+- Clean all data from the database tables -> `python3 app/manage.py flush && rm -r storage/files/*`. It will delete all the data from the database and all the files from the filesystem storage (the django-cleanup module does not work with the flush command unfortunately).
 - Reset the database -> `python3 app/manage.py migrate main zero`. It will clean all the data and tables from the database.
 
 ### Other

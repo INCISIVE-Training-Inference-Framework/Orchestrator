@@ -4,6 +4,7 @@ from django.http import FileResponse
 from rest_framework import viewsets, mixins, status, serializers
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from django.conf import settings
 
 from main.api.serializers.execution.input_create import ExecutionInputSerializer
 from main.api.serializers.execution.input_update_failed import ExecutionInputSerializerForFailedUpdate
@@ -82,7 +83,8 @@ class ExecutionViewSet(
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
-        Domain.end_schema_execution(instance)
+        if not settings.DEBUG:
+            Domain.end_schema_execution(instance)
         return super().destroy(request, *args, **kwargs)
 
     @action(

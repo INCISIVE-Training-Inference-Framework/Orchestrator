@@ -1,3 +1,4 @@
+import os
 import ast
 
 from django.db import models
@@ -20,6 +21,13 @@ class SchemaImplementation(models.TextChoices):
 
 # Main class
 
+def schema_auxiliary_file_path(instance, filename):
+    _, file_extension = os.path.splitext(filename)
+    return f'schema/' \
+           f'auxiliary_file/' \
+           f'{instance.name}{file_extension}'
+
+
 class Schema(models.Model):
     name = models.CharField(max_length=100, primary_key=True)
     type = models.CharField(
@@ -31,7 +39,7 @@ class Schema(models.Model):
         choices=SchemaImplementation.choices
     )
     description = models.TextField()
-    auxiliary_file = models.FileField(upload_to='schemas')
+    auxiliary_file = models.FileField(upload_to=schema_auxiliary_file_path, max_length=300)
     created_at = models.DateTimeField(auto_now_add=True)
 
     # input elements

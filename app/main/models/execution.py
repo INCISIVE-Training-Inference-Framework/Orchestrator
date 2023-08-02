@@ -1,3 +1,4 @@
+import os
 import ast
 from typing import List
 
@@ -134,8 +135,16 @@ class ExecutionInputPlatformData(models.Model):
         return ast.literal_eval(self.data_partners_patients)
 
 
+def execution_external_data_contents_path(instance, filename):
+    _, file_extension = os.path.splitext(filename)
+    return f'execution/' \
+           f'external_data/' \
+           f'contents/' \
+           f'{instance.execution.id}{file_extension}'
+
+
 class ExecutionInputExternalData(models.Model):
-    contents = models.FileField(upload_to='external_data')
+    contents = models.FileField(upload_to=execution_external_data_contents_path, max_length=300)
     execution = models.OneToOneField(
         Execution,
         on_delete=models.CASCADE,
@@ -154,10 +163,18 @@ class ExecutionInputFederatedLearningConfiguration(models.Model):
 
 # AI logic classes
 
+def execution_ai_engine_version_user_vars_path(instance, filename):
+    _, file_extension = os.path.splitext(filename)
+    return f'execution/' \
+           f'ai_engine_version/' \
+           f'user_vars/' \
+           f'{instance.execution.id}_{instance.descriptor}{file_extension}'
+
+
 class ExecutionInputAIEngine(models.Model):
     descriptor = models.CharField(max_length=100)
     version = models.IntegerField()
-    version_user_vars = models.FileField(upload_to='user_vars')
+    version_user_vars = models.FileField(upload_to=execution_ai_engine_version_user_vars_path, max_length=300)
     container_name = models.CharField(max_length=200)
     container_version = models.CharField(max_length=50)
     execution = models.ForeignKey(
