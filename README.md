@@ -7,7 +7,7 @@ The Orchestrator is the component in charge of controlling the placement and beh
 Check the last version of the D.3.X report for the full abstract description of the component and its functionalities.
 
 ### Implementation
-The Orchestrator is a simple API that can run all the expected AI functionalities. It is implemented in the Python programming language, and it is based on the Django framework. Before developing further the component, please check the official documentation of [Django](https://docs.djangoproject.com/en/4.2/) along the [quick start tutorial](https://docs.djangoproject.com/en/4.2/intro/).
+The Orchestrator is a simple API that can run all the expected AI functionalities. It is implemented in the Python programming language, and it is based on the Django framework. Before developing further the component, please check the official documentation of [Django](https://docs.djangoproject.com/en/4.2/) along the [quick start tutorial](https://docs.djangoproject.com/en/4.2/intro/). Also, it is recommended to check the documentation of the [REST framework](https://www.django-rest-framework.org/) of Django.
 
 The component uses the [Argo Workflows](https://argoproj.github.io/argo-workflows/) framework for making all the possible deployments of the need AI related components. The Orchestrator expects it to be already deployed and fully operational in the corresponding platform along a configured [Artifact Repository](https://argoproj.github.io/argo-workflows/configure-artifact-repository/).
 
