@@ -1,17 +1,17 @@
 {
-	"url": "http://127.0.0.1:8000/api/executions/2/",
-	"id": 2,
+	"url": "http://127.0.0.1:8000/api/executions/1/",
+	"id": 1,
 	"schema": "http://127.0.0.1:8000/api/schemas/training_from_scratch_federated_learning/",
-	"created_at": "2023-03-01T11:14:28.398017+01:00",
-	"updated_at": "2023-03-01T11:14:28.398045+01:00",
+	"created_at": "2023-08-09T15:35:52.189238+02:00",
+	"updated_at": "2023-08-09T15:35:52.189281+02:00",
 	"state": {
 		"status": "pending"
 	},
 	"input_elements": {
 		"platform_data": {
 			"data_partners_patients": {
-				"data-partner-1": ["1", "2"],
-				"data-partner-2": ["1"]
+				"data-partner-1": ["004-000001", "004-000002"],
+				"data-partner-2": ["003-000001"]
 			}
 		},
 		"federated_learning_configuration": {
@@ -22,7 +22,7 @@
 		"ai_engines": [{
 			"descriptor": "main-ai-engine",
 			"version": "http://maas-service:8000/api/ai_engines_versions/1/",
-			"version_user_vars": "http://127.0.0.1:8000/api/executions/2/download_user_vars/?descriptor=main-ai-engine"
+			"version_user_vars": "http://127.0.0.1:8000/api/executions/1/download_user_vars/?descriptor=main-ai-engine"
 		}]
 	},
 	"output_elements": {
