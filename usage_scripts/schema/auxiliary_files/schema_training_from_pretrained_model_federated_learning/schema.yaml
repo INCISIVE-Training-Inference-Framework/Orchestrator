@@ -1,0 +1,281 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: training-from-pretrained-model-federated-learning-
+spec:
+  serviceAccountName: argo-workflow
+  imagePullSecrets:
+  - name: incisive-azurecrio-secret
+  ttlStrategy:
+    secondsAfterCompletion: 100
+    secondsAfterSuccess: 100
+    secondsAfterFailure: 1200
+  hostNetwork: true
+  dnsPolicy: ClusterFirstWithHostNet
+  entrypoint: main
+  volumes:
+  - name: ai-elements
+    emptyDir: {}
+  - name: output-elements
+    emptyDir: {}
+  - name: raw-platform-vars
+    configMap:
+      name: "{{workflow.parameters.aiEngine_plaformVarsConfigMapName}}"
+  - name: platform-vars
+    emptyDir: {}
+      
+  templates:
+  - name: main
+    inputs:
+      parameters:
+      - name: platform_centralNodeLabelKey
+      - name: platform_centralNodeLabelValue
+      - name: platform_maasApiHostname
+      - name: platform_orchestratorApiHostname
+      - name: platform_processorResourceManagerVersion
+      - name: platform_processorResourceManagerCallbackUrl
+      - name: platform_federatedLearningManagerVersion
+      - name: aiEngine_plaformVarsConfigMapName
+      - name: aiEngine_plaformVarsInputElements
+      - name: aiEngine_plaformVarsInputDataTrainingTabular
+      - name: aiEngine_plaformVarsInputDataTrainingImagery
+      - name: aiEngine_plaformVarsInputAIElements
+      - name: aiEngine_plaformVarsInputModel
+      - name: aiEngine_plaformVarsInputModels
+      - name: aiEngine_plaformVarsInputUserVars
+      - name: aiEngine_plaformVarsOutputElements
+      - name: aiEngine_plaformVarsOutputModel
+      - name: aiEngine_plaformVarsOutputEvaluationMetrics
+      - name: aiEngine_plaformVarsApiPingUrl
+      - name: aiEngine_plaformVarsApiRunUrl
+      - name: aiEngine_plaformVarsApiEndUrl
+      - name: execution_id
+      - name: execution_communicationAdapterId
+      - name: execution_federatedConfigNumberIterations
+      - name: execution_federatedConfigNumberDataPartners
+      - name: execution_dataPartnerPatients
+      - name: execution_dataPartnerPatientsList
+      - name: execution_main-ai-engine-version
+      - name: execution_main-ai-engine-container-name
+      - name: execution_main-ai-engine-container-version
+      - name: execution_main-ai-engine-ai-model
+      - name: execution_main-ai-engine-prm-api-host
+      - name: execution_main-ai-engine-plaform-vars-api-host
+      - name: execution_outputAIModelName
+      - name: execution_outputAIModelDescription
+      - name: execution_outputAIModelMergeType
+    dag:
+      tasks:
+      - name: server
+        template: server-template
+      - name: client
+        template: client-template
+        arguments:
+          parameters:
+          - name: dataPartner
+            value: "{{item.data_partner}}"
+          - name: dataPath
+            value: "{{item.data_path}}"
+          - name: dataPartnerFullInfo
+            value: "{{item.full_info}}"
+        withParam: "{{inputs.parameters.execution_dataPartnerPatientsList}}"
+      - name: server-finalization
+        dependencies: [server]
+        template: server-finalization-template
+        arguments:
+          artifacts:
+          - name: output-elements
+            from: "{{tasks.server.outputs.artifacts.output-elements}}"
+        
+  - name: client-template
+    retryStrategy:
+      limit: "2"
+      retryPolicy: "OnError"
+    inputs:
+      parameters:
+      - name: dataPartner
+      - name: dataPath
+      - name: dataPartnerFullInfo
+    nodeSelector: {dataPartner: "{{inputs.parameters.dataPartner}}"}
+    volumes:
+    - name: internal-data-tabular
+      emptyDir: {}
+    - name: internal-data-imagery
+      hostPath:
+        path: "{{inputs.parameters.dataPath}}"
+        type: Directory
+    initContainers:
+    - name: config-changer
+      image: "incisive.azurecr.io/processor-resource-manager:{{workflow.parameters.platform_processorResourceManagerVersion}}"
+      args: ["{\"actions\":[{\"name\":\"change_api_host_and_port\",\"read_file_path\":\"/platform_vars.json\",\"write_file_path\":\"/tmp/config_changer/platform_vars.json\",\"api_host_and_port\":\"{{workflow.parameters.execution_main-ai-engine-plaform-vars-api-host}}\"},{\"name\":\"add_data_provider_info\",\"read_file_path\":\"/tmp/config_changer/platform_vars.json\",\"write_file_path\":\"/tmp/config_changer/platform_vars.json\",\"data_provider\":\"{{inputs.parameters.dataPartner}}\"}]}"]
+      volumeMounts:
+      - name: raw-platform-vars
+        mountPath: /platform_vars.json
+        subPath: platform_vars.json  
+      - name: platform-vars
+        mountPath: /tmp/config_changer
+    - name: inizialization
+      image: "incisive.azurecr.io/processor-resource-manager:{{workflow.parameters.platform_processorResourceManagerVersion}}"
+      resources:
+        requests:
+          cpu: 250m
+          memory: 256Mi
+        limits:
+          cpu: 1000m
+          memory: 256Mi
+      args: ["{\"actions\":[{\"name\":\"update_to_running\",\"update_status_url\":\"http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/update_to_running/\"},{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputAIElements}}\"},{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputModel}}\"},{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsOutputElements}}\"},{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsOutputModel}}\"},{\"name\":\"download_user_vars\",\"user_vars_url\":\"http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/download_user_vars/?descriptor=main-ai-engine\",\"output_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputUserVars}}\"},{\"name\":\"download_ai_model\",\"ai_model_url\":\"http://{{workflow.parameters.platform_maasApiHostname}}/api/ai_models/{{workflow.parameters.execution_main-ai-engine-ai-model}}/download_contents/\",\"output_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputModel}}\"},{\"name\":\"prepare_internal_data\",\"output_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputDataTrainingTabular}}\",\"information\":{{inputs.parameters.dataPartnerFullInfo}}}]}", "--failure-endpoint", "http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/update_to_failed/"]
+      volumeMounts:
+      - name: internal-data-tabular
+        mountPath: "{{workflow.parameters.aiEngine_plaformVarsInputDataTrainingTabular}}"
+      - name: ai-elements
+        mountPath: "{{workflow.parameters.aiEngine_plaformVarsInputAIElements}}"
+      - name: output-elements
+        mountPath: "{{workflow.parameters.aiEngine_plaformVarsOutputElements}}"
+    containerSet:
+      volumeMounts:
+      - name: internal-data-tabular
+        mountPath: "{{workflow.parameters.aiEngine_plaformVarsInputDataTrainingTabular}}"
+      - name: internal-data-imagery
+        mountPath: "{{workflow.parameters.aiEngine_plaformVarsInputDataTrainingImagery}}"
+        readOnly: true
+      - name: ai-elements
+        mountPath: "{{workflow.parameters.aiEngine_plaformVarsInputAIElements}}"
+      - name: output-elements
+        mountPath: "{{workflow.parameters.aiEngine_plaformVarsOutputElements}}"
+      - name: platform-vars
+        mountPath: /platform_vars.json
+        subPath: platform_vars.json
+      containers:
+        - name: main
+          image: "incisive.azurecr.io/federated-learning-manager:{{workflow.parameters.platform_federatedLearningManagerVersion}}"
+          resources:
+            requests:
+              cpu: 250m
+              memory: 256Mi
+            limits:
+              cpu: 1000m
+              memory: 256Mi
+          args: ["client", "{{workflow.parameters.execution_communicationAdapterId}}", "{{inputs.parameters.dataPartner}}", "{{workflow.parameters.execution_federatedConfigNumberIterations}}",  "training_from_scratch", "--failure-endpoint", "http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/update_to_failed/"]
+          envFrom:
+            - configMapRef:
+                name: federated-learning-manager-client-2nd-prototype
+          env:
+            - name: AI_ENGINE_LINKAGE_ADAPTER_SERVER_HOST
+              value: "{{workflow.parameters.execution_main-ai-engine-prm-api-host}}"
+            - name: AI_ENGINE_LINKAGE_ADAPTER_CLIENT_HOST
+              value: "{{workflow.parameters.execution_main-ai-engine-plaform-vars-api-host}}"
+        - name: main-ai-engine
+          image: "incisive.azurecr.io/{{workflow.parameters.execution_main-ai-engine-container-name}}:{{workflow.parameters.execution_main-ai-engine-container-version}}"
+          resources:
+            requests:
+              cpu: 250m
+              memory: 2560Mi
+            limits:
+              cpu: 2000m
+              memory: 2560Mi
+        
+  - name: server-template
+    retryStrategy:
+      limit: "2"
+      retryPolicy: "OnError"
+    nodeSelector: {"{{workflow.parameters.platform_centralNodeLabelKey}}": "{{workflow.parameters.platform_centralNodeLabelValue}}"}
+    outputs:
+      artifacts:
+      - name: output-elements
+        path: "{{workflow.parameters.aiEngine_plaformVarsOutputElements}}"
+        azure:
+          endpoint: https://incisivesa.blob.core.windows.net
+          container: federated-learning
+          blob: "output-elements-{{workflow.creationTimestamp.RFC3339}}"
+          accountKeySecret:
+            name: incisive-azure-storage-credentials
+            key: account-access-key
+    initContainers:
+    - name: config-changer
+      image: "incisive.azurecr.io/processor-resource-manager:{{workflow.parameters.platform_processorResourceManagerVersion}}"
+      args: ["{\"actions\":[{\"name\":\"change_api_host_and_port\",\"read_file_path\":\"/platform_vars.json\",\"write_file_path\":\"/tmp/config_changer/platform_vars.json\",\"api_host_and_port\":\"{{workflow.parameters.execution_main-ai-engine-plaform-vars-api-host}}\"}]}"]
+      volumeMounts:
+      - name: raw-platform-vars
+        mountPath: /platform_vars.json
+        subPath: platform_vars.json  
+      - name: platform-vars
+        mountPath: /tmp/config_changer
+    - name: inizialization
+      image: "incisive.azurecr.io/processor-resource-manager:{{workflow.parameters.platform_processorResourceManagerVersion}}"
+      resources:
+        requests:
+          cpu: 250m
+          memory: 256Mi
+        limits:
+          cpu: 1000m
+          memory: 256Mi
+      args: ["{\"actions\":[{\"name\":\"update_to_running\",\"update_status_url\":\"http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/update_to_running/\"},{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputAIElements}}\"},{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputModels}}\"},{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsOutputElements}}\"},{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsOutputModel}}\"},{\"name\":\"download_user_vars\",\"user_vars_url\":\"http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/download_user_vars/?descriptor=main-ai-engine\",\"output_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputUserVars}}\"}]}", "--failure-endpoint", "http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/update_to_failed/"]
+      volumeMounts:
+      - name: ai-elements
+        mountPath: "{{workflow.parameters.aiEngine_plaformVarsInputAIElements}}"
+      - name: output-elements
+        mountPath: "{{workflow.parameters.aiEngine_plaformVarsOutputElements}}"
+    containerSet:
+      volumeMounts:
+      - name: ai-elements
+        mountPath: "{{workflow.parameters.aiEngine_plaformVarsInputAIElements}}"
+      - name: output-elements
+        mountPath: "{{workflow.parameters.aiEngine_plaformVarsOutputElements}}"
+      - name: platform-vars
+        mountPath: /platform_vars.json
+        subPath: platform_vars.json
+      containers:
+        - name: main
+          image: "incisive.azurecr.io/federated-learning-manager:{{workflow.parameters.platform_federatedLearningManagerVersion}}"
+          resources:
+            requests:
+              cpu: 250m
+              memory: 256Mi
+            limits:
+              cpu: 1000m
+              memory: 256Mi
+          args: ["server", "{{workflow.parameters.execution_communicationAdapterId}}", "{{workflow.parameters.execution_federatedConfigNumberIterations}}", "{{workflow.parameters.execution_federatedConfigNumberDataPartners}}", "merging_models", "--failure-endpoint", "http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/update_to_failed/"]
+          envFrom:
+            - configMapRef:
+                name: federated-learning-manager-server-2nd-prototype
+          env:
+            - name: AI_ENGINE_LINKAGE_ADAPTER_SERVER_HOST
+              value: "{{workflow.parameters.execution_main-ai-engine-prm-api-host}}"
+            - name: AI_ENGINE_LINKAGE_ADAPTER_CLIENT_HOST
+              value: "{{workflow.parameters.execution_main-ai-engine-plaform-vars-api-host}}"
+        - name: main-ai-engine
+          image: "incisive.azurecr.io/{{workflow.parameters.execution_main-ai-engine-container-name}}:{{workflow.parameters.execution_main-ai-engine-container-version}}"
+          resources:
+            requests:
+              cpu: 250m
+              memory: 3584Mi
+            limits:
+              cpu: 4000m
+              memory: 3584Mi
+        
+  - name: server-finalization-template
+    retryStrategy:
+      limit: "2"
+      retryPolicy: "OnError"
+    nodeSelector: {"{{workflow.parameters.platform_centralNodeLabelKey}}": "{{workflow.parameters.platform_centralNodeLabelValue}}"}
+    inputs:
+      artifacts:
+      - name: output-elements
+        path: "{{workflow.parameters.aiEngine_plaformVarsOutputElements}}"
+        azure:
+          endpoint: https://incisivesa.blob.core.windows.net
+          container: federated-learning
+          blob: "output-elements-{{workflow.creationTimestamp.RFC3339}}"
+          accountKeySecret:
+            name: incisive-azure-storage-credentials
+            key: account-access-key
+    container:
+      image: "incisive.azurecr.io/processor-resource-manager:{{workflow.parameters.platform_processorResourceManagerVersion}}"
+      resources:
+        requests:
+          cpu: 250m
+          memory: 256Mi
+        limits:
+          cpu: 1000m
+          memory: 256Mi
+      args: ["{\"actions\":[{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputAIElements}}\"},{\"name\":\"download_user_vars\",\"user_vars_url\":\"http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/download_user_vars/?descriptor=main-ai-engine\",\"output_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputUserVars}}\"},{\"name\":\"update_to_succeeded\",\"update_status_url\":\"http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/update_to_succeeded/\",\"upload_ai_model\":true,\"upload_evaluation_metrics\":true,\"upload_generic_file\":false,\"ai_model_upload_url\":\"http://{{workflow.parameters.platform_maasApiHostname}}/api/ai_models/update_or_create/\",\"ai_model_delete_url\":\"http://{{workflow.parameters.platform_maasApiHostname}}/api/ai_models/\",\"ai_model_upload_path\":\"{{workflow.parameters.aiEngine_plaformVarsOutputModel}}/*\",\"ai_model_user_vars_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputUserVars}}\",\"ai_model_upload_metadata\":{\"ai_engine_version\":{{workflow.parameters.execution_main-ai-engine-version}},\"name\":\"{{workflow.parameters.execution_outputAIModelName}}\",\"data_partners_patients\":{{workflow.parameters.execution_dataPartnerPatients}},\"description\":\"{{workflow.parameters.execution_outputAIModelDescription}}\",\"merge_type\":\"{{workflow.parameters.execution_outputAIModelMergeType}}\",\"parent_ai_model\":{{workflow.parameters.execution_main-ai-engine-ai-model}}},\"evaluation_metrics_multiple\":true,\"evaluation_metrics_upload_url\":\"http://{{workflow.parameters.platform_maasApiHostname}}/api/evaluation_metrics/update_or_create/\",\"evaluation_metrics_delete_url\":\"http://{{workflow.parameters.platform_maasApiHostname}}/api/evaluation_metrics/\",\"evaluation_metrics_upload_path\":\"{{workflow.parameters.aiEngine_plaformVarsOutputElements}}/evaluation_metrics/\",\"evaluation_metrics_patients_info\":{{workflow.parameters.execution_dataPartnerPatients}},\"evaluation_metrics_upload_metadata\":{\"data_partners_patients\":{}}}]}", "--failure-endpoint", "http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/update_to_failed/"]
