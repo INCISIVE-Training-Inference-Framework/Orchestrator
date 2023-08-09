@@ -70,7 +70,8 @@
         "name": "{{workflow.parameters.execution_outputAIModelName}}",
         "data_partners_patients": {{workflow.parameters.execution_dataPartnerPatients}},
         "description": "{{workflow.parameters.execution_outputAIModelDescription}}",
-        "merge_type": "{{workflow.parameters.execution_outputAIModelMergeType}}"
+        "merge_type": "{{workflow.parameters.execution_outputAIModelMergeType}}",
+        "parent_ai_model": {{workflow.parameters.execution_main-ai-engine-ai-model}}
       },
 
       "evaluation_metrics_upload_url": "http://{{workflow.parameters.platform_maasApiHostname}}/api/evaluation_metrics/update_or_create/",
