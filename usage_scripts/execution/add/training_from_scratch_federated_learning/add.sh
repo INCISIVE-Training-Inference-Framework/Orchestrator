@@ -17,7 +17,7 @@ schema="training_from_scratch_federated_learning" # str
 
 # input attributes
 
-input_platform_data="{\"data-partner-1\": [\"1\", \"2\"], \"data-partner-2\": [\"1\"]}" # dict[str:list[str]], the partners must exist on the platform
+input_platform_data="{\"data-partner-1\": {\"system_path\": \"\", \"fields_definition\": \"\", \"sheets_definition\": \"\", \"patients\": [{\"id\": \"patient\", \"clinical_data\": \"patient\"}]}, \"data-partner-2\": {\"system_path\": \"\", \"fields_definition\": \"\", \"sheets_definition\": \"\", \"patients\": [{\"id\": \"patient\", \"clinical_data\": \"patient\"}]}}" # dict[str:list[str]], the partners must exist on the platform
 input_federated_learning_configuration='{"number_iterations": 2}'
 
 # AI logic attributes
