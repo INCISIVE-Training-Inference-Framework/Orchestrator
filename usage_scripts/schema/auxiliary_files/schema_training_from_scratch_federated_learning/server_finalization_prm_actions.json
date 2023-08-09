@@ -1,6 +1,15 @@
 {
   "actions": [
     {
+      "name": "create_directory",
+      "directory_path": "{{workflow.parameters.aiEngine_plaformVarsInputAIElements}}"
+    },
+    {
+      "name": "download_user_vars",
+      "user_vars_url": "http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/download_user_vars/?descriptor=main-ai-engine",
+      "output_path": "{{workflow.parameters.aiEngine_plaformVarsInputUserVars}}"
+    },
+    {
       "name": "update_to_succeeded",
       "update_status_url": "http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/update_to_succeeded/",
       "upload_ai_model": true,
@@ -18,12 +27,14 @@
         "description": "{{workflow.parameters.execution_outputAIModelDescription}}",
         "merge_type": "{{workflow.parameters.execution_outputAIModelMergeType}}"
       },
-
+      
+      "evaluation_metrics_multiple": true,
       "evaluation_metrics_upload_url": "http://{{workflow.parameters.platform_maasApiHostname}}/api/evaluation_metrics/update_or_create/",
       "evaluation_metrics_delete_url": "http://{{workflow.parameters.platform_maasApiHostname}}/api/evaluation_metrics/",
-      "evaluation_metrics_upload_path": "{{workflow.parameters.aiEngine_plaformVarsOutputEvaluationMetrics}}",
+      "evaluation_metrics_upload_path": "{{workflow.parameters.aiEngine_plaformVarsOutputElements}}/evaluation_metrics/",
+      "evaluation_metrics_patients_info": {{workflow.parameters.execution_dataPartnerPatients}}, 
       "evaluation_metrics_upload_metadata": {
-        "data_partners_patients": {{workflow.parameters.execution_dataPartnerPatients}}
+        "data_partners_patients": {}
       }
     } 
   ]
