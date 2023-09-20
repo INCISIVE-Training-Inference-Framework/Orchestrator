@@ -94,5 +94,7 @@ def retrieve_ai_model_information(ai_model_id: int) -> int:
     except Exception as e:
         if not isinstance(e, serializers.ValidationError):
             raise InternalError(f'Error while retrieving AI Model from MaaS. {e}', e)
+        else:
+            raise e
 
     return download_resume_retries

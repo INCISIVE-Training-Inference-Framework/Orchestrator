@@ -70,7 +70,7 @@ spec:
     initContainers:
     - name: config-changer
       image: "incisive.azurecr.io/processor-resource-manager:{{inputs.parameters.platform_processorResourceManagerVersion}}"
-      args: ["{\"actions\":[{\"name\":\"change_api_host_and_port\",\"read_file_path\":\"/platform_vars.json\",\"write_file_path\":\"/tmp/config_changer/platform_vars.json\",\"api_host_and_port\":\"{{inputs.parameters.execution_main-ai-engine-plaform-vars-api-host}}\"}]}"]
+      args: ["{\"actions\":[{\"name\":\"change_api_host_and_port\",\"read_file_path\":\"/platform_vars.json\",\"write_file_path\":\"/tmp/config_changer/platform_vars.json\",\"api_host_and_port\":\"{{inputs.parameters.execution_main-ai-engine-plaform-vars-api-host}}\"}]}", "--failure-actions", "{\"actions\":[{\"name\":\"ping_ai_engine\",\"max_initialization_time\":30,\"client_host\":\"{{workflow.parameters.execution_main-ai-engine-plaform-vars-api-host}}\",\"ping_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiPingUrl}}\"},{\"name\":\"end_ai_engine\",\"max_finalization_time\":30,\"max_finalization_retries\":4,\"client_host\":\"{{workflow.parameters.execution_main-ai-engine-plaform-vars-api-host}}\",\"ping_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiPingUrl}}\",\"end_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiEndUrl}}\"}]
       volumeMounts:
       - name: raw-platform-vars
         mountPath: /platform_vars.json
