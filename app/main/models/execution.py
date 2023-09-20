@@ -177,6 +177,8 @@ class ExecutionInputAIEngine(models.Model):
     version_user_vars = models.FileField(upload_to=execution_ai_engine_version_user_vars_path, max_length=300)
     container_name = models.CharField(max_length=200)
     container_version = models.CharField(max_length=50)
+    max_iteration_time = models.IntegerField()
+
     execution = models.ForeignKey(
         Execution,
         on_delete=models.CASCADE
@@ -191,6 +193,8 @@ class ExecutionInputAIEngine(models.Model):
 
 class ExecutionInputAIModel(models.Model):
     ai_model = models.IntegerField()
+    download_resume_retries = models.IntegerField()
+
     input_ai_engine = models.OneToOneField(
         ExecutionInputAIEngine,
         on_delete=models.CASCADE,

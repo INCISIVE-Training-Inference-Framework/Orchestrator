@@ -33,12 +33,13 @@
     {
       "name": "download_ai_model",
       "ai_model_url": "http://{{workflow.parameters.platform_maasApiHostname}}/api/ai_models/{{workflow.parameters.execution_main-ai-engine-ai-model}}/download_contents/",
+      "download_resume_retries": "{{workflow.parameters.execution_main-ai-engine-ai-model-download-resume-retries}}",
       "output_path": "{{workflow.parameters.aiEngine_plaformVarsInputModel}}"
     },
     {
       "name": "run_ai_engine",
       "use_case": "inferencing_from_pretrained_model",
-      "max_iteration_time": 1200,
+      "max_iteration_time": "{{workflow.parameters.execution_main-ai-engine-container-version-max-iteration-time}}",
       "max_initialization_time": 600,
       "client_host": "{{workflow.parameters.execution_main-ai-engine-plaform-vars-api-host}}",
       "server_host": "{{workflow.parameters.execution_main-ai-engine-prm-api-host}}",

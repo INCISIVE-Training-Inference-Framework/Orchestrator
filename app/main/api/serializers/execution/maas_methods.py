@@ -23,6 +23,7 @@ def retrieve_container_information(ai_engine_version_id):
         # retrieve AI Engine Version
         headers = {'Accept': 'application/json'}
         r = requests.get(get_maas_url('ai_engine_version', ai_engine_version_id), headers=headers)
+
         if r.status_code == 500:
             message = 'Internal error while retrieving AI Engine Version from MaaS'
             raise InternalError(f'{message}. Status code {r.status_code}', None)
@@ -34,6 +35,7 @@ def retrieve_container_information(ai_engine_version_id):
             raise serializers.ValidationError(f'Error while retrieving AI Engine Version from MaaS. Status code {r.status_code}. {message}')
         response = r.json()
         container_version = response['container_version']
+        max_iteration_time = response['max_iteration_time']
     except Exception as e:
         if not isinstance(e, serializers.ValidationError):
             raise InternalError(f'Error while retrieving AI Engine Version from MaaS. {e}', e)
@@ -61,4 +63,36 @@ def retrieve_container_information(ai_engine_version_id):
         else:
             raise e
 
-    return container_name, container_version
+    return container_name, container_version, max_iteration_time
+
+
+def retrieve_ai_model_information(ai_model_id: int) -> int:
+    """
+
+    """
+    try:
+        # Retrieve AI Model
+        headers = {'Accept': 'application/json'}
+        r = requests.get(get_maas_url('ai_model', ai_model_id), headers=headers)
+
+        # Evaluate response status code
+        if r.status_code == 500:
+            message = 'Internal error while retrieving AI Model from MaaS'
+            raise InternalError(f'{message}. Status code {r.status_code}', None)
+        elif r.status_code != 200:
+            try:
+                message = r.json()
+            except:
+                message = ''
+            raise serializers.ValidationError(
+                f'Error while retrieving AI Model from MaaS. Status code {r.status_code}. {message}')
+
+        # Get the desired values from the AI Model response
+        response = r.json()
+        download_resume_retries = response['download_resume_retries']
+
+    except Exception as e:
+        if not isinstance(e, serializers.ValidationError):
+            raise InternalError(f'Error while retrieving AI Model from MaaS. {e}', e)
+
+    return download_resume_retries
