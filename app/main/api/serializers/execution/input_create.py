@@ -15,7 +15,9 @@ from main.models import \
     ExecutionInputAIEngine, \
     ExecutionInputAIModel, \
     ExecutionOutputAIModel
-from .maas_methods import retrieve_container_information
+from .maas_methods import \
+    retrieve_container_information, \
+    retrieve_ai_model_information
 
 
 # TODO implement validate methods
@@ -247,14 +249,25 @@ class ExecutionInputSerializerInputAIEngine(serializers.Serializer):
             f'{validated_data["descriptor"]}_version_user_vars'
         )
 
-        # retrieve container name and version from MaaS
+        # retrieve container name and version and max iteration time from MaaS
         container_name = 'dummy'
         container_version = 'dummy'
+        max_iteration_time = 1200 # Dummy value, same as in MaaS
+
+        # retrieve AI model fields from MaaS
+        download_resume_retries = 4 # Dummy value, same as in MaaS
+
         if settings.VALIDATE_WITH_MAAS:
-            container_name, container_version = retrieve_container_information(validated_data['version'])
+            container_name, container_version, max_iteration_time = retrieve_container_information(validated_data['version'])
+            if is_ai_model_required:
+                download_resume_retries = retrieve_ai_model_information(validated_data['ai_model'])
+
 
         validated_data['container_name'] = container_name
         validated_data['container_version'] = container_version
+        validated_data['max_iteration_time'] = max_iteration_time
+        validated_data['download_resume_retries'] = download_resume_retries
+
 
         return validated_data
 
@@ -271,10 +284,15 @@ class ExecutionInputSerializerInputAIEngine(serializers.Serializer):
             'version_user_vars': validated_data['version_user_vars'],
             'container_name': validated_data['container_name'],
             'container_version': validated_data['container_version'],
+            'max_iteration_time': validated_data['max_iteration_time'],
             'execution': execution_instance
         })
         if 'ai_model' in validated_data:
-            ExecutionInputAIModel.objects.create(**{'ai_model': validated_data['ai_model'], 'input_ai_engine': ai_engine_schema})
+            ExecutionInputAIModel.objects.create(**{
+                'ai_model': validated_data['ai_model'],
+                'download_resume_retries': validated_data['download_resume_retries'],
+                'input_ai_engine': ai_engine_schema
+            })
 
 
 class ExecutionInputSerializerAIElements(serializers.Serializer):
