@@ -23,12 +23,12 @@
     },
     {
       "name": "download_user_vars",
-      "user_vars_url": "http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/download_user_vars/?descriptor=prioritization-and-segmentation",
+      "user_vars_url": "http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/download_user_vars/?descriptor=localization",
       "output_path": "{{workflow.parameters.aiEngine_plaformVarsInputUserVars}}"
     },
     {
       "name": "download_ai_model",
-      "ai_model_url": "http://{{workflow.parameters.platform_maasApiHostname}}/api/ai_models/{{workflow.parameters.execution_prioritization-and-segmentation-ai-model}}/download_contents/",
+      "ai_model_url": "http://{{workflow.parameters.platform_maasApiHostname}}/api/ai_models/{{workflow.parameters.execution_localization-ai-model}}/download_contents/",
       "output_path": "{{workflow.parameters.aiEngine_plaformVarsInputModel}}"
     },
     {
@@ -40,8 +40,8 @@
       "use_case": "inferencing_from_pretrained_model",
       "max_iteration_time": 1200,
       "max_initialization_time": 600,
-      "client_host": "{{workflow.parameters.execution_prioritization-and-segmentation-plaform-vars-api-host}}",
-      "server_host": "{{workflow.parameters.execution_prioritization-and-segmentation-prm-api-host}}",
+      "client_host": "{{workflow.parameters.execution_localization-plaform-vars-api-host}}",
+      "server_host": "{{workflow.parameters.execution_localization-prm-api-host}}",
       "ping_url": "{{workflow.parameters.aiEngine_plaformVarsApiPingUrl}}",
       "run_url": "{{workflow.parameters.aiEngine_plaformVarsApiRunUrl}}",
       "callback_url": "{{workflow.parameters.platform_processorResourceManagerCallbackUrl}}"
@@ -50,7 +50,7 @@
       "name": "end_ai_engine",
       "max_finalization_time": 30,
       "max_finalization_retries": 4,
-      "client_host": "{{workflow.parameters.execution_prioritization-and-segmentation-plaform-vars-api-host}}",
+      "client_host": "{{workflow.parameters.execution_localization-plaform-vars-api-host}}",
       "ping_url": "{{workflow.parameters.aiEngine_plaformVarsApiPingUrl}}",
       "end_url": "{{workflow.parameters.aiEngine_plaformVarsApiEndUrl}}"
     }

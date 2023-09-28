@@ -28,20 +28,35 @@ input_federated_learning_configuration="false" # bool
 
 # AI logic attributes
 
-_1_input_ai_engine_descriptor="prioritization-and-segmentation" # str, cannot contain spaces or special symbols
+_1_input_ai_engine_descriptor="segmentation" # str, cannot contain spaces or special symbols
 _1_input_ai_engine_role_type="segmentation" # str, possible values -> the ones defined on the MaaS along the symbol *
 _1_input_ai_engine_functionalities='["inferencing_from_pretrained_model"]' # list[str], possible values -> the ones defined on the MaaS
 _1_input_ai_engine_model="true" # bool
 
-_2_input_ai_engine_descriptor="birads-classification" # str, cannot contain spaces or special symbols
-_2_input_ai_engine_role_type="classification" # str, possible values -> the ones defined on the MaaS along the symbol *
+_2_input_ai_engine_descriptor="localization" # str, cannot contain spaces or special symbols
+_2_input_ai_engine_role_type="segmentation" # str, possible values -> the ones defined on the MaaS along the symbol *
 _2_input_ai_engine_functionalities='["inferencing_from_pretrained_model"]' # list[str], possible values -> the ones defined on the MaaS
 _2_input_ai_engine_model="true" # bool
 
-_3_input_ai_engine_descriptor="medical-report-generation" # str, cannot contain spaces or special symbols
-_3_input_ai_engine_role_type="report_generation" # str, possible values -> the ones defined on the MaaS along the symbol *
+_3_input_ai_engine_descriptor="prioritization" # str, cannot contain spaces or special symbols
+_3_input_ai_engine_role_type="segmentation" # str, possible values -> the ones defined on the MaaS along the symbol *
 _3_input_ai_engine_functionalities='["inferencing_from_pretrained_model"]' # list[str], possible values -> the ones defined on the MaaS
-_3_input_ai_engine_model="false" # bool
+_3_input_ai_engine_model="true" # bool
+
+_4_input_ai_engine_descriptor="birads-classification" # str, cannot contain spaces or special symbols
+_4_input_ai_engine_role_type="classification" # str, possible values -> the ones defined on the MaaS along the symbol *
+_4_input_ai_engine_functionalities='["inferencing_from_pretrained_model"]' # list[str], possible values -> the ones defined on the MaaS
+_4_input_ai_engine_model="true" # bool
+
+_5_input_ai_engine_descriptor="density-classification" # str, cannot contain spaces or special symbols
+_5_input_ai_engine_role_type="classification" # str, possible values -> the ones defined on the MaaS along the symbol *
+_5_input_ai_engine_functionalities='["inferencing_from_pretrained_model"]' # list[str], possible values -> the ones defined on the MaaS
+_5_input_ai_engine_model="true" # bool
+
+_6_input_ai_engine_descriptor="medical-report-generation" # str, cannot contain spaces or special symbols
+_6_input_ai_engine_role_type="report_generation" # str, possible values -> the ones defined on the MaaS along the symbol *
+_6_input_ai_engine_functionalities='["inferencing_from_pretrained_model"]' # list[str], possible values -> the ones defined on the MaaS
+_6_input_ai_engine_model="false" # bool
 
 # output attributes
 
@@ -81,6 +96,24 @@ curl -X POST http://${orchestrator_api_hostname}/api/schemas/ \
                                             \"role_type\": \"${_3_input_ai_engine_role_type}\",
                                             \"functionalities\": ${_3_input_ai_engine_functionalities},
                                             \"ai_model\": ${_3_input_ai_engine_model}
+                                        },
+                                        {
+                                            \"descriptor\": \"${_4_input_ai_engine_descriptor}\",
+                                            \"role_type\": \"${_4_input_ai_engine_role_type}\",
+                                            \"functionalities\": ${_4_input_ai_engine_functionalities},
+                                            \"ai_model\": ${_4_input_ai_engine_model}
+                                        },
+                                        {
+                                            \"descriptor\": \"${_5_input_ai_engine_descriptor}\",
+                                            \"role_type\": \"${_5_input_ai_engine_role_type}\",
+                                            \"functionalities\": ${_5_input_ai_engine_functionalities},
+                                            \"ai_model\": ${_5_input_ai_engine_model}
+                                        },
+                                        {
+                                            \"descriptor\": \"${_6_input_ai_engine_descriptor}\",
+                                            \"role_type\": \"${_6_input_ai_engine_role_type}\",
+                                            \"functionalities\": ${_6_input_ai_engine_functionalities},
+                                            \"ai_model\": ${_6_input_ai_engine_model}
                                         }
                                     ]
                                 },
