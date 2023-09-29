@@ -19,4 +19,6 @@ platform_centralNodeLabelValue: "auth-rm2"
 execution_id: 1
 execution_main-ai-engine-container-name: "ai-engines/lung-chest-xray-classification"
 execution_main-ai-engine-container-version: "2.0.0"
+execution_main-ai-engine-container-version-max-iteration-time: 1200
 execution_main-ai-engine-ai-model: 1
+execution_main-ai-engine-ai-model-download-resume-retries: 4

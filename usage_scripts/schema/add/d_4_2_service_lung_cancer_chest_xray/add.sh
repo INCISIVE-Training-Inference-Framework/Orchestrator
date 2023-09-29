@@ -13,7 +13,7 @@ source ../global_variables.sh
 # --> REQUIRED LOCAL VARIABLES
 
 # main attributes
-name="d_4_2_lung_cancer" # str
+name="d_4_2_lung_cancer_chest_xray" # str
 type="joint" # str, possible values -> {individual, joint}, individual for one AI Engine executions, joint for pipelines
 implementation="argo_workflows" # str, possible values -> {argo_workflows}
 description="A schema that performs the Lung Cancer Service from D.4.2, creating a set of results and charts"

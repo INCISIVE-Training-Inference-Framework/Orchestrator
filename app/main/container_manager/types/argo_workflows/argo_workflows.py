@@ -176,8 +176,13 @@ class ContainerManagerArgoWorkflows(ContainerManagerInterface):
             parameters[f'execution_{ai_engine.descriptor}-version'] = ai_engine.version
             parameters[f'execution_{ai_engine.descriptor}-container-name'] = ai_engine.container_name
             parameters[f'execution_{ai_engine.descriptor}-container-version'] = ai_engine.container_version
+            parameters[f'execution_{ai_engine.descriptor}-container-version-max-iteration-time'] = \
+                ai_engine.max_iteration_time
+
             if ai_engine.requires_ai_model():
                 parameters[f'execution_{ai_engine.descriptor}-ai-model'] = ai_engine.get_ai_model().ai_model
+                parameters[f'execution_{ai_engine.descriptor}-ai-model-download-resume-retries'] = \
+                    ai_engine.get_ai_model().download_resume_retries
 
         if execution.schema.produces_output_elements_ai_model():
             parameters['execution_outputAIModelName'] = execution.get_output_elements_ai_model().name
