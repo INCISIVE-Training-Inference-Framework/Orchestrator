@@ -90,6 +90,24 @@ class ExecutionViewSet(
     @action(
         methods=['get'],
         detail=True,
+        url_name='data_partner_information'
+    )
+    def retrieve_data_partner_information(self, *args, **kwargs):
+        data_partner = self.request.query_params.get('data_partner')
+        if data_partner is None:
+            raise serializers.ValidationError('data_partner query parameter is missing')
+        instance = self.get_object()
+        if not instance.schema.requires_input_elements_platform_data():
+            raise serializers.ValidationError(f'\"{instance.schema.name}\" does not require data from data partners')
+        included_data_partners = instance.get_input_elements_platform_data().parsed_data_partners_patients
+        if data_partner not in included_data_partners:
+            raise serializers.ValidationError(f'data_partner {data_partner} is not taken part in the execution')
+        data_partner_patients_full_info = instance.get_input_elements_platform_data().parsed_data_partners_patients_full[data_partner]
+        return Response(data_partner_patients_full_info, status=status.HTTP_200_OK)
+
+    @action(
+        methods=['get'],
+        detail=True,
         url_name='external_data'
     )
     def download_external_data(self, *args, **kwargs):

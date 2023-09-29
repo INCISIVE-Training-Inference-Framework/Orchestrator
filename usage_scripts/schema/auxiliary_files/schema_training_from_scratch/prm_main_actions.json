@@ -24,7 +24,7 @@
     {
       "name": "prepare_internal_data",
       "output_path": "{{workflow.parameters.aiEngine_plaformVarsInputDataTrainingTabular}}",
-      "information": {{workflow.parameters.execution_dataPartnerPatientsFullInfo}}
+      "information_url": "http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/retrieve_data_partner_information/?data_partner={{inputs.parameters.execution_dataPartner}}"
     },
     {
       "name": "run_ai_engine",

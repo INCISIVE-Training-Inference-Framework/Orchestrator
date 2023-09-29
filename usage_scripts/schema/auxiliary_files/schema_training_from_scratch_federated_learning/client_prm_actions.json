@@ -28,7 +28,7 @@
     {
       "name": "prepare_internal_data",
       "output_path": "{{workflow.parameters.aiEngine_plaformVarsInputDataTrainingTabular}}",
-      "information": {{inputs.parameters.dataPartnerFullInfo}}
+      "information_url": "http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/retrieve_data_partner_information/?data_partner={{inputs.parameters.dataPartner}}"
     }
   ]
 }

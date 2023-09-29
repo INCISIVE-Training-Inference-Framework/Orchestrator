@@ -76,8 +76,6 @@ spec:
             value: "{{item.data_partner}}"
           - name: dataPath
             value: "{{item.data_path}}"
-          - name: dataPartnerFullInfo
-            value: "{{item.full_info}}"
         withParam: "{{inputs.parameters.execution_dataPartnerPatientsList}}"
       - name: server-finalization
         dependencies: [server]
@@ -95,7 +93,6 @@ spec:
       parameters:
       - name: dataPartner
       - name: dataPath
-      - name: dataPartnerFullInfo
     nodeSelector: {dataPartner: "{{inputs.parameters.dataPartner}}"}
     volumes:
     - name: internal-data-tabular
@@ -123,7 +120,7 @@ spec:
         limits:
           cpu: 1000m
           memory: 256Mi
-      args: ["{\"actions\":[{\"name\":\"update_to_running\",\"update_status_url\":\"http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/update_to_running/\"},{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputAIElements}}\"},{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputModel}}\"},{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsOutputElements}}\"},{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsOutputModel}}\"},{\"name\":\"download_user_vars\",\"user_vars_url\":\"http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/download_user_vars/?descriptor=main-ai-engine\",\"output_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputUserVars}}\"},{\"name\":\"download_ai_model\",\"ai_model_url\":\"http://{{workflow.parameters.platform_maasApiHostname}}/api/ai_models/{{workflow.parameters.execution_main-ai-engine-ai-model}}/download_contents/\",\"output_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputModel}}\"},{\"name\":\"prepare_internal_data\",\"output_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputDataTrainingTabular}}\",\"information\":{{inputs.parameters.dataPartnerFullInfo}}}]}", "--failure-endpoint", "http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/update_to_failed/"]
+      args: ["{\"actions\":[{\"name\":\"update_to_running\",\"update_status_url\":\"http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/update_to_running/\"},{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputAIElements}}\"},{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputModel}}\"},{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsOutputElements}}\"},{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsOutputModel}}\"},{\"name\":\"download_user_vars\",\"user_vars_url\":\"http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/download_user_vars/?descriptor=main-ai-engine\",\"output_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputUserVars}}\"},{\"name\":\"download_ai_model\",\"ai_model_url\":\"http://{{workflow.parameters.platform_maasApiHostname}}/api/ai_models/{{workflow.parameters.execution_main-ai-engine-ai-model}}/download_contents/\",\"output_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputModel}}\"},{\"name\":\"prepare_internal_data\",\"output_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputDataTrainingTabular}}\",\"information_url\":\"http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/retrieve_data_partner_information/?data_partner={{inputs.parameters.dataPartner}}\"}]}", "--failure-endpoint", "http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/update_to_failed/"]
       volumeMounts:
       - name: internal-data-tabular
         mountPath: "{{workflow.parameters.aiEngine_plaformVarsInputDataTrainingTabular}}"
