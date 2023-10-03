@@ -13,10 +13,10 @@ source ../global_variables.sh
 # --> REQUIRED LOCAL VARIABLES
 
 # main attributes
-name="d_4_2_breast_cancer" # str
+name="d_4_2_breast_cancer_mg" # str
 type="joint" # str, possible values -> {individual, joint}, individual for one AI Engine executions, joint for pipelines
 implementation="argo_workflows" # str, possible values -> {argo_workflows}
-description="A schema that performs the Breast Cancer Service from D.4.2, creating a set of results and charts"
+description="A schema that performs the Breast Cancer MG Service from D.4.2, creating a set of results and charts"
 auxiliary_file="./auxiliary_files/schema_d_4_2_service_breast_cancer/schema.yaml" # FILE, optional (it is mandatory for the argo_workflows implementation)
 
 # input attributes

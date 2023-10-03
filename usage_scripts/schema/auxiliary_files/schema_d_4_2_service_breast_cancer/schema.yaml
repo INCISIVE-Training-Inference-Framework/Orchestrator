@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Workflow
 metadata:
-  generateName: d-4-2-service-breast-cancer-
+  generateName: d-4-2-service-breast-cancer-mg-
 spec:
   serviceAccountName: argo-workflow
   imagePullSecrets:
