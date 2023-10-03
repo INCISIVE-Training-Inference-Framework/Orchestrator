@@ -29,7 +29,7 @@
     {
       "name": "run_ai_engine",
       "use_case": "training_from_scratch",
-      "max_iteration_time": 1200,
+      "max_iteration_time": 2400,
       "max_initialization_time": 600,
       "client_host": "{{workflow.parameters.execution_main-ai-engine-plaform-vars-api-host}}",
       "server_host": "{{workflow.parameters.execution_main-ai-engine-prm-api-host}}",
