@@ -69,18 +69,18 @@ spec:
         - name: execution_prioritization-ai-model
         - name: execution_prioritization-prm-api-host
         - name: execution_prioritization-plaform-vars-api-host
-        - name: execution_birads-classification-container-name
-        - name: execution_birads-classification-container-version
-        - name: execution_birads-classification-container-version-max-iteration-time
-        - name: execution_birads-classification-ai-model
-        - name: execution_birads-classification-prm-api-host
-        - name: execution_birads-classification-plaform-vars-api-host
-        - name: execution_density-classification-container-name
-        - name: execution_density-classification-container-version
-        - name: execution_density-classification-container-version-max-iteration-time
-        - name: execution_density-classification-ai-model
-        - name: execution_density-classification-prm-api-host
-        - name: execution_density-classification-plaform-vars-api-host
+        - name: execution_birads-classification-xai-container-name
+        - name: execution_birads-classification-xai-container-version
+        - name: execution_birads-classification-xai-container-version-max-iteration-time
+        - name: execution_birads-classification-xai-ai-model
+        - name: execution_birads-classification-xai-prm-api-host
+        - name: execution_birads-classification-xai-plaform-vars-api-host
+        - name: execution_density-classification-xai-container-name
+        - name: execution_density-classification-xai-container-version
+        - name: execution_density-classification-xai-container-version-max-iteration-time
+        - name: execution_density-classification-xai-ai-model
+        - name: execution_density-classification-xai-prm-api-host
+        - name: execution_density-classification-xai-plaform-vars-api-host
         - name: execution_medical-report-generation-container-name
         - name: execution_medical-report-generation-container-version
         - name: execution_medical-report-generation-container-version-max-iteration-time
@@ -107,7 +107,7 @@ spec:
               value: "{{ workflow.parameters.execution_{{item}}-ai-model}}"
             - name: ai-model-download-resume-retries
               value: "{{ workflow.parameters.execution_{{item}}-ai-model-download-resume-retries}}"
-          withParam: "[segmentation, localization, prioritization, birads-classification, density-classification]"
+          withParam: "[segmentation, localization, prioritization, birads-classification-xai, density-classification-xai]"
       - - name: medical-report-generation
           template: medical-report-generation-template
           arguments:
@@ -119,9 +119,9 @@ spec:
             - name: prioritization-output
               from: "{{steps.prioritization.outputs.artifacts.prioritization-output}}"
             - name: birads-output
-              from: "{{steps.birads-classification.outputs.artifacts.birads-classification-output}}"
+              from: "{{steps.birads-classification-xai.outputs.artifacts.birads-classification-xai-output}}"
             - name: density-output
-              from: "{{steps.density-classification.outputs.artifacts.density-classification-output}}"
+              from: "{{steps.density-classification-xai.outputs.artifacts.density-classification-xai-output}}"
       - - name: finalization
           template: finalization-template
           arguments:
@@ -132,10 +132,10 @@ spec:
               from: "{{steps.localization.outputs.artifacts.visualization}}"
             - name: visualization-prioritization
               from: "{{steps.prioritization.outputs.artifacts.visualization}}"
-            - name: visualization-birads-classification
-              from: "{{steps.birads-classification.outputs.artifacts.visualization}}"
-            - name: visualization-density-classification
-              from: "{{steps.density-classification.outputs.artifacts.visualization}}"
+            - name: visualization-birads-classification-xai
+              from: "{{steps.birads-classification-xai.outputs.artifacts.visualization}}"
+            - name: visualization-density-classification-xai
+              from: "{{steps.density-classification-xai.outputs.artifacts.visualization}}"
             - name: visualization-medical-report-generation
               from: "{{steps.medical-report-generation.outputs.artifacts.visualization}}"
               
@@ -374,21 +374,21 @@ spec:
             accountKeySecret:
               name: incisive-azure-storage-credentials
               key: account-access-key
-        - name: visualization-birads-classification
-          path: "/tmp/output_elements/birads-classification/"
+        - name: visualization-birads-classification-xai
+          path: "/tmp/output_elements/birads-classification-xai/"
           azure:
             endpoint: https://incisivesa.blob.core.windows.net
             container: d-4-2-service-breast-cancer
-            blob: "visualization-birads-classification-{{workflow.creationTimestamp.RFC3339}}"
+            blob: "visualization-birads-classification-xai-{{workflow.creationTimestamp.RFC3339}}"
             accountKeySecret:
               name: incisive-azure-storage-credentials
               key: account-access-key
-        - name: visualization-density-classification
-          path: "/tmp/output_elements/density-classification/"
+        - name: visualization-density-classification-xai
+          path: "/tmp/output_elements/density-classification-xai/"
           azure:
             endpoint: https://incisivesa.blob.core.windows.net
             container: d-4-2-service-breast-cancer
-            blob: "visualization-density-classification-{{workflow.creationTimestamp.RFC3339}}"
+            blob: "visualization-density-classification-xai-{{workflow.creationTimestamp.RFC3339}}"
             accountKeySecret:
               name: incisive-azure-storage-credentials
               key: account-access-key
