@@ -87,16 +87,27 @@ spec:
         - name: execution_medical-report-generation-prm-api-host
         - name: execution_medical-report-generation-plaform-vars-api-host
       steps:
-      - - name: segmentation
-          template: segmentation-template
-        - name: localization
-          template: localization-template
-        - name: prioritization
-          template: prioritization-template
-        - name: birads-classification
-          template: birads-classification-template
-        - name: density-classification
-          template: density-classification-template
+      - - name: initial-ai-engines
+          template: ai-engine-template
+          arguments:
+            parameters:
+            - name: descriptor
+              value: "{{item}}"
+            - name: prm-api-host
+              value: "{{ workflow.parameters.execution_{{item}}-prm-api-host }}"
+            - name: plaform-vars-api-host
+              value: "{{ workflow.parameters.execution_{{item}}-plaform-vars-api-host }}"
+            - name: container-name
+              value: "{{ workflow.parameters.execution_{{item}}-container-name }}"
+            - name: container-version
+              value: "{{ workflow.parameters.execution_{{item}}-container-version }}"
+            - name: max-iteration-time
+              value: "{{ workflow.parameters.execution_{{item}}-container-version-max-iteration-time }}"
+            - name: ai-model
+              value: "{{ workflow.parameters.execution_{{item}}-ai-model}}"
+            - name: ai-model-download-resume-retries
+              value: "{{ workflow.parameters.execution_{{item}}-ai-model-download-resume-retries}}"
+          withParam: "[segmentation, localization, prioritization, birads-classification, density-classification]"
       - - name: medical-report-generation
           template: medical-report-generation-template
           arguments:
@@ -108,9 +119,9 @@ spec:
             - name: prioritization-output
               from: "{{steps.prioritization.outputs.artifacts.prioritization-output}}"
             - name: birads-output
-              from: "{{steps.birads-classification.outputs.artifacts.birads-output}}"
+              from: "{{steps.birads-classification.outputs.artifacts.birads-classification-output}}"
             - name: density-output
-              from: "{{steps.density-classification.outputs.artifacts.density-output}}"
+              from: "{{steps.density-classification.outputs.artifacts.density-classification-output}}"
       - - name: finalization
           template: finalization-template
           arguments:
@@ -127,13 +138,22 @@ spec:
               from: "{{steps.density-classification.outputs.artifacts.visualization}}"
             - name: visualization-medical-report-generation
               from: "{{steps.medical-report-generation.outputs.artifacts.visualization}}"
-
-    # SEGMENTATION
-    - name: segmentation-template
+              
+    - name: ai-engine-template
       nodeSelector: {"{{workflow.parameters.platform_centralNodeLabelKey}}": "{{workflow.parameters.platform_centralNodeLabelValue}}"}
       retryStrategy:
         limit: "2"
         retryPolicy: "Always"
+      inputs:
+        parameters:
+        - name: descriptor
+        - name: prm-api-host
+        - name: plaform-vars-api-host
+        - name: container-name
+        - name: container-version
+        - name: max-iteration-time
+        - name: ai-model
+        - name: ai-model-download-resume-retries
       outputs:
         parameters:
         - name: error-message
@@ -142,12 +162,12 @@ spec:
             path: /usr/application/error_message.txt
           globalName: main-error-message
         artifacts:
-        - name: segmentation-output
-          path: "{{workflow.parameters.aiEngine_plaformVarsInputDataInference}}/segmentation"
+        - name: output
+          path: "{{workflow.parameters.aiEngine_plaformVarsInputDataInference}}/{{inputs.parameters.descriptor}}"
           azure:
             endpoint: https://incisivesa.blob.core.windows.net
             container: d-4-2-service-breast-cancer
-            blob: "segmentation-output-{{workflow.creationTimestamp.RFC3339}}"
+            blob: "{{inputs.parameters.descriptor}}-output-{{workflow.creationTimestamp.RFC3339}}"
             accountKeySecret:
               name: incisive-azure-storage-credentials
               key: account-access-key
@@ -156,14 +176,14 @@ spec:
           azure:
             endpoint: https://incisivesa.blob.core.windows.net
             container: d-4-2-service-breast-cancer
-            blob: "visualization-segmentation-{{workflow.creationTimestamp.RFC3339}}"
+            blob: "visualization-{{inputs.parameters.descriptor}}-{{workflow.creationTimestamp.RFC3339}}"
             accountKeySecret:
               name: incisive-azure-storage-credentials
               key: account-access-key
       initContainers:
       - name: config-changer
         image: "incisive.azurecr.io/processor-resource-manager:{{workflow.parameters.platform_processorResourceManagerVersion}}"
-        args: ["{\"actions\":[{\"name\":\"change_api_host_and_port\",\"read_file_path\":\"/platform_vars.json\",\"write_file_path\":\"/tmp/config_changer/platform_vars.json\",\"api_host_and_port\":\"{{workflow.parameters.execution_prioritization-and-segmentation-plaform-vars-api-host}}\"}]}"]
+        args: ["{\"actions\":[{\"name\":\"change_api_host_and_port\",\"read_file_path\":\"/platform_vars.json\",\"write_file_path\":\"/tmp/config_changer/platform_vars.json\",\"api_host_and_port\":\"{{inputs.parameters.plaform-vars-api-host}}\"}]}"]
         volumeMounts:
         - name: raw-platform-vars
           mountPath: /platform_vars.json
@@ -191,305 +211,9 @@ spec:
               limits:
                 cpu: 1000m
                 memory: 256Mi
-            args: ["{\"actions\":[{\"name\":\"update_to_running\",\"update_status_url\":\"http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/update_to_running/\"},{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputDataInference}}\"},{\"name\":\"download_external_data\",\"external_data_url\":\"http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/download_external_data/\",\"output_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputDataInference}}\"},{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputAIElements}}\"},{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputModel}}\"},{\"name\":\"download_user_vars\",\"user_vars_url\":\"http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/download_user_vars/?descriptor=segmentation\",\"output_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputUserVars}}\"},{\"name\":\"download_ai_model\",\"ai_model_url\":\"http://{{workflow.parameters.platform_maasApiHostname}}/api/ai_models/{{workflow.parameters.execution_segmentation-ai-model}}/download_contents/\",\"output_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputModel}}\"},{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsOutputInferenceResults}}\"},{\"name\":\"run_ai_engine\",\"use_case\":\"inferencing_from_pretrained_model\",\"max_iteration_time\":{{workflow.parameters.execution_segmentation-max-iteration-time}},\"max_initialization_time\":600,\"client_host\":\"{{workflow.parameters.execution_segmentation-plaform-vars-api-host}}\",\"server_host\":\"{{workflow.parameters.execution_segmentation-prm-api-host}}\",\"ping_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiPingUrl}}\",\"run_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiRunUrl}}\",\"callback_url\":\"{{workflow.parameters.platform_processorResourceManagerCallbackUrl}}\"},{\"name\":\"end_ai_engine\",\"max_finalization_time\":30,\"max_finalization_retries\":4,\"client_host\":\"{{workflow.parameters.execution_segmentation-plaform-vars-api-host}}\",\"ping_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiPingUrl}}\",\"end_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiEndUrl}}\"}]}", "--failure-actions", "{\"actions\":[{\"name\":\"ping_ai_engine\",\"max_initialization_time\":30,\"client_host\":\"{{workflow.parameters.execution_segmentation-plaform-vars-api-host}}\",\"ping_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiPingUrl}}\",},{\"name\":\"end_ai_engine\",\"max_finalization_time\":30,\"max_finalization_retries\":4,\"client_host\":\"{{workflow.parameters.execution_segmentation-plaform-vars-api-host}}\",\"ping_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiPingUrl}}\",\"end_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiEndUrl}}\"}]}"]
+            args: ["{\"actions\":[{\"name\":\"update_to_running\",\"update_status_url\":\"http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/update_to_running/\"},{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputDataInference}}\"},{\"name\":\"download_external_data\",\"external_data_url\":\"http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/download_external_data/\",\"output_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputDataInference}}\"},{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputAIElements}}\"},{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputModel}}\"},{\"name\":\"download_user_vars\",\"user_vars_url\":\"http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/download_user_vars/?descriptor={{inputs.parameters.descriptor}}\",\"output_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputUserVars}}\"},{\"name\":\"download_ai_model\",\"ai_model_url\":\"http://{{workflow.parameters.platform_maasApiHostname}}/api/ai_models/{{inputs.parameters.ai-model}}/download_contents/\",\"output_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputModel}}\", \"download_resume_retries\": {input.parameters.ai-model-download-resume-retries}},{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsOutputInferenceResults}}\"},{\"name\":\"run_ai_engine\",\"use_case\":\"inferencing_from_pretrained_model\",\"max_iteration_time\":{{inputs.parameters.max-iteration-time}},\"max_initialization_time\":600,\"client_host\":\"{{inputs.parameters.plaform-vars-api-host}}\",\"server_host\":\"{{inputs.parameters.prm-api-host}}\",\"ping_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiPingUrl}}\",\"run_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiRunUrl}}\",\"callback_url\":\"{{workflow.parameters.platform_processorResourceManagerCallbackUrl}}\"},{\"name\":\"end_ai_engine\",\"max_finalization_time\":30,\"max_finalization_retries\":4,\"client_host\":\"{{workflow.parameters.execution_segmentation-plaform-vars-api-host}}\",\"ping_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiPingUrl}}\",\"end_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiEndUrl}}\"}]}", "--failure-actions", "{\"actions\":[{\"name\":\"ping_ai_engine\",\"max_initialization_time\":30,\"client_host\":\"{{inputs.parameters.plaform-vars-api-host}}\",\"ping_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiPingUrl}}\"},{\"name\":\"end_ai_engine\",\"max_finalization_time\":30,\"max_finalization_retries\":4,\"client_host\":\"{{inputs.parameters.plaform-vars-api-host}}\",\"ping_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiPingUrl}}\",\"end_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiEndUrl}}\"}]}"]
           - name: main-ai-engine
-            image: "incisive.azurecr.io/{{workflow.parameters.execution_segmentation-container-name}}:{{workflow.parameters.execution_segmentation-container-version}}"
-            resources:
-              requests:
-                cpu: 250m
-                memory: 2560Mi
-              limits:
-                cpu: 2000m
-                memory: 2560Mi
-
-    # LOCALIZATION
-    - name: localization-template
-      nodeSelector: {"{{workflow.parameters.platform_centralNodeLabelKey}}": "{{workflow.parameters.platform_centralNodeLabelValue}}"}
-      retryStrategy:
-        limit: "2"
-        retryPolicy: "Always"
-      outputs:
-        parameters:
-        - name: error-message
-          valueFrom:
-            default: "Unexpected error"
-            path: /usr/application/error_message.txt
-          globalName: main-error-message
-        artifacts:
-        - name: segmentation-output
-          path: "{{workflow.parameters.aiEngine_plaformVarsInputDataInference}}/segmentation"
-          azure:
-            endpoint: https://incisivesa.blob.core.windows.net
-            container: d-4-2-service-breast-cancer
-            blob: "segmentation-output-{{workflow.creationTimestamp.RFC3339}}"
-            accountKeySecret:
-              name: incisive-azure-storage-credentials
-              key: account-access-key
-        - name: visualization
-          path: "{{workflow.parameters.aiEngine_plaformVarsOutputInferenceResults}}"
-          azure:
-            endpoint: https://incisivesa.blob.core.windows.net
-            container: d-4-2-service-breast-cancer
-            blob: "visualization-localization-{{workflow.creationTimestamp.RFC3339}}"
-            accountKeySecret:
-              name: incisive-azure-storage-credentials
-              key: account-access-key
-      initContainers:
-      - name: config-changer
-        image: "incisive.azurecr.io/processor-resource-manager:{{workflow.parameters.platform_processorResourceManagerVersion}}"
-        args: ["{\"actions\":[{\"name\":\"change_api_host_and_port\",\"read_file_path\":\"/platform_vars.json\",\"write_file_path\":\"/tmp/config_changer/platform_vars.json\",\"api_host_and_port\":\"{{workflow.parameters.execution_localization-plaform-vars-api-host}}\"}]}"]
-        volumeMounts:
-        - name: raw-platform-vars
-          mountPath: /platform_vars.json
-          subPath: platform_vars.json  
-        - name: platform-vars
-          mountPath: /tmp/config_changer
-      containerSet:
-        volumeMounts:
-        - name: input-elements
-          mountPath: "{{workflow.parameters.aiEngine_plaformVarsInputElements}}"
-        - name: ai-elements
-          mountPath: "{{workflow.parameters.aiEngine_plaformVarsInputAIElements}}"
-        - name: output-elements
-          mountPath: "{{workflow.parameters.aiEngine_plaformVarsOutputElements}}"
-        - name: platform-vars
-          mountPath: /platform_vars.json
-          subPath: platform_vars.json
-        containers:
-          - name: main
-            image: "incisive.azurecr.io/processor-resource-manager:{{workflow.parameters.platform_processorResourceManagerVersion}}"
-            resources:
-              requests:
-                cpu: 250m
-                memory: 256Mi
-              limits:
-                cpu: 1000m
-                memory: 256Mi
-            args: ["{\"actions\":[{\"name\":\"update_to_running\",\"update_status_url\":\"http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/update_to_running/\"},{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputDataInference}}\"},{\"name\":\"download_external_data\",\"external_data_url\":\"http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/download_external_data/\",\"output_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputDataInference}}\"},{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputAIElements}}\"},{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputModel}}\"},{\"name\":\"download_user_vars\",\"user_vars_url\":\"http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/download_user_vars/?descriptor=localization\",\"output_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputUserVars}}\"},{\"name\":\"download_ai_model\",\"ai_model_url\":\"http://{{workflow.parameters.platform_maasApiHostname}}/api/ai_models/{{workflow.parameters.execution_localization-ai-model}}/download_contents/\",\"output_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputModel}}\"},{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsOutputInferenceResults}}\"},{\"name\":\"run_ai_engine\",\"use_case\":\"inferencing_from_pretrained_model\",\"max_iteration_time\":{{workflow.parameters.execution_localization-max-iteration-time}},\"max_initialization_time\":600,\"client_host\":\"{{workflow.parameters.execution_localization-plaform-vars-api-host}}\",\"server_host\":\"{{workflow.parameters.execution_localization-prm-api-host}}\",\"ping_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiPingUrl}}\",\"run_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiRunUrl}}\",\"callback_url\":\"{{workflow.parameters.platform_processorResourceManagerCallbackUrl}}\"},{\"name\":\"end_ai_engine\",\"max_finalization_time\":30,\"max_finalization_retries\":4,\"client_host\":\"{{workflow.parameters.execution_localization-plaform-vars-api-host}}\",\"ping_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiPingUrl}}\",\"end_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiEndUrl}}\"}]}", "--failure-actions", "{\"actions\":[{\"name\":\"ping_ai_engine\",\"max_initialization_time\":30,\"client_host\":\"{{workflow.parameters.execution_localization-plaform-vars-api-host}}\",\"ping_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiPingUrl}}\",},{\"name\":\"end_ai_engine\",\"max_finalization_time\":30,\"max_finalization_retries\":4,\"client_host\":\"{{workflow.parameters.execution_localization-plaform-vars-api-host}}\",\"ping_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiPingUrl}}\",\"end_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiEndUrl}}\"}]}"]
-          - name: main-ai-engine
-            image: "incisive.azurecr.io/{{workflow.parameters.execution_localization-container-name}}:{{workflow.parameters.execution_localization-container-version}}"
-            resources:
-              requests:
-                cpu: 250m
-                memory: 2560Mi
-              limits:
-                cpu: 2000m
-                memory: 2560Mi
-
-    # PRIORITIZATION
-    - name: prioritization-template
-      nodeSelector: {"{{workflow.parameters.platform_centralNodeLabelKey}}": "{{workflow.parameters.platform_centralNodeLabelValue}}"}
-      retryStrategy:
-        limit: "2"
-        retryPolicy: "Always"
-      outputs:
-        parameters:
-        - name: error-message
-          valueFrom:
-            default: "Unexpected error"
-            path: /usr/application/error_message.txt
-          globalName: main-error-message
-        artifacts:
-        - name: segmentation-output
-          path: "{{workflow.parameters.aiEngine_plaformVarsInputDataInference}}/segmentation"
-          azure:
-            endpoint: https://incisivesa.blob.core.windows.net
-            container: d-4-2-service-breast-cancer
-            blob: "segmentation-output-{{workflow.creationTimestamp.RFC3339}}"
-            accountKeySecret:
-              name: incisive-azure-storage-credentials
-              key: account-access-key
-        - name: visualization
-          path: "{{workflow.parameters.aiEngine_plaformVarsOutputInferenceResults}}"
-          azure:
-            endpoint: https://incisivesa.blob.core.windows.net
-            container: d-4-2-service-breast-cancer
-            blob: "visualization-prioritization-{{workflow.creationTimestamp.RFC3339}}"
-            accountKeySecret:
-              name: incisive-azure-storage-credentials
-              key: account-access-key
-      initContainers:
-      - name: config-changer
-        image: "incisive.azurecr.io/processor-resource-manager:{{workflow.parameters.platform_processorResourceManagerVersion}}"
-        args: ["{\"actions\":[{\"name\":\"change_api_host_and_port\",\"read_file_path\":\"/platform_vars.json\",\"write_file_path\":\"/tmp/config_changer/platform_vars.json\",\"api_host_and_port\":\"{{workflow.parameters.execution_prioritization-plaform-vars-api-host}}\"}]}"]
-        volumeMounts:
-        - name: raw-platform-vars
-          mountPath: /platform_vars.json
-          subPath: platform_vars.json  
-        - name: platform-vars
-          mountPath: /tmp/config_changer
-      containerSet:
-        volumeMounts:
-        - name: input-elements
-          mountPath: "{{workflow.parameters.aiEngine_plaformVarsInputElements}}"
-        - name: ai-elements
-          mountPath: "{{workflow.parameters.aiEngine_plaformVarsInputAIElements}}"
-        - name: output-elements
-          mountPath: "{{workflow.parameters.aiEngine_plaformVarsOutputElements}}"
-        - name: platform-vars
-          mountPath: /platform_vars.json
-          subPath: platform_vars.json
-        containers:
-          - name: main
-            image: "incisive.azurecr.io/processor-resource-manager:{{workflow.parameters.platform_processorResourceManagerVersion}}"
-            resources:
-              requests:
-                cpu: 250m
-                memory: 256Mi
-              limits:
-                cpu: 1000m
-                memory: 256Mi
-            args: ["{\"actions\":[{\"name\":\"update_to_running\",\"update_status_url\":\"http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/update_to_running/\"},{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputDataInference}}\"},{\"name\":\"download_external_data\",\"external_data_url\":\"http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/download_external_data/\",\"output_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputDataInference}}\"},{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputAIElements}}\"},{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputModel}}\"},{\"name\":\"download_user_vars\",\"user_vars_url\":\"http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/download_user_vars/?descriptor=prioritization\",\"output_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputUserVars}}\"},{\"name\":\"download_ai_model\",\"ai_model_url\":\"http://{{workflow.parameters.platform_maasApiHostname}}/api/ai_models/{{workflow.parameters.execution_prioritization-ai-model}}/download_contents/\",\"output_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputModel}}\"},{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsOutputInferenceResults}}\"},{\"name\":\"run_ai_engine\",\"use_case\":\"inferencing_from_pretrained_model\",\"max_iteration_time\":{{workflow.parameters.execution_prioritization-max-iteration-time}},\"max_initialization_time\":600,\"client_host\":\"{{workflow.parameters.execution_prioritization-plaform-vars-api-host}}\",\"server_host\":\"{{workflow.parameters.execution_prioritization-prm-api-host}}\",\"ping_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiPingUrl}}\",\"run_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiRunUrl}}\",\"callback_url\":\"{{workflow.parameters.platform_processorResourceManagerCallbackUrl}}\"},{\"name\":\"end_ai_engine\",\"max_finalization_time\":30,\"max_finalization_retries\":4,\"client_host\":\"{{workflow.parameters.execution_prioritization-plaform-vars-api-host}}\",\"ping_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiPingUrl}}\",\"end_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiEndUrl}}\"}]}", "--failure-actions", "{\"actions\":[{\"name\":\"ping_ai_engine\",\"max_initialization_time\":30,\"client_host\":\"{{workflow.parameters.execution_prioritization-plaform-vars-api-host}}\",\"ping_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiPingUrl}}\",},{\"name\":\"end_ai_engine\",\"max_finalization_time\":30,\"max_finalization_retries\":4,\"client_host\":\"{{workflow.parameters.execution_prioritization-plaform-vars-api-host}}\",\"ping_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiPingUrl}}\",\"end_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiEndUrl}}\"}]}"]
-          - name: main-ai-engine
-            image: "incisive.azurecr.io/{{workflow.parameters.execution_prioritization-container-name}}:{{workflow.parameters.execution_prioritization-container-version}}"
-            resources:
-              requests:
-                cpu: 250m
-                memory: 2560Mi
-              limits:
-                cpu: 2000m
-                memory: 2560Mi
-
-    # BIRADS CLASSIFICATION 
-    - name: birads-classification-template
-      nodeSelector: {"{{workflow.parameters.platform_centralNodeLabelKey}}": "{{workflow.parameters.platform_centralNodeLabelValue}}"}
-      retryStrategy:
-        limit: "2"
-        retryPolicy: "Always"
-      outputs:
-        parameters:
-        - name: error-message
-          valueFrom:
-            default: "Unexpected error"
-            path: /usr/application/error_message.txt
-          globalName: main-error-message
-        artifacts:
-        - name: birads-output
-          path: "{{workflow.parameters.aiEngine_plaformVarsInputDataInference}}/birads"
-          azure:
-            endpoint: https://incisivesa.blob.core.windows.net
-            container: d-4-2-service-breast-cancer
-            blob: "birads-output-{{workflow.creationTimestamp.RFC3339}}"
-            accountKeySecret:
-              name: incisive-azure-storage-credentials
-              key: account-access-key
-        - name: visualization
-          path: "{{workflow.parameters.aiEngine_plaformVarsOutputInferenceResults}}"
-          azure:
-            endpoint: https://incisivesa.blob.core.windows.net
-            container: d-4-2-service-breast-cancer
-            blob: "visualization-birads-classification-{{workflow.creationTimestamp.RFC3339}}"
-            accountKeySecret:
-              name: incisive-azure-storage-credentials
-              key: account-access-key
-      initContainers:
-      - name: config-changer
-        image: "incisive.azurecr.io/processor-resource-manager:{{workflow.parameters.platform_processorResourceManagerVersion}}"
-        args: ["{\"actions\":[{\"name\":\"change_api_host_and_port\",\"read_file_path\":\"/platform_vars.json\",\"write_file_path\":\"/tmp/config_changer/platform_vars.json\",\"api_host_and_port\":\"{{workflow.parameters.execution_birads-classification-plaform-vars-api-host}}\"}]}"]
-        volumeMounts:
-        - name: raw-platform-vars
-          mountPath: /platform_vars.json
-          subPath: platform_vars.json  
-        - name: platform-vars
-          mountPath: /tmp/config_changer
-      containerSet:
-        volumeMounts:
-        - name: input-elements
-          mountPath: "{{workflow.parameters.aiEngine_plaformVarsInputElements}}"
-        - name: ai-elements
-          mountPath: "{{workflow.parameters.aiEngine_plaformVarsInputAIElements}}"
-        - name: output-elements
-          mountPath: "{{workflow.parameters.aiEngine_plaformVarsOutputElements}}"
-        - name: platform-vars
-          mountPath: /platform_vars.json
-          subPath: platform_vars.json
-        containers:
-          - name: main
-            image: "incisive.azurecr.io/processor-resource-manager:{{workflow.parameters.platform_processorResourceManagerVersion}}"
-            resources:
-              requests:
-                cpu: 250m
-                memory: 256Mi
-              limits:
-                cpu: 1000m
-                memory: 256Mi
-            args: ["{\"actions\":[{\"name\":\"update_to_running\",\"update_status_url\":\"http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/update_to_running/\"},{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputDataInference}}\"},{\"name\":\"download_external_data\",\"external_data_url\":\"http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/download_external_data/\",\"output_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputDataInference}}\"},{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputAIElements}}\"},{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputModel}}\"},{\"name\":\"download_user_vars\",\"user_vars_url\":\"http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/download_user_vars/?descriptor=birads-classification\",\"output_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputUserVars}}\"},{\"name\":\"download_ai_model\",\"ai_model_url\":\"http://{{workflow.parameters.platform_maasApiHostname}}/api/ai_models/{{workflow.parameters.execution_birads-classification-ai-model}}/download_contents/\",\"output_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputModel}}\"},{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsOutputInferenceResults}}\"},{\"name\":\"run_ai_engine\",\"use_case\":\"inferencing_from_pretrained_model\",\"max_iteration_time\":{{workflow.parameters.execution_birads-classification-max-iteration-time}},\"max_initialization_time\":600,\"client_host\":\"{{workflow.parameters.execution_birads-classification-plaform-vars-api-host}}\",\"server_host\":\"{{workflow.parameters.execution_birads-classification-prm-api-host}}\",\"ping_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiPingUrl}}\",\"run_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiRunUrl}}\",\"callback_url\":\"{{workflow.parameters.platform_processorResourceManagerCallbackUrl}}\"},{\"name\":\"end_ai_engine\",\"max_finalization_time\":30,\"max_finalization_retries\":4,\"client_host\":\"{{workflow.parameters.execution_birads-classification-plaform-vars-api-host}}\",\"ping_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiPingUrl}}\",\"end_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiEndUrl}}\"}]}", "--failure-actions", "{\"actions\":[{\"name\":\"ping_ai_engine\",\"max_initialization_time\":30,\"client_host\":\"{{workflow.parameters.execution_birads-classification-plaform-vars-api-host}}\",\"ping_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiPingUrl}}\",},{\"name\":\"end_ai_engine\",\"max_finalization_time\":30,\"max_finalization_retries\":4,\"client_host\":\"{{workflow.parameters.execution_birads-classification-plaform-vars-api-host}}\",\"ping_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiPingUrl}}\",\"end_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiEndUrl}}\"}]}"]
-          - name: main-ai-engine
-            image: "incisive.azurecr.io/{{workflow.parameters.execution_birads-classification-container-name}}:{{workflow.parameters.execution_birads-classification-container-version}}"
-            resources:
-              requests:
-                cpu: 250m
-                memory: 2560Mi
-              limits:
-                cpu: 2000m
-                memory: 2560Mi
-
-    # DENSITY CLASSIFICATION 
-    - name: density-classification-template
-      nodeSelector: {"{{workflow.parameters.platform_centralNodeLabelKey}}": "{{workflow.parameters.platform_centralNodeLabelValue}}"}
-      retryStrategy:
-        limit: "2"
-        retryPolicy: "Always"
-      outputs:
-        parameters:
-        - name: error-message
-          valueFrom:
-            default: "Unexpected error"
-            path: /usr/application/error_message.txt
-          globalName: main-error-message
-        artifacts:
-        - name: density-output
-          path: "{{workflow.parameters.aiEngine_plaformVarsInputDataInference}}/density"
-          azure:
-            endpoint: https://incisivesa.blob.core.windows.net
-            container: d-4-2-service-breast-cancer
-            blob: "density-output-{{workflow.creationTimestamp.RFC3339}}"
-            accountKeySecret:
-              name: incisive-azure-storage-credentials
-              key: account-access-key
-        - name: visualization
-          path: "{{workflow.parameters.aiEngine_plaformVarsOutputInferenceResults}}"
-          azure:
-            endpoint: https://incisivesa.blob.core.windows.net
-            container: d-4-2-service-breast-cancer
-            blob: "visualization-density-classification-{{workflow.creationTimestamp.RFC3339}}"
-            accountKeySecret:
-              name: incisive-azure-storage-credentials
-              key: account-access-key
-      initContainers:
-      - name: config-changer
-        image: "incisive.azurecr.io/processor-resource-manager:{{workflow.parameters.platform_processorResourceManagerVersion}}"
-        args: ["{\"actions\":[{\"name\":\"change_api_host_and_port\",\"read_file_path\":\"/platform_vars.json\",\"write_file_path\":\"/tmp/config_changer/platform_vars.json\",\"api_host_and_port\":\"{{workflow.parameters.execution_density-classification-plaform-vars-api-host}}\"}]}"]
-        volumeMounts:
-        - name: raw-platform-vars
-          mountPath: /platform_vars.json
-          subPath: platform_vars.json  
-        - name: platform-vars
-          mountPath: /tmp/config_changer
-      containerSet:
-        volumeMounts:
-        - name: input-elements
-          mountPath: "{{workflow.parameters.aiEngine_plaformVarsInputElements}}"
-        - name: ai-elements
-          mountPath: "{{workflow.parameters.aiEngine_plaformVarsInputAIElements}}"
-        - name: output-elements
-          mountPath: "{{workflow.parameters.aiEngine_plaformVarsOutputElements}}"
-        - name: platform-vars
-          mountPath: /platform_vars.json
-          subPath: platform_vars.json
-        containers:
-          - name: main
-            image: "incisive.azurecr.io/processor-resource-manager:{{workflow.parameters.platform_processorResourceManagerVersion}}"
-            resources:
-              requests:
-                cpu: 250m
-                memory: 256Mi
-              limits:
-                cpu: 1000m
-                memory: 256Mi
-            args: ["{\"actions\":[{\"name\":\"update_to_running\",\"update_status_url\":\"http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/update_to_running/\"},{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputDataInference}}\"},{\"name\":\"download_external_data\",\"external_data_url\":\"http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/download_external_data/\",\"output_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputDataInference}}\"},{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputAIElements}}\"},{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputModel}}\"},{\"name\":\"download_user_vars\",\"user_vars_url\":\"http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/download_user_vars/?descriptor=density-classification\",\"output_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputUserVars}}\"},{\"name\":\"download_ai_model\",\"ai_model_url\":\"http://{{workflow.parameters.platform_maasApiHostname}}/api/ai_models/{{workflow.parameters.execution_density-classification-ai-model}}/download_contents/\",\"output_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputModel}}\"},{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsOutputInferenceResults}}\"},{\"name\":\"run_ai_engine\",\"use_case\":\"inferencing_from_pretrained_model\",\"max_iteration_time\":{{workflow.parameters.execution_density-classification-max-iteration-time}},\"max_initialization_time\":600,\"client_host\":\"{{workflow.parameters.execution_density-classification-plaform-vars-api-host}}\",\"server_host\":\"{{workflow.parameters.execution_density-classification-prm-api-host}}\",\"ping_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiPingUrl}}\",\"run_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiRunUrl}}\",\"callback_url\":\"{{workflow.parameters.platform_processorResourceManagerCallbackUrl}}\"},{\"name\":\"end_ai_engine\",\"max_finalization_time\":30,\"max_finalization_retries\":4,\"client_host\":\"{{workflow.parameters.execution_density-classification-plaform-vars-api-host}}\",\"ping_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiPingUrl}}\",\"end_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiEndUrl}}\"}]}", "--failure-actions", "{\"actions\":[{\"name\":\"ping_ai_engine\",\"max_initialization_time\":30,\"client_host\":\"{{workflow.parameters.execution_density-classification-plaform-vars-api-host}}\",\"ping_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiPingUrl}}\",},{\"name\":\"end_ai_engine\",\"max_finalization_time\":30,\"max_finalization_retries\":4,\"client_host\":\"{{workflow.parameters.execution_density-classification-plaform-vars-api-host}}\",\"ping_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiPingUrl}}\",\"end_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiEndUrl}}\"}]}"]
-          - name: main-ai-engine
-            image: "incisive.azurecr.io/{{workflow.parameters.execution_density-classification-container-name}}:{{workflow.parameters.execution_density-classification-container-version}}"
+            image: "incisive.azurecr.io/{{inputs.parameters.container-name}}:{{inputs.parameters.container-version}}"
             resources:
               requests:
                 cpu: 250m
@@ -710,3 +434,4 @@ spec:
       container:
         image: "incisive.azurecr.io/processor-resource-manager:{{workflow.parameters.platform_processorResourceManagerVersion}}"
         args: ["{\"actions\":[{\"name\":\"update_to_failed\", \"message\":\"{{inputs.parameters.error-message}}\", \"update_status_url\":\"http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/update_to_failed/\"}]}"]
+

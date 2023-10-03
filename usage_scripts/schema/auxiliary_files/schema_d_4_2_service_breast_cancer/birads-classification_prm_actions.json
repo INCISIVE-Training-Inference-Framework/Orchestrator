@@ -29,7 +29,8 @@
     {
       "name": "download_ai_model",
       "ai_model_url": "http://{{workflow.parameters.platform_maasApiHostname}}/api/ai_models/{{workflow.parameters.execution_birads-classification-ai-model}}/download_contents/",
-      "output_path": "{{workflow.parameters.aiEngine_plaformVarsInputModel}}"
+      "output_path": "{{workflow.parameters.aiEngine_plaformVarsInputModel}}",
+      "download_resume_retries": 3
     },
     {
       "name": "create_directory",
