@@ -46,7 +46,7 @@ _5_input_ai_engine_version_user_vars="./auxiliary_files/d_4_2_service_breast_can
 _5_input_ai_model=10 # int, must exist on the MaaS
 
 # Medical report generation
-_6_input_ai_engine_version=4 # int, must exist on the MaaS
+_6_input_ai_engine_version=5 # int, must exist on the MaaS
 _6_input_ai_engine_version_user_vars="./auxiliary_files/d_4_2_service_breast_cancer_mg/medical_report_generation_user_vars.json" # FILE
 
 # output attributes
