@@ -4,7 +4,7 @@
       "name": "change_api_host_and_port",
       "read_file_path": "/platform_vars.json",
       "write_file_path": "/tmp/config_changer/platform_vars.json",
-      "api_host_and_port": "{{workflow.parameters.execution_main-ai-engine-plaform-vars-api-host}}"
+      "api_host_and_port": "{{inputs.parameters.plaform-vars-api-host}}"
     }
   ]
 }
