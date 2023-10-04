@@ -106,38 +106,12 @@ spec:
             - name: ai-model
               value: "{{ workflow.parameters.execution_{{item}}-ai-model}}"
             - name: ai-model-download-resume-retries
-              value: "{{ workflow.parameters.execution_{{item}}-ai-model-download-resume-retries}}"
-          withParam: "[segmentation, localization, prioritization, birads-classification-xai, density-classification-xai]"
+              value: "{{ workflow.parameters.execution_{{item}}-ai-model-download-resume-retries }}"
+          withItems: "[segmentation, localization, prioritization, birads-classification-xai, density-classification-xai]"
       - - name: medical-report-generation
           template: medical-report-generation-template
-          arguments:
-            artifacts:
-            - name: segmentation-output
-              from: "{{steps.segmentation.outputs.artifacts.segmentation-output}}"
-            - name: localization-output
-              from: "{{steps.localization.outputs.artifacts.localization-output}}"
-            - name: prioritization-output
-              from: "{{steps.prioritization.outputs.artifacts.prioritization-output}}"
-            - name: birads-output
-              from: "{{steps.birads-classification-xai.outputs.artifacts.birads-classification-xai-output}}"
-            - name: density-output
-              from: "{{steps.density-classification-xai.outputs.artifacts.density-classification-xai-output}}"
       - - name: finalization
           template: finalization-template
-          arguments:
-            artifacts:
-            - name: visualization-segmentation
-              from: "{{steps.segmentation.outputs.artifacts.visualization}}"
-            - name: visualization-localization
-              from: "{{steps.localization.outputs.artifacts.visualization}}"
-            - name: visualization-prioritization
-              from: "{{steps.prioritization.outputs.artifacts.visualization}}"
-            - name: visualization-birads-classification-xai
-              from: "{{steps.birads-classification-xai.outputs.artifacts.visualization}}"
-            - name: visualization-density-classification-xai
-              from: "{{steps.density-classification-xai.outputs.artifacts.visualization}}"
-            - name: visualization-medical-report-generation
-              from: "{{steps.medical-report-generation.outputs.artifacts.visualization}}"
               
     - name: ai-engine-template
       nodeSelector: {"{{workflow.parameters.platform_centralNodeLabelKey}}": "{{workflow.parameters.platform_centralNodeLabelValue}}"}
