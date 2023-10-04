@@ -29,63 +29,65 @@ spec:
   - name: platform-vars
     emptyDir: {}
 
+  # Global workflow arguments
+  arguments:
+    parameters:
+    - name: platform_centralNodeLabelKey
+    - name: platform_centralNodeLabelValue
+    - name: platform_maasApiHostname
+    - name: platform_orchestratorApiHostname
+    - name: platform_processorResourceManagerVersion
+    - name: platform_processorResourceManagerCallbackUrl
+    - name: aiEngine_plaformVarsConfigMapName
+    - name: aiEngine_plaformVarsInputElements
+    - name: aiEngine_plaformVarsInputDataInference
+    - name: aiEngine_plaformVarsInputAIElements
+    - name: aiEngine_plaformVarsInputUserVars
+    - name: aiEngine_plaformVarsInputModel
+    - name: aiEngine_plaformVarsOutputElements
+    - name: aiEngine_plaformVarsOutputInferenceResults
+    - name: aiEngine_plaformVarsApiPingUrl
+    - name: aiEngine_plaformVarsApiRunUrl
+    - name: aiEngine_plaformVarsApiEndUrl
+    - name: execution_id
+    - name: execution_segmentation-container-name
+    - name: execution_segmentation-container-version
+    - name: execution_segmentation-container-version-max-iteration-time
+    - name: execution_segmentation-ai-model
+    - name: execution_segmentation-prm-api-host
+    - name: execution_segmentation-plaform-vars-api-host
+    - name: execution_localization-container-name
+    - name: execution_localization-container-version
+    - name: execution_localization-container-version-max-iteration-time
+    - name: execution_localization-ai-model
+    - name: execution_localization-prm-api-host
+    - name: execution_localization-plaform-vars-api-host
+    - name: execution_prioritization-container-name
+    - name: execution_prioritization-container-version
+    - name: execution_prioritization-container-version-max-iteration-time
+    - name: execution_prioritization-ai-model
+    - name: execution_prioritization-prm-api-host
+    - name: execution_prioritization-plaform-vars-api-host
+    - name: execution_birads-classification-xai-container-name
+    - name: execution_birads-classification-xai-container-version
+    - name: execution_birads-classification-xai-container-version-max-iteration-time
+    - name: execution_birads-classification-xai-ai-model
+    - name: execution_birads-classification-xai-prm-api-host
+    - name: execution_birads-classification-xai-plaform-vars-api-host
+    - name: execution_density-classification-xai-container-name
+    - name: execution_density-classification-xai-container-version
+    - name: execution_density-classification-xai-container-version-max-iteration-time
+    - name: execution_density-classification-xai-ai-model
+    - name: execution_density-classification-xai-prm-api-host
+    - name: execution_density-classification-xai-plaform-vars-api-host
+    - name: execution_medical-report-generation-container-name
+    - name: execution_medical-report-generation-container-version
+    - name: execution_medical-report-generation-container-version-max-iteration-time
+    - name: execution_medical-report-generation-prm-api-host
+    - name: execution_medical-report-generation-plaform-vars-api-host
+
   templates:
     - name: main
-      inputs:
-        parameters:
-        - name: platform_centralNodeLabelKey
-        - name: platform_centralNodeLabelValue
-        - name: platform_maasApiHostname
-        - name: platform_orchestratorApiHostname
-        - name: platform_processorResourceManagerVersion
-        - name: platform_processorResourceManagerCallbackUrl
-        - name: aiEngine_plaformVarsConfigMapName
-        - name: aiEngine_plaformVarsInputElements
-        - name: aiEngine_plaformVarsInputDataInference
-        - name: aiEngine_plaformVarsInputAIElements
-        - name: aiEngine_plaformVarsInputUserVars
-        - name: aiEngine_plaformVarsInputModel
-        - name: aiEngine_plaformVarsOutputElements
-        - name: aiEngine_plaformVarsOutputInferenceResults
-        - name: aiEngine_plaformVarsApiPingUrl
-        - name: aiEngine_plaformVarsApiRunUrl
-        - name: aiEngine_plaformVarsApiEndUrl
-        - name: execution_id
-        - name: execution_segmentation-container-name
-        - name: execution_segmentation-container-version
-        - name: execution_segmentation-container-version-max-iteration-time
-        - name: execution_segmentation-ai-model
-        - name: execution_segmentation-prm-api-host
-        - name: execution_segmentation-plaform-vars-api-host
-        - name: execution_localization-container-name
-        - name: execution_localization-container-version
-        - name: execution_localization-container-version-max-iteration-time
-        - name: execution_localization-ai-model
-        - name: execution_localization-prm-api-host
-        - name: execution_localization-plaform-vars-api-host
-        - name: execution_prioritization-container-name
-        - name: execution_prioritization-container-version
-        - name: execution_prioritization-container-version-max-iteration-time
-        - name: execution_prioritization-ai-model
-        - name: execution_prioritization-prm-api-host
-        - name: execution_prioritization-plaform-vars-api-host
-        - name: execution_birads-classification-xai-container-name
-        - name: execution_birads-classification-xai-container-version
-        - name: execution_birads-classification-xai-container-version-max-iteration-time
-        - name: execution_birads-classification-xai-ai-model
-        - name: execution_birads-classification-xai-prm-api-host
-        - name: execution_birads-classification-xai-plaform-vars-api-host
-        - name: execution_density-classification-xai-container-name
-        - name: execution_density-classification-xai-container-version
-        - name: execution_density-classification-xai-container-version-max-iteration-time
-        - name: execution_density-classification-xai-ai-model
-        - name: execution_density-classification-xai-prm-api-host
-        - name: execution_density-classification-xai-plaform-vars-api-host
-        - name: execution_medical-report-generation-container-name
-        - name: execution_medical-report-generation-container-version
-        - name: execution_medical-report-generation-container-version-max-iteration-time
-        - name: execution_medical-report-generation-prm-api-host
-        - name: execution_medical-report-generation-plaform-vars-api-host
       steps:
       - - name: initial-ai-engines
           template: ai-engine-template
