@@ -60,17 +60,17 @@ curl -X POST http://${orchestrator_api_hostname}/api/executions/ \
                                 \"ai_elements\": {
                                     \"ai_engines\": [
                                         {
-                                            \"descriptor\": \"mg-segmentation\",
+                                            \"descriptor\": \"segmentation\",
                                             \"version\": ${_1_input_ai_engine_version},
                                             \"ai_model\": ${_1_input_ai_model}
                                         },
                                         {
-                                            \"descriptor\": \"mg-localization\",
+                                            \"descriptor\": \"localization\",
                                             \"version\": ${_2_input_ai_engine_version},
                                             \"ai_model\": ${_2_input_ai_model}
                                         },
                                         {
-                                            \"descriptor\": \"mg-prioritization\",
+                                            \"descriptor\": \"prioritization\",
                                             \"version\": ${_3_input_ai_engine_version},
                                             \"ai_model\": ${_3_input_ai_model}
                                         },
