@@ -237,21 +237,21 @@ spec:
             accountKeySecret:
               name: incisive-azure-storage-credentials
               key: account-access-key
-        - name: birads-output
-          path: "{{workflow.parameters.aiEngine_plaformVarsInputDataInference}}/birads"
+        - name: birads-classification-xai-output
+          path: "{{workflow.parameters.aiEngine_plaformVarsInputDataInference}}/birads-classification-xai"
           azure:
             endpoint: https://incisivesa.blob.core.windows.net
             container: d-4-2-service-breast-cancer
-            blob: "birads-output-{{workflow.creationTimestamp.RFC3339}}"
+            blob: "birads-classification-xai-output-{{workflow.creationTimestamp.RFC3339}}"
             accountKeySecret:
               name: incisive-azure-storage-credentials
               key: account-access-key
-        - name: density-output
-          path: "{{workflow.parameters.aiEngine_plaformVarsInputDataInference}}/density"
+        - name: density-classification-xai-output
+          path: "{{workflow.parameters.aiEngine_plaformVarsInputDataInference}}/density-classification-xai"
           azure:
             endpoint: https://incisivesa.blob.core.windows.net
             container: d-4-2-service-breast-cancer
-            blob: "density-output-{{workflow.creationTimestamp.RFC3339}}"
+            blob: "density-classification-xai-output-{{workflow.creationTimestamp.RFC3339}}"
             accountKeySecret:
               name: incisive-azure-storage-credentials
               key: account-access-key
