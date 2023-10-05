@@ -4,7 +4,7 @@
       "name": "ping_ai_engine",
       "max_initialization_time": 30,
       "client_host": "{{workflow.parameters.execution_medical-report-generation-plaform-vars-api-host}}",
-      "ping_url": "{{workflow.parameters.aiEngine_plaformVarsApiPingUrl}}",
+      "ping_url": "{{workflow.parameters.aiEngine_plaformVarsApiPingUrl}}"
     },
     {
       "name": "end_ai_engine",
