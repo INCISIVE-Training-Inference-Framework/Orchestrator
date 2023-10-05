@@ -29,63 +29,6 @@ spec:
   - name: platform-vars
     emptyDir: {}
 
-  # Global workflow arguments
-  arguments:
-    parameters:
-    - name: platform_centralNodeLabelKey
-    - name: platform_centralNodeLabelValue
-    - name: platform_maasApiHostname
-    - name: platform_orchestratorApiHostname
-    - name: platform_processorResourceManagerVersion
-    - name: platform_processorResourceManagerCallbackUrl
-    - name: aiEngine_plaformVarsConfigMapName
-    - name: aiEngine_plaformVarsInputElements
-    - name: aiEngine_plaformVarsInputDataInference
-    - name: aiEngine_plaformVarsInputAIElements
-    - name: aiEngine_plaformVarsInputUserVars
-    - name: aiEngine_plaformVarsInputModel
-    - name: aiEngine_plaformVarsOutputElements
-    - name: aiEngine_plaformVarsOutputInferenceResults
-    - name: aiEngine_plaformVarsApiPingUrl
-    - name: aiEngine_plaformVarsApiRunUrl
-    - name: aiEngine_plaformVarsApiEndUrl
-    - name: execution_id
-    - name: execution_segmentation-container-name
-    - name: execution_segmentation-container-version
-    - name: execution_segmentation-container-version-max-iteration-time
-    - name: execution_segmentation-ai-model
-    - name: execution_segmentation-prm-api-host
-    - name: execution_segmentation-plaform-vars-api-host
-    - name: execution_localization-container-name
-    - name: execution_localization-container-version
-    - name: execution_localization-container-version-max-iteration-time
-    - name: execution_localization-ai-model
-    - name: execution_localization-prm-api-host
-    - name: execution_localization-plaform-vars-api-host
-    - name: execution_prioritization-container-name
-    - name: execution_prioritization-container-version
-    - name: execution_prioritization-container-version-max-iteration-time
-    - name: execution_prioritization-ai-model
-    - name: execution_prioritization-prm-api-host
-    - name: execution_prioritization-plaform-vars-api-host
-    - name: execution_birads-classification-xai-container-name
-    - name: execution_birads-classification-xai-container-version
-    - name: execution_birads-classification-xai-container-version-max-iteration-time
-    - name: execution_birads-classification-xai-ai-model
-    - name: execution_birads-classification-xai-prm-api-host
-    - name: execution_birads-classification-xai-plaform-vars-api-host
-    - name: execution_density-classification-xai-container-name
-    - name: execution_density-classification-xai-container-version
-    - name: execution_density-classification-xai-container-version-max-iteration-time
-    - name: execution_density-classification-xai-ai-model
-    - name: execution_density-classification-xai-prm-api-host
-    - name: execution_density-classification-xai-plaform-vars-api-host
-    - name: execution_medical-report-generation-container-name
-    - name: execution_medical-report-generation-container-version
-    - name: execution_medical-report-generation-container-version-max-iteration-time
-    - name: execution_medical-report-generation-prm-api-host
-    - name: execution_medical-report-generation-plaform-vars-api-host
-
   templates:
     - name: main
       steps:
@@ -192,7 +135,12 @@ spec:
               limits:
                 cpu: 1000m
                 memory: 256Mi
-            args: ["{\"actions\":[{\"name\":\"update_to_running\",\"update_status_url\":\"http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/update_to_running/\"},{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputDataInference}}\"},{\"name\":\"download_external_data\",\"external_data_url\":\"http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/download_external_data/\",\"output_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputDataInference}}\"},{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputAIElements}}\"},{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputModel}}\"},{\"name\":\"download_user_vars\",\"user_vars_url\":\"http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/download_user_vars/?descriptor={{inputs.parameters.descriptor}}\",\"output_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputUserVars}}\"},{\"name\":\"download_ai_model\",\"ai_model_url\":\"http://{{workflow.parameters.platform_maasApiHostname}}/api/ai_models/{{inputs.parameters.ai-model}}/download_contents/\",\"output_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputModel}}\", \"download_resume_retries\": {{inputs.parameters.ai-model-download-resume-retries}},{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsOutputInferenceResults}}\"},{\"name\":\"run_ai_engine\",\"use_case\":\"inferencing_from_pretrained_model\",\"max_iteration_time\":{{inputs.parameters.max-iteration-time}},\"max_initialization_time\":600,\"client_host\":\"{{inputs.parameters.plaform-vars-api-host}}\",\"server_host\":\"{{inputs.parameters.prm-api-host}}\",\"ping_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiPingUrl}}\",\"run_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiRunUrl}}\",\"callback_url\":\"{{workflow.parameters.platform_processorResourceManagerCallbackUrl}}\"},{\"name\":\"end_ai_engine\",\"max_finalization_time\":30,\"max_finalization_retries\":4,\"client_host\":\"{{workflow.parameters.execution_segmentation-plaform-vars-api-host}}\",\"ping_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiPingUrl}}\",\"end_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiEndUrl}}\"}]}", "--failure-actions", "{\"actions\":[{\"name\":\"ping_ai_engine\",\"max_initialization_time\":30,\"client_host\":\"{{inputs.parameters.plaform-vars-api-host}}\",\"ping_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiPingUrl}}\"},{\"name\":\"end_ai_engine\",\"max_finalization_time\":30,\"max_finalization_retries\":4,\"client_host\":\"{{inputs.parameters.plaform-vars-api-host}}\",\"ping_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiPingUrl}}\",\"end_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiEndUrl}}\"}]}"]
+            args:
+              # Main action
+              - "{\"actions\":[{\"name\":\"update_to_running\",\"update_status_url\":\"http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/update_to_running/\"},{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputDataInference}}\"},{\"name\":\"download_external_data\",\"external_data_url\":\"http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/download_external_data/\",\"output_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputDataInference}}\"},{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputAIElements}}\"},{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputModel}}\"},{\"name\":\"download_user_vars\",\"user_vars_url\":\"http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/download_user_vars/?descriptor={{inputs.parameters.descriptor}}\",\"output_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputUserVars}}\"},{\"name\":\"download_ai_model\",\"ai_model_url\":\"http://{{workflow.parameters.platform_maasApiHostname}}/api/ai_models/{{inputs.parameters.ai-model}}/download_contents/\",\"output_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputModel}}\",\"download_resume_retries\":\"{{inputs.parameters.ai-model-download-resume-retries}}\"},{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsOutputInferenceResults}}\"},{\"name\":\"run_ai_engine\",\"use_case\":\"inferencing_from_pretrained_model\",\"max_iteration_time\":\"{{inputs.parameters.max-iteration-time}}\",\"max_initialization_time\":600,\"client_host\":\"{{inputs.parameters.plaform-vars-api-host}}\",\"server_host\":\"{{inputs.parameters.prm-api-host}}\",\"ping_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiPingUrl}}\",\"run_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiRunUrl}}\",\"callback_url\":\"{{workflow.parameters.platform_processorResourceManagerCallbackUrl}}\"},{\"name\":\"end_ai_engine\",\"max_finalization_time\":30,\"max_finalization_retries\":4,\"client_host\":\"{{inputs.parameters.plaform-vars-api-host}}\",\"ping_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiPingUrl}}\",\"end_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiEndUrl}}\"}]}"
+              # Failure actions
+              - "--failure-actions"
+              - "{\"actions\":[{\"name\":\"ping_ai_engine\",\"max_initialization_time\":30,\"client_host\":\"{{inputs.parameters.plaform-vars-api-host}}\",\"ping_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiPingUrl}}\"},{\"name\":\"end_ai_engine\",\"max_finalization_time\":30,\"max_finalization_retries\":4,\"client_host\":\"{{inputs.parameters.plaform-vars-api-host}}\",\"ping_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiPingUrl}}\",\"end_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiEndUrl}}\"}]}"
           - name: main-ai-engine
             image: "incisive.azurecr.io/{{inputs.parameters.container-name}}:{{inputs.parameters.container-version}}"
             resources:
@@ -310,7 +258,12 @@ spec:
               limits:
                 cpu: 1000m
                 memory: 256Mi
-            args: ["{\"actions\":[{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputAIElements}}\"},{\"name\":\"download_user_vars\",\"user_vars_url\":\"http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/download_user_vars/?descriptor=medical-report-generation\",\"output_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputUserVars}}\"},{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsOutputInferenceResults}}\"},{\"name\":\"run_ai_engine\",\"use_case\":\"inferencing_from_pretrained_model\",\"max_iteration_time\":{{workflow.parameters.execution_medical-report-generation-max-iteration-time}},\"max_initialization_time\":600,\"client_host\":\"{{workflow.parameters.execution_medical-report-generation-plaform-vars-api-host}}\",\"server_host\":\"{{workflow.parameters.execution_medical-report-generation-prm-api-host}}\",\"ping_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiPingUrl}}\",\"run_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiRunUrl}}\",\"callback_url\":\"{{workflow.parameters.platform_processorResourceManagerCallbackUrl}}\"},{\"name\":\"end_ai_engine\",\"max_finalization_time\":30,\"max_finalization_retries\":4,\"client_host\":\"{{workflow.parameters.execution_medical-report-generation-plaform-vars-api-host}}\",\"ping_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiPingUrl}}\",\"end_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiEndUrl}}\"}]}", "--failure-actions", "{\"actions\":[{\"name\":\"ping_ai_engine\",\"max_initialization_time\":30,\"client_host\":\"{{workflow.parameters.execution_medical-report-generation-plaform-vars-api-host}}\",\"ping_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiPingUrl}}\",},{\"name\":\"end_ai_engine\",\"max_finalization_time\":30,\"max_finalization_retries\":4,\"client_host\":\"{{workflow.parameters.execution_medical-report-generation-plaform-vars-api-host}}\",\"ping_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiPingUrl}}\",\"end_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiEndUrl}}\"}]}"]
+            args:
+              # Main actions
+              - "{\"actions\":[{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputAIElements}}\"},{\"name\":\"download_user_vars\",\"user_vars_url\":\"http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/download_user_vars/?descriptor=medical-report-generation\",\"output_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputUserVars}}\"},{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsOutputInferenceResults}}\"},{\"name\":\"run_ai_engine\",\"use_case\":\"inferencing_from_pretrained_model\",\"max_iteration_time\":{{workflow.parameters.execution_medical-report-generation-container-version-max-iteration-time}},\"max_initialization_time\":600,\"client_host\":\"{{workflow.parameters.execution_medical-report-generation-plaform-vars-api-host}}\",\"server_host\":\"{{workflow.parameters.execution_medical-report-generation-prm-api-host}}\",\"ping_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiPingUrl}}\",\"run_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiRunUrl}}\",\"callback_url\":\"{{workflow.parameters.platform_processorResourceManagerCallbackUrl}}\"},{\"name\":\"end_ai_engine\",\"max_finalization_time\":30,\"max_finalization_retries\":4,\"client_host\":\"{{workflow.parameters.execution_medical-report-generation-plaform-vars-api-host}}\",\"ping_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiPingUrl}}\",\"end_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiEndUrl}}\"}]}"
+              # Failre actions
+              - "--failure-actions"
+              - "{\"actions\":[{\"name\":\"ping_ai_engine\",\"max_initialization_time\":30,\"client_host\":\"{{workflow.parameters.execution_medical-report-generation-plaform-vars-api-host}}\",\"ping_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiPingUrl}}\",},{\"name\":\"end_ai_engine\",\"max_finalization_time\":30,\"max_finalization_retries\":4,\"client_host\":\"{{workflow.parameters.execution_medical-report-generation-plaform-vars-api-host}}\",\"ping_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiPingUrl}}\",\"end_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiEndUrl}}\"}]}"]
           - name: main-ai-engine
             image: "incisive.azurecr.io/{{workflow.parameters.execution_medical-report-generation-container-name}}:{{workflow.parameters.execution_medical-report-generation-container-version}}"
             resources:

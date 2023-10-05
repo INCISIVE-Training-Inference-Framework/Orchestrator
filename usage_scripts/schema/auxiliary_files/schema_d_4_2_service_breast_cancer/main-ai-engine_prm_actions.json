@@ -23,7 +23,7 @@
     },
     {
       "name": "download_user_vars",
-      "user_vars_url": "http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/download_user_vars/?descriptor=descriptor={{inputs.parameters.descriptor}}",
+      "user_vars_url": "http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/download_user_vars/?descriptor={{inputs.parameters.descriptor}}",
       "output_path": "{{workflow.parameters.aiEngine_plaformVarsInputUserVars}}"
     },
     {
