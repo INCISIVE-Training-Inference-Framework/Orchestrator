@@ -23,7 +23,7 @@
       },
       {
         "descriptor": "xai",
-        "role_type": "classification",
+        "role_type": "xai",
         "functionalities": [
           "inferencing_from_pretrained_model"
         ],
