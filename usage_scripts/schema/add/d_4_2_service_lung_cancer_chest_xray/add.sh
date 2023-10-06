@@ -34,7 +34,7 @@ _1_input_ai_engine_functionalities='["inferencing_from_pretrained_model"]' # lis
 _1_input_ai_engine_model="true" # bool
 
 _2_input_ai_engine_descriptor="xai" # str, cannot contain spaces or special symbols
-_2_input_ai_engine_role_type="classification" # str, possible values -> the ones defined on the MaaS along the symbol *
+_2_input_ai_engine_role_type="xai" # str, possible values -> the ones defined on the MaaS along the symbol *
 _2_input_ai_engine_functionalities='["inferencing_from_pretrained_model"]' # list[str], possible values -> the ones defined on the MaaS
 _2_input_ai_engine_model="true" # bool
 
