@@ -36,6 +36,10 @@ def retrieve_container_information(ai_engine_version_id):
         response = r.json()
         container_version = response['container_version']
         max_iteration_time = response['max_iteration_time']
+        memory_request = response['memory_request']
+        cpu_request = response['cpu_request']
+        memory_limit = response['memory_limit']
+        cpu_limit = response['cpu_limit']
     except Exception as e:
         if not isinstance(e, serializers.ValidationError):
             raise InternalError(f'Error while retrieving AI Engine Version from MaaS. {e}', e)
@@ -63,7 +67,7 @@ def retrieve_container_information(ai_engine_version_id):
         else:
             raise e
 
-    return container_name, container_version, max_iteration_time
+    return container_name, container_version, max_iteration_time, memory_request, cpu_request, memory_limit, cpu_limit
 
 
 def retrieve_ai_model_information(ai_model_id: int) -> int:
