@@ -178,13 +178,8 @@ class ExecutionInputAIEngine(models.Model):
     container_name = models.CharField(max_length=200)
     container_version = models.CharField(max_length=50)
     max_iteration_time = models.IntegerField()
-    # Define memory request and limit. Accepted quantity suffixes
-    #   --> E, P, T, G, M, k
-    #   --> Or power-of-two equivalents: Ei, Pi, Ti, Gi, Mi, Ki
     memory_request = models.CharField(max_length=50)
     memory_limit = models.CharField(max_length=50)
-    # Define CPU request and limit. Accepted quantity suffixes
-    #   --> m (millicpu) equivalent to 0.1 CPU
     cpu_request = models.CharField(max_length=50)
     cpu_limit = models.CharField(max_length=50)
 

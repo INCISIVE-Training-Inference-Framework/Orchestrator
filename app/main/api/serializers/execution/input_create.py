@@ -271,7 +271,7 @@ class ExecutionInputSerializerInputAIEngine(serializers.Serializer):
         validated_data['max_iteration_time'] = max_iteration_time
         validated_data['memory_request'] = memory_request
         validated_data['cpu_request'] = cpu_request
-        validated_data['memory_limit'] =memory_limit
+        validated_data['memory_limit'] = memory_limit
         validated_data['cpu_limit'] = cpu_limit
         validated_data['download_resume_retries'] = download_resume_retries
 

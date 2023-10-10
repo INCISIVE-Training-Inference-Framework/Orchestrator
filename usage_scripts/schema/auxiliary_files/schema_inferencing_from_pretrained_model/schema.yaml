@@ -111,7 +111,7 @@ spec:
               memory: "{{workflow.parameters.execution_main-ai-engine-container-version-memory-request}}"
             limits:
               cpu: "{{workflow.parameters.execution_main-ai-engine-container-version-cpu-limit}}"
-              memory: "{{workflow.parameters.execution_main-ai-engine-container-version-memory-request}}"
+              memory: "{{workflow.parameters.execution_main-ai-engine-container-version-memory-limit}}"
         
   - name: exit-handler
     steps:
