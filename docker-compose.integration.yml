@@ -29,6 +29,7 @@ services:
     volumes:
       - ${STORAGE_LOCAL_PATH}:/usr/application/storage
       - ./docker_compose_init_orchestrator.sh:/usr/application/init_orchestrator.sh
+      - ./app/main/migrations:/usr/application/app/main/migrations
     # Command overwrite to initialize the local db
     command:
       - /usr/application/init_orchestrator.sh
