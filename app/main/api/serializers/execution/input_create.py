@@ -253,21 +253,27 @@ class ExecutionInputSerializerInputAIEngine(serializers.Serializer):
         container_name = 'dummy'
         container_version = 'dummy'
         max_iteration_time = 1200 # Dummy value, same as in MaaS
+        memory_request = "3584Mi"
+        cpu_request = "250m"
+        memory_limit = "3584Mi"
+        cpu_limit = "4000m"
 
         # retrieve AI model fields from MaaS
         download_resume_retries = 4 # Dummy value, same as in MaaS
 
         if settings.VALIDATE_WITH_MAAS:
-            container_name, container_version, max_iteration_time = retrieve_container_information(validated_data['version'])
+            container_name, container_version, max_iteration_time, memory_request, cpu_request, memory_limit, cpu_limit = retrieve_container_information(validated_data['version'])
             if is_ai_model_required:
                 download_resume_retries = retrieve_ai_model_information(validated_data['ai_model'])
-
 
         validated_data['container_name'] = container_name
         validated_data['container_version'] = container_version
         validated_data['max_iteration_time'] = max_iteration_time
+        validated_data['memory_request'] = memory_request
+        validated_data['cpu_request'] = cpu_request
+        validated_data['memory_limit'] = memory_limit
+        validated_data['cpu_limit'] = cpu_limit
         validated_data['download_resume_retries'] = download_resume_retries
-
 
         return validated_data
 
@@ -285,6 +291,10 @@ class ExecutionInputSerializerInputAIEngine(serializers.Serializer):
             'container_name': validated_data['container_name'],
             'container_version': validated_data['container_version'],
             'max_iteration_time': validated_data['max_iteration_time'],
+            'memory_request': validated_data['memory_request'],
+            'cpu_request': validated_data['cpu_request'],
+            'memory_limit': validated_data['memory_limit'],
+            'cpu_limit': validated_data['cpu_limit'],
             'execution': execution_instance
         })
         if 'ai_model' in validated_data:

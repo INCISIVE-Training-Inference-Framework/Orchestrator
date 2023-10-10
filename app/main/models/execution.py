@@ -178,6 +178,10 @@ class ExecutionInputAIEngine(models.Model):
     container_name = models.CharField(max_length=200)
     container_version = models.CharField(max_length=50)
     max_iteration_time = models.IntegerField()
+    memory_request = models.CharField(max_length=50)
+    memory_limit = models.CharField(max_length=50)
+    cpu_request = models.CharField(max_length=50)
+    cpu_limit = models.CharField(max_length=50)
 
     execution = models.ForeignKey(
         Execution,

@@ -20,5 +20,9 @@ execution_id: 1
 execution_main-ai-engine-container-name: "ai-engines/lung-chest-xray-classification"
 execution_main-ai-engine-container-version: "2.0.0"
 execution_main-ai-engine-container-version-max-iteration-time: 1200
+execution_main-ai-engine-container-version-cpu-request: "250m"
+execution_main-ai-engine-container-version-memory-request: "2048Mi"
+execution_main-ai-engine-container-version-cpu-limit: "400m"
+execution_main-ai-engine-container-version-memory-limit: "4096Mi"
 execution_main-ai-engine-ai-model: 1
 execution_main-ai-engine-ai-model-download-resume-retries: 4

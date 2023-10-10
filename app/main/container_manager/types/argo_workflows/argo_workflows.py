@@ -178,6 +178,14 @@ class ContainerManagerArgoWorkflows(ContainerManagerInterface):
             parameters[f'execution_{ai_engine.descriptor}-container-version'] = ai_engine.container_version
             parameters[f'execution_{ai_engine.descriptor}-container-version-max-iteration-time'] = \
                 ai_engine.max_iteration_time
+            parameters[f'execution_{ai_engine.descriptor}-container-version-memory-request'] = \
+                ai_engine.memory_request
+            parameters[f'execution_{ai_engine.descriptor}-container-version-cpu-request'] = \
+                ai_engine.cpu_request
+            parameters[f'execution_{ai_engine.descriptor}-container-version-memory-limit'] = \
+                ai_engine.memory_limit
+            parameters[f'execution_{ai_engine.descriptor}-container-version-cpu-limit'] = \
+                ai_engine.cpu_limit
 
             if ai_engine.requires_ai_model():
                 parameters[f'execution_{ai_engine.descriptor}-ai-model'] = ai_engine.get_ai_model().ai_model
