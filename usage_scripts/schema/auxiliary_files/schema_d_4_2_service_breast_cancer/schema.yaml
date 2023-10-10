@@ -126,6 +126,16 @@ spec:
           subPath: platform_vars.json  
         - name: platform-vars
           mountPath: /tmp/config_changer
+      podSpecPatch: |
+        containers:
+        - name: main-ai-engine
+          resources:
+            requests:
+              cpu: "{{ inputs.parameters.cpu-request }}"
+              memory: "{{ inputs.parameters.memory-request }}"
+            limits:
+              cpu: "{{ inputs.parameters.cpu-limit }}"
+              memory: "{{ inputs.parameters.memory-limit }}"
       containerSet:
         volumeMounts:
         - name: input-elements
@@ -155,13 +165,6 @@ spec:
               - "{\"actions\":[{\"name\":\"ping_ai_engine\",\"max_initialization_time\":30,\"client_host\":\"{{inputs.parameters.plaform-vars-api-host}}\",\"ping_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiPingUrl}}\"},{\"name\":\"end_ai_engine\",\"max_finalization_time\":30,\"max_finalization_retries\":4,\"client_host\":\"{{inputs.parameters.plaform-vars-api-host}}\",\"ping_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiPingUrl}}\",\"end_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiEndUrl}}\"}]}"
           - name: main-ai-engine
             image: "incisive.azurecr.io/{{inputs.parameters.container-name}}:{{inputs.parameters.container-version}}"
-            resources:
-              requests:
-                cpu: "{{inputs.parameters.cpu-request}}"
-                memory: "{{inputs.parameters.memory-request}}"
-              limits:
-                cpu: "{{inputs.parameters.cpu-limit}}"
-                memory: "{{inputs.parameters.memory-limit}}"
         
     - name: medical-report-generation-template
       nodeSelector: {"{{workflow.parameters.platform_centralNodeLabelKey}}": "{{workflow.parameters.platform_centralNodeLabelValue}}"}
@@ -249,6 +252,16 @@ spec:
           subPath: platform_vars.json  
         - name: platform-vars
           mountPath: /tmp/config_changer
+      podSpecPatch: |
+        containers:
+        - name: main-ai-engine
+          resources:
+            requests:
+              cpu: "{{ workflow.parameters.execution_medical-report-generation-container-version-cpu-request }}"
+              memory: "{{ workflow.parameters.execution_medical-report-generation-container-version-memory-request }}"
+            limits:
+              cpu: "{{ workflow.parameters.execution_medical-report-generation-container-version-cpu-limit }}"
+              memory: "{{ workflow.parameters.execution_medical-report-generation-container-version-memory-limit }}"
       containerSet:
         volumeMounts:
         - name: input-elements
@@ -275,16 +288,9 @@ spec:
               - "{\"actions\":[{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputAIElements}}\"},{\"name\":\"download_user_vars\",\"user_vars_url\":\"http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/download_user_vars/?descriptor=medical-report-generation\",\"output_path\":\"{{workflow.parameters.aiEngine_plaformVarsInputUserVars}}\"},{\"name\":\"create_directory\",\"directory_path\":\"{{workflow.parameters.aiEngine_plaformVarsOutputInferenceResults}}\"},{\"name\":\"run_ai_engine\",\"use_case\":\"inferencing_from_pretrained_model\",\"max_iteration_time\":{{workflow.parameters.execution_medical-report-generation-container-version-max-iteration-time}},\"max_initialization_time\":600,\"client_host\":\"{{workflow.parameters.execution_medical-report-generation-plaform-vars-api-host}}\",\"server_host\":\"{{workflow.parameters.execution_medical-report-generation-prm-api-host}}\",\"ping_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiPingUrl}}\",\"run_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiRunUrl}}\",\"callback_url\":\"{{workflow.parameters.platform_processorResourceManagerCallbackUrl}}\"},{\"name\":\"end_ai_engine\",\"max_finalization_time\":30,\"max_finalization_retries\":4,\"client_host\":\"{{workflow.parameters.execution_medical-report-generation-plaform-vars-api-host}}\",\"ping_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiPingUrl}}\",\"end_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiEndUrl}}\"}]}"
               # Failre actions
               - "--failure-actions"
-              - "{\"actions\":[{\"name\":\"ping_ai_engine\",\"max_initialization_time\":30,\"client_host\":\"{{workflow.parameters.execution_medical-report-generation-plaform-vars-api-host}}\",\"ping_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiPingUrl}}\",},{\"name\":\"end_ai_engine\",\"max_finalization_time\":30,\"max_finalization_retries\":4,\"client_host\":\"{{workflow.parameters.execution_medical-report-generation-plaform-vars-api-host}}\",\"ping_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiPingUrl}}\",\"end_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiEndUrl}}\"}]}"]
+              - "{\"actions\":[{\"name\":\"ping_ai_engine\",\"max_initialization_time\":30,\"client_host\":\"{{workflow.parameters.execution_medical-report-generation-plaform-vars-api-host}}\",\"ping_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiPingUrl}}\",},{\"name\":\"end_ai_engine\",\"max_finalization_time\":30,\"max_finalization_retries\":4,\"client_host\":\"{{workflow.parameters.execution_medical-report-generation-plaform-vars-api-host}}\",\"ping_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiPingUrl}}\",\"end_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiEndUrl}}\"}]}"
           - name: main-ai-engine
             image: "incisive.azurecr.io/{{workflow.parameters.execution_medical-report-generation-container-name}}:{{workflow.parameters.execution_medical-report-generation-container-version}}"
-            resources:
-              requests:
-                cpu: "{{workflow.parameters.execution_medical-report-generation-container-version-cpu-request}}"
-                memory: "{{workflow.parameters.execution_medical-report-generation-container-version-memory-request}}"
-              limits:
-                cpu: "{{workflow.parameters.execution_medical-report-generation-container-version-cpu-limit}}"
-                memory: "{{workflow.parameters.execution_medical-report-generation-container-version-cpu-limit}}"
 
     - name: finalization-template
       nodeSelector: {"{{workflow.parameters.platform_centralNodeLabelKey}}": "{{workflow.parameters.platform_centralNodeLabelValue}}"}
