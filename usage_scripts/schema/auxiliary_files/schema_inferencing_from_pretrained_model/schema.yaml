@@ -56,6 +56,10 @@ spec:
       - name: execution_main-ai-engine-container-name
       - name: execution_main-ai-engine-container-version
       - name: execution_main-ai-engine-container-version-max-iteration-time
+      - name: execution_main-ai-engine-container-version-memory-request
+      - name: execution_main-ai-engine-container-version-cpu-request
+      - name: execution_main-ai-engine-container-version-memory-limit
+      - name: execution_main-ai-engine-container-version-cpu-limit
       - name: execution_main-ai-engine-ai-model
       - name: execution_main-ai-engine-ai-model-download-resume-retries
       - name: execution_main-ai-engine-prm-api-host

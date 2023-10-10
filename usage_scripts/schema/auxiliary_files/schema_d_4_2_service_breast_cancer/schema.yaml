@@ -48,6 +48,14 @@ spec:
               value: "{{ workflow.parameters.execution_{{item}}-container-version }}"
             - name: max-iteration-time
               value: "{{ workflow.parameters.execution_{{item}}-container-version-max-iteration-time }}"
+            - name: cpu-request
+              value: "{{ workflow.parameters.execution_{{item}}-container-version-cpu-request }}"
+            - name: memory-request
+              value: "{{ workflow.parameters.execution_{{item}}-container-version-memory-request }}"
+            - name: cpu-limit
+              value: "{{ workflow.parameters.execution_{{item}}-container-version-cpu-limit }}"
+            - name: memory-limit
+              value: "{{ workflow.parameters.execution_{{item}}-container-version-memory-limit }}"
             - name: ai-model
               value: "{{ workflow.parameters.execution_{{item}}-ai-model}}"
             - name: ai-model-download-resume-retries
@@ -76,6 +84,10 @@ spec:
         - name: container-name
         - name: container-version
         - name: max-iteration-time
+        - name: memory-request
+        - name: cpu-request
+        - name: memory-limit
+        - name: cpu-limit
         - name: ai-model
         - name: ai-model-download-resume-retries
       outputs:
@@ -145,11 +157,11 @@ spec:
             image: "incisive.azurecr.io/{{inputs.parameters.container-name}}:{{inputs.parameters.container-version}}"
             resources:
               requests:
-                cpu: 250m
-                memory: 2560Mi
+                cpu: "{{inputs.parameters.cpu-request}}"
+                memory: "{{inputs.parameters.memory-request}}"
               limits:
-                cpu: 2000m
-                memory: 2560Mi
+                cpu: "{{inputs.parameters.cpu-limit}}"
+                memory: "{{inputs.parameters.memory-limit}}"
         
     - name: medical-report-generation-template
       nodeSelector: {"{{workflow.parameters.platform_centralNodeLabelKey}}": "{{workflow.parameters.platform_centralNodeLabelValue}}"}
@@ -268,11 +280,11 @@ spec:
             image: "incisive.azurecr.io/{{workflow.parameters.execution_medical-report-generation-container-name}}:{{workflow.parameters.execution_medical-report-generation-container-version}}"
             resources:
               requests:
-                cpu: 250m
-                memory: 2560Mi
+                cpu: "{{workflow.parameters.execution_medical-report-generation-container-version-cpu-request}}"
+                memory: "{{workflow.parameters.execution_medical-report-generation-container-version-memory-request}}"
               limits:
-                cpu: 2000m
-                memory: 2560Mi
+                cpu: "{{workflow.parameters.execution_medical-report-generation-container-version-cpu-limit}}"
+                memory: "{{workflow.parameters.execution_medical-report-generation-container-version-cpu-limit}}"
 
     - name: finalization-template
       nodeSelector: {"{{workflow.parameters.platform_centralNodeLabelKey}}": "{{workflow.parameters.platform_centralNodeLabelValue}}"}
