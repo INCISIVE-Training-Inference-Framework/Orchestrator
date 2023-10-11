@@ -74,7 +74,7 @@ execution_metastasis-risk-classification-xai-ai-model-download-resume-retries: 3
 execution_metastasis-risk-classification-xai-prm-api-host: "127.0.0.1:8010"
 execution_metastasis-risk-classification-xai-plaform-vars-api-host: "127.0.0.1:8011"
 execution_medical-report-generation-container-name: "ai-engines/lung-cancer-medical-report"
-execution_medical-report-generation-container-version: "2.0.0-alpha-1"
+execution_medical-report-generation-container-version: "2.0.0"
 execution_medical-report-generation-container-version-max-iteration-time: 1200
 execution_medical-report-generation-container-version-cpu-request: 250m
 execution_medical-report-generation-container-version-memory-request: 3578Mi
