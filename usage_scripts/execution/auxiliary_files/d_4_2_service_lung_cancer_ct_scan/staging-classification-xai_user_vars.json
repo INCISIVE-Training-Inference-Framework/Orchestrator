@@ -1,0 +1,9 @@
+{
+  "model_name": "rf_staging_v8_subset.joblib",
+  "clinical_template": "Lung_Cancer_Prospective_Xinou_AK.xls",
+  "Debug": false,
+  "save_intermediate_data": false,
+  "explainability_mode": 1,
+  "explain_method": "lime",
+  "patient_pid": "R01-019"
+}
