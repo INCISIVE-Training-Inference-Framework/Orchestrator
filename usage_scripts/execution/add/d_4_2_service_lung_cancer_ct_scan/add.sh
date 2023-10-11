@@ -51,7 +51,7 @@ _5_input_ai_engine_version_user_vars="./auxiliary_files/${schema}/${_5_input_des
 _5_input_ai_model=9 # int, must exist on the MaaS
 
 # Medical report generation
-_6_input_descriptor="report_generation"
+_6_input_descriptor="medical-report-generation"
 _6_input_ai_engine_version=13 # int, must exist on the MaaS
 _6_input_ai_engine_version_user_vars="./auxiliary_files/${schema}/${_6_input_descriptor}_user_vars.json" # FILE
 
@@ -99,12 +99,12 @@ curl -X POST http://${orchestrator_api_hostname}/api/executions/ \
                                 \"output_elements\": {}
                             }" \
                             -F external_data=@${input_external_data} \
-                            -F segmentation_version_user_vars=@${_1_input_ai_engine_version_user_vars} \
-                            -F localization_version_user_vars=@${_2_input_ai_engine_version_user_vars} \
-                            -F prioritization_version_user_vars=@${_3_input_ai_engine_version_user_vars} \
-                            -F birads-classification-xai_version_user_vars=@${_4_input_ai_engine_version_user_vars} \
-                            -F density-classification-xai_version_user_vars=@${_5_input_ai_engine_version_user_vars} \
-                            -F medical-report-generation_version_user_vars=@${_6_input_ai_engine_version_user_vars}
+                            -F ${_1_input_descriptor}_version_user_vars=@${_1_input_ai_engine_version_user_vars} \
+                            -F ${_2_input_descriptor}_version_user_vars=@${_2_input_ai_engine_version_user_vars} \
+                            -F ${_3_input_descriptor}_version_user_vars=@${_3_input_ai_engine_version_user_vars} \
+                            -F ${_4_input_descriptor}_version_user_vars=@${_4_input_ai_engine_version_user_vars} \
+                            -F ${_5_input_descriptor}_version_user_vars=@${_5_input_ai_engine_version_user_vars} \
+                            -F ${_6_input_descriptor}_version_user_vars=@${_6_input_ai_engine_version_user_vars}
 
 # --> SUCCESSFUL OUTPUT
 # code: 201
