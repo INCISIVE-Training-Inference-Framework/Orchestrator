@@ -40,10 +40,10 @@ services:
       incisive:
   
   # alpine for debugging purposes
-  alpine:
+  alpine-orchestrator:
     image: alpine/curl:latest
-    hostname: alpine
-    container_name: alpine
+    hostname: alpine-orchestrator
+    container_name: alpine-orchestrator
     environment:
       TZ: Europe/Madrid
     command:
@@ -58,3 +58,4 @@ networks:
   incisive:
     name: incisive
     driver: bridge
+    external: true
