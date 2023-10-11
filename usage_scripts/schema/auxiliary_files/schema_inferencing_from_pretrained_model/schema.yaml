@@ -26,7 +26,7 @@ spec:
       name: "{{workflow.parameters.aiEngine_plaformVarsConfigMapName}}"
   - name: platform-vars
     emptyDir: {}
-    
+
   templates:
   - name: main
     nodeSelector: {"{{workflow.parameters.platform_centralNodeLabelKey}}": "{{workflow.parameters.platform_centralNodeLabelValue}}"}
@@ -82,6 +82,16 @@ spec:
         subPath: platform_vars.json  
       - name: platform-vars
         mountPath: /tmp/config_changer
+    podSpecPatch: |
+      containers:
+      - name: main-ai-engine
+        resources:
+          requests:
+            cpu: "{{workflow.parameters.execution_main-ai-engine-container-version-cpu-request}}"
+            memory: "{{workflow.parameters.execution_main-ai-engine-container-version-memory-request}}"
+          limits:
+            cpu: "{{workflow.parameters.execution_main-ai-engine-container-version-cpu-limit}}"
+            memory: "{{workflow.parameters.execution_main-ai-engine-container-version-memory-limit}}"
     containerSet:
       volumeMounts:
       - name: input-elements
@@ -109,13 +119,6 @@ spec:
             - "{\"actions\":[{\"name\":\"ping_ai_engine\",\"max_initialization_time\":30,\"client_host\":\"{{workflow.parameters.execution_main-ai-engine-plaform-vars-api-host}}\",\"ping_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiPingUrl}}\"},{\"name\":\"end_ai_engine\",\"max_finalization_time\":30,\"max_finalization_retries\":4,\"client_host\":\"{{workflow.parameters.execution_main-ai-engine-plaform-vars-api-host}}\",\"ping_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiPingUrl}}\",\"end_url\":\"{{workflow.parameters.aiEngine_plaformVarsApiEndUrl}}\"}]}"
         - name: main-ai-engine
           image: "incisive.azurecr.io/{{workflow.parameters.execution_main-ai-engine-container-name}}:{{workflow.parameters.execution_main-ai-engine-container-version}}"
-          resources:
-            requests:
-              cpu: "{{workflow.parameters.execution_main-ai-engine-container-version-cpu-request}}"
-              memory: "{{workflow.parameters.execution_main-ai-engine-container-version-memory-request}}"
-            limits:
-              cpu: "{{workflow.parameters.execution_main-ai-engine-container-version-cpu-limit}}"
-              memory: "{{workflow.parameters.execution_main-ai-engine-container-version-memory-limit}}"
         
   - name: exit-handler
     steps:
