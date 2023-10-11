@@ -1,33 +1,56 @@
 {
-	"url": "http://127.0.0.1:8000/api/executions/7/",
-	"id": 7,
-	"schema": "http://127.0.0.1:8000/api/schemas/d_4_2_breast_cancer/",
-	"created_at": "2023-07-18T17:23:47.415855+02:00",
-	"updated_at": "2023-07-18T17:23:47.415917+02:00",
-	"state": {
-		"status": "pending"
-	},
-	"input_elements": {
-		"external_data": {
-			"contents": "http://127.0.0.1:8000/api/executions/7/download_external_data/"
-		}
-	},
-	"ai_elements": {
-		"ai_engines": [{
-			"descriptor": "prioritization-and-segmentation",
-			"version": "http://127.0.0.2:8000/api/ai_engines_versions/1/",
-			"version_user_vars": "http://127.0.0.1:8000/api/executions/7/download_user_vars/?descriptor=prioritization-and-segmentation",
-			"ai_model": "http://127.0.0.2:8000/api/ai_models/1/"
-		}, {
-			"descriptor": "birads-classification",
-			"version": "http://127.0.0.2:8000/api/ai_engines_versions/2/",
-			"version_user_vars": "http://127.0.0.1:8000/api/executions/7/download_user_vars/?descriptor=birads-classification",
-			"ai_model": "http://127.0.0.2:8000/api/ai_models/2/"
-		}, {
-			"descriptor": "medical-report-generation",
-			"version": "http://127.0.0.2:8000/api/ai_engines_versions/4/",
-			"version_user_vars": "http://127.0.0.1:8000/api/executions/7/download_user_vars/?descriptor=medical-report-generation"
-		}]
-	},
-	"output_elements": {}
+  "url": "http://orchestrator-service-2nd-prototype:8000/api/executions/4/",
+  "id": 4,
+  "schema": "http://orchestrator-service-2nd-prototype:8000/api/schemas/d_4_2_breast_cancer_mg/",
+  "created_at": "2023-10-10T20:44:25.046155+02:00",
+  "updated_at": "2023-10-10T21:09:50.344640+02:00",
+  "state": {
+	"status": "failed",
+	"message": "{{workflow.outputs.parameters.main-error-message}}"
+  },
+  "input_elements": {
+	"external_data": {
+	  "contents": "http://orchestrator-service-2nd-prototype:8000/api/executions/4/download_external_data/"
+	}
+  },
+  "ai_elements": {
+	"ai_engines": [
+	  {
+		"descriptor": "segmentation",
+		"version": "http://maas-service-2nd-prototype:8000/api/ai_engines_versions/3/",
+		"version_user_vars": "http://orchestrator-service-2nd-prototype:8000/api/executions/4/download_user_vars/?descriptor=segmentation",
+		"ai_model": "http://maas-service-2nd-prototype:8000/api/ai_models/2/"
+	  },
+	  {
+		"descriptor": "localization",
+		"version": "http://maas-service-2nd-prototype:8000/api/ai_engines_versions/3/",
+		"version_user_vars": "http://orchestrator-service-2nd-prototype:8000/api/executions/4/download_user_vars/?descriptor=localization",
+		"ai_model": "http://maas-service-2nd-prototype:8000/api/ai_models/2/"
+	  },
+	  {
+		"descriptor": "prioritization",
+		"version": "http://maas-service-2nd-prototype:8000/api/ai_engines_versions/3/",
+		"version_user_vars": "http://orchestrator-service-2nd-prototype:8000/api/executions/4/download_user_vars/?descriptor=prioritization",
+		"ai_model": "http://maas-service-2nd-prototype:8000/api/ai_models/2/"
+	  },
+	  {
+		"descriptor": "birads-classification-xai",
+		"version": "http://maas-service-2nd-prototype:8000/api/ai_engines_versions/4/",
+		"version_user_vars": "http://orchestrator-service-2nd-prototype:8000/api/executions/4/download_user_vars/?descriptor=birads-classification-xai",
+		"ai_model": "http://maas-service-2nd-prototype:8000/api/ai_models/3/"
+	  },
+	  {
+		"descriptor": "density-classification-xai",
+		"version": "http://maas-service-2nd-prototype:8000/api/ai_engines_versions/4/",
+		"version_user_vars": "http://orchestrator-service-2nd-prototype:8000/api/executions/4/download_user_vars/?descriptor=density-classification-xai",
+		"ai_model": "http://maas-service-2nd-prototype:8000/api/ai_models/10/"
+	  },
+	  {
+		"descriptor": "medical-report-generation",
+		"version": "http://maas-service-2nd-prototype:8000/api/ai_engines_versions/5/",
+		"version_user_vars": "http://orchestrator-service-2nd-prototype:8000/api/executions/4/download_user_vars/?descriptor=medical-report-generation"
+	  }
+	]
+  },
+  "output_elements": {}
 }

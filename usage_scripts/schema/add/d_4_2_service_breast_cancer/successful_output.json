@@ -1,37 +1,71 @@
 {
-	"url": "http://127.0.0.1:8000/api/schemas/d_4_2_breast_cancer/",
-	"name": "d_4_2_breast_cancer",
-	"type": "joint",
-	"implementation": "argo_workflows",
-	"description": "A schema that performs the Breast Cancer Service from D.4.2, creating a set of results and charts",
-	"auxiliary_file": "http://127.0.0.1:8000/api/schemas/d_4_2_breast_cancer/download_auxiliary_file/",
-	"created_at": "2023-03-16T14:56:36.661847+01:00",
-	"input_elements": {
-		"platform_data": false,
-		"external_data": true,
-		"federated_learning_configuration": false
-	},
-	"ai_elements": {
-		"ai_engines": [{
-			"descriptor": "prioritization-and-segmentation",
-			"role_type": "segmentation",
-			"functionalities": ["inferencing_from_pretrained_model"],
-			"ai_model": true
-		}, {
-			"descriptor": "birads-classification",
-			"role_type": "classification",
-			"functionalities": ["inferencing_from_pretrained_model"],
-			"ai_model": true
-		}, {
-			"descriptor": "medical-report-generation",
-			"role_type": "report_generation",
-			"functionalities": ["inferencing_from_pretrained_model"],
-			"ai_model": false
-		}]
-	},
-	"output_elements": {
-		"ai_model": false,
-		"evaluation_metrics": false,
-		"generic_file": true
-	}
+  "url": "http://orchestrator-service-2nd-prototype:8000/api/schemas/d_4_2_breast_cancer_mg/",
+  "name": "d_4_2_breast_cancer_mg",
+  "type": "joint",
+  "implementation": "argo_workflows",
+  "description": "A schema that performs the Breast Cancer MG Service from D.4.2, creating a set of results and charts",
+  "auxiliary_file": "http://orchestrator-service-2nd-prototype:8000/api/schemas/d_4_2_breast_cancer_mg/download_auxiliary_file/",
+  "created_at": "2023-10-10T20:40:34.601187+02:00",
+  "input_elements": {
+	"platform_data": false,
+	"external_data": true,
+	"federated_learning_configuration": false
+  },
+  "ai_elements": {
+	"ai_engines": [
+	  {
+		"descriptor": "segmentation",
+		"role_type": "segmentation",
+		"functionalities": [
+		  "inferencing_from_pretrained_model"
+		],
+		"ai_model": true
+	  },
+	  {
+		"descriptor": "localization",
+		"role_type": "segmentation",
+		"functionalities": [
+		  "inferencing_from_pretrained_model"
+		],
+		"ai_model": true
+	  },
+	  {
+		"descriptor": "prioritization",
+		"role_type": "segmentation",
+		"functionalities": [
+		  "inferencing_from_pretrained_model"
+		],
+		"ai_model": true
+	  },
+	  {
+		"descriptor": "birads-classification-xai",
+		"role_type": "xai",
+		"functionalities": [
+		  "inferencing_from_pretrained_model"
+		],
+		"ai_model": true
+	  },
+	  {
+		"descriptor": "density-classification-xai",
+		"role_type": "xai",
+		"functionalities": [
+		  "inferencing_from_pretrained_model"
+		],
+		"ai_model": true
+	  },
+	  {
+		"descriptor": "medical-report-generation",
+		"role_type": "report_generation",
+		"functionalities": [
+		  "inferencing_from_pretrained_model"
+		],
+		"ai_model": false
+	  }
+	]
+  },
+  "output_elements": {
+	"ai_model": false,
+	"evaluation_metrics": false,
+	"generic_file": true
+  }
 }

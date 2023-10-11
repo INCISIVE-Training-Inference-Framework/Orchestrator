@@ -1,0 +1,55 @@
+{
+  "url": "http://orchestrator-service-2nd-prototype:8000/api/executions/5/",
+  "id": 5,
+  "schema": "http://orchestrator-service-2nd-prototype:8000/api/schemas/d_4_2_service_lung_cancer_ct_scan/",
+  "created_at": "2023-10-11T17:01:31.446694+02:00",
+  "updated_at": "2023-10-11T17:01:31.446717+02:00",
+  "state": {
+    "status": "pending"
+  },
+  "input_elements": {
+    "external_data": {
+      "contents": "http://orchestrator-service-2nd-prototype:8000/api/executions/5/download_external_data/"
+    }
+  },
+  "ai_elements": {
+    "ai_engines": [
+      {
+        "descriptor": "segmentation",
+        "version": "http://maas-service-2nd-prototype:8000/api/ai_engines_versions/6/",
+        "version_user_vars": "http://orchestrator-service-2nd-prototype:8000/api/executions/5/download_user_vars/?descriptor=segmentation",
+        "ai_model": "http://maas-service-2nd-prototype:8000/api/ai_models/4/"
+      },
+      {
+        "descriptor": "localization",
+        "version": "http://maas-service-2nd-prototype:8000/api/ai_engines_versions/6/",
+        "version_user_vars": "http://orchestrator-service-2nd-prototype:8000/api/executions/5/download_user_vars/?descriptor=localization",
+        "ai_model": "http://maas-service-2nd-prototype:8000/api/ai_models/4/"
+      },
+      {
+        "descriptor": "prioritization",
+        "version": "http://maas-service-2nd-prototype:8000/api/ai_engines_versions/6/",
+        "version_user_vars": "http://orchestrator-service-2nd-prototype:8000/api/executions/5/download_user_vars/?descriptor=prioritization",
+        "ai_model": "http://maas-service-2nd-prototype:8000/api/ai_models/4/"
+      },
+      {
+        "descriptor": "staging-classification-xai",
+        "version": "http://maas-service-2nd-prototype:8000/api/ai_engines_versions/10/",
+        "version_user_vars": "http://orchestrator-service-2nd-prototype:8000/api/executions/5/download_user_vars/?descriptor=staging-classification-xai",
+        "ai_model": "http://maas-service-2nd-prototype:8000/api/ai_models/7/"
+      },
+      {
+        "descriptor": "metastasis-risk-classification-xai",
+        "version": "http://maas-service-2nd-prototype:8000/api/ai_engines_versions/12/",
+        "version_user_vars": "http://orchestrator-service-2nd-prototype:8000/api/executions/5/download_user_vars/?descriptor=metastasis-risk-classification-xai",
+        "ai_model": "http://maas-service-2nd-prototype:8000/api/ai_models/9/"
+      },
+      {
+        "descriptor": "medical-report-generation",
+        "version": "http://maas-service-2nd-prototype:8000/api/ai_engines_versions/13/",
+        "version_user_vars": "http://orchestrator-service-2nd-prototype:8000/api/executions/5/download_user_vars/?descriptor=medical-report-generation"
+      }
+    ]
+  },
+  "output_elements": {}
+}
