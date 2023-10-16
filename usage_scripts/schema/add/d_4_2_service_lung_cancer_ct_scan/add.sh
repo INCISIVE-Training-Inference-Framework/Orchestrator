@@ -44,12 +44,12 @@ _3_input_ai_engine_functionalities='["inferencing_from_pretrained_model"]' # lis
 _3_input_ai_engine_model="true" # bool
 
 _4_input_ai_engine_descriptor="staging-classification-xai" # str, cannot contain spaces or special symbols
-_4_input_ai_engine_role_type="classification" # str, possible values -> the ones defined on the MaaS along the symbol *
+_4_input_ai_engine_role_type="xai" # str, possible values -> the ones defined on the MaaS along the symbol *
 _4_input_ai_engine_functionalities='["inferencing_from_pretrained_model"]' # list[str], possible values -> the ones defined on the MaaS
 _4_input_ai_engine_model="true" # bool
 
 _5_input_ai_engine_descriptor="metastasis-risk-classification-xai" # str, cannot contain spaces or special symbols
-_5_input_ai_engine_role_type="classification" # str, possible values -> the ones defined on the MaaS along the symbol *
+_5_input_ai_engine_role_type="xai" # str, possible values -> the ones defined on the MaaS along the symbol *
 _5_input_ai_engine_functionalities='["inferencing_from_pretrained_model"]' # list[str], possible values -> the ones defined on the MaaS
 _5_input_ai_engine_model="true" # bool
 

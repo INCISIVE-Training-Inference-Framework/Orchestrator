@@ -4,6 +4,5 @@
   "Debug": false,
   "save_intermediate_data": false,
   "explainability_mode": 1,
-  "explain_method": "lime",
-  "patient_pid": "R01-019"
+  "explain_method": "lime"
 }
