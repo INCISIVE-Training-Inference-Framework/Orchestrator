@@ -47,7 +47,7 @@ _4_input_ai_model=7 # int, must exist on the MaaS
 # Metastasis Risk classification XAI
 _5_input_descriptor="metastasis-risk-classification-xai"
 _5_input_ai_engine_version=12 # int, must exist on the MaaS
-_5_input_ai_engine_version_user_vars="./auxiliary_files/${schema}/${_5_input_descriptor}i_user_vars.json" # FILE
+_5_input_ai_engine_version_user_vars="./auxiliary_files/${schema}/${_5_input_descriptor}_user_vars.json" # FILE
 _5_input_ai_model=9 # int, must exist on the MaaS
 
 # Medical report generation
