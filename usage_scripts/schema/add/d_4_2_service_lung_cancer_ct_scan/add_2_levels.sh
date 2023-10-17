@@ -13,7 +13,7 @@ source ../global_variables.sh
 # --> REQUIRED LOCAL VARIABLES
 
 # main attributes
-name="d_4_2_service_lung_cancer_ct_scan" # str
+name="d_4_2_service_lung_cancer_ct_scan_2_levels" # str
 type="joint" # str, possible values -> {individual, joint}, individual for one AI Engine executions, joint for pipelines
 implementation="argo_workflows" # str, possible values -> {argo_workflows}
 description="A schema that performs the Lung cancer CT-Scan Service from D.4.2, creating a set of results and charts"
