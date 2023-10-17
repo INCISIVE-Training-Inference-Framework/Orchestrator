@@ -64,8 +64,8 @@ spec:
           - "prioritization"
           - "localization"
           - "segmentation"
-          - "isup-score-classification-xai"
           - "gland-segmentation"
+          - "isup-score-classification-xai"
       - - name: medical-report-generation
           template: medical-report-generation-template
       - - name: finalization
