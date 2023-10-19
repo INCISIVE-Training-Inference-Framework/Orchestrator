@@ -21,19 +21,19 @@ input_external_data="./auxiliary_files/${schema}/${schema}_input.zip" # FILE
 
 # AI logic attributes
 # MRI prioritization
-_1_input_descriptor="prioritization"
+_1_input_descriptor="lesion-prioritization"
 _1_input_ai_engine_version=6 # int, must exist on the MaaS
 _1_input_ai_engine_version_user_vars="./auxiliary_files/${schema}/${_1_input_descriptor}_user_vars.json" # FILE
 _1_input_ai_model=4 # int, must exist on the MaaS
 
 # MRI localization
-_2_input_descriptor="localization"
+_2_input_descriptor="lesion-localization"
 _2_input_ai_engine_version=6 # int, must exist on the MaaS
 _2_input_ai_engine_version_user_vars="./auxiliary_files/${schema}/${_2_input_descriptor}_user_vars.json" # FILE
 _2_input_ai_model=4 # int, must exist on the MaaS
 
 # MRI segmentation
-_3_input_descriptor="segmentation"
+_3_input_descriptor="lesion-segmentation"
 _3_input_ai_engine_version=6 # int, must exist on the MaaS
 _3_input_ai_engine_version_user_vars="./auxiliary_files/${schema}/${_3_input_descriptor}_user_vars.json" # FILE
 _3_input_ai_model=4 # int, must exist on the MaaS
