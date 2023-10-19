@@ -61,9 +61,9 @@ spec:
             - name: ai-model-download-resume-retries
               value: "{{ workflow.parameters.execution_{{item}}-ai-model-download-resume-retries }}"
           withItems:
-          - "segmentation"
-          - "localization"
           - "prioritization"
+          - "localization"
+          - "segmentation"
           - "birads-classification-xai"
           - "density-classification-xai"
       - - name: medical-report-generation

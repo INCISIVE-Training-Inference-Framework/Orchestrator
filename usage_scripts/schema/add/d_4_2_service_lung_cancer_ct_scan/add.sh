@@ -28,7 +28,7 @@ input_federated_learning_configuration="false" # bool
 
 # AI logic attributes
 
-_1_input_ai_engine_descriptor="segmentation" # str, cannot contain spaces or special symbols
+_1_input_ai_engine_descriptor="prioritization" # str, cannot contain spaces or special symbols
 _1_input_ai_engine_role_type="segmentation" # str, possible values -> the ones defined on the MaaS along the symbol *
 _1_input_ai_engine_functionalities='["inferencing_from_pretrained_model"]' # list[str], possible values -> the ones defined on the MaaS
 _1_input_ai_engine_model="true" # bool
@@ -38,7 +38,7 @@ _2_input_ai_engine_role_type="segmentation" # str, possible values -> the ones d
 _2_input_ai_engine_functionalities='["inferencing_from_pretrained_model"]' # list[str], possible values -> the ones defined on the MaaS
 _2_input_ai_engine_model="true" # bool
 
-_3_input_ai_engine_descriptor="prioritization" # str, cannot contain spaces or special symbols
+_3_input_ai_engine_descriptor="segmentation" # str, cannot contain spaces or special symbols
 _3_input_ai_engine_role_type="segmentation" # str, possible values -> the ones defined on the MaaS along the symbol *
 _3_input_ai_engine_functionalities='["inferencing_from_pretrained_model"]' # list[str], possible values -> the ones defined on the MaaS
 _3_input_ai_engine_model="true" # bool
