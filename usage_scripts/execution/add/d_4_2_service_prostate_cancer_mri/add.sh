@@ -41,13 +41,13 @@ _3_input_ai_model=4 # int, must exist on the MaaS
 # Gland segmentation
 _4_input_descriptor="gland-segmentation"
 _4_input_ai_engine_version=12 # int, must exist on the MaaS
-_4_input_ai_engine_version_user_vars="./auxiliary_files/${schema}/${_5_input_descriptor}_user_vars.json" # FILE
+_4_input_ai_engine_version_user_vars="./auxiliary_files/${schema}/${_4_input_descriptor}_user_vars.json" # FILE
 _4_input_ai_model=9 # int, must exist on the MaaS
 
 # ISUP Score classification XAI
 _5_input_descriptor="isup-score-classification-xai"
 _5_input_ai_engine_version=10 # int, must exist on the MaaS
-_5_input_ai_engine_version_user_vars="./auxiliary_files/${schema}/${_4_input_descriptor}_user_vars.json" # FILE
+_5_input_ai_engine_version_user_vars="./auxiliary_files/${schema}/${_5_input_descriptor}_user_vars.json" # FILE
 _5_input_ai_model=7 # int, must exist on the MaaS
 
 # Medical report generation
