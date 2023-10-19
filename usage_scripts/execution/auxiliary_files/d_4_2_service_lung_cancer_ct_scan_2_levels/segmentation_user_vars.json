@@ -1,0 +1,6 @@
+{
+  "mode": "segmentation",
+  "batch_size": 8,
+  "x_min": -1671.7861,
+  "x_max": 4130.9136
+}
