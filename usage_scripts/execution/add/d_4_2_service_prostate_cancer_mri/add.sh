@@ -13,42 +13,42 @@ source ../global_variables.sh
 # --> REQUIRED LOCAL VARIABLES
 
 # main attributes
-schema="d_4_2_service_lung_cancer_ct_scan" # str
+schema="d_4_2_service_prostate_cancer_mri" # str
 
 # input attributes
 
 input_external_data="./auxiliary_files/${schema}/${schema}_input.zip" # FILE
 
 # AI logic attributes
-# CT-Scan segmentation
-_1_input_descriptor="segmentation"
+# MRI prioritization
+_1_input_descriptor="lesion-prioritization"
 _1_input_ai_engine_version=6 # int, must exist on the MaaS
 _1_input_ai_engine_version_user_vars="./auxiliary_files/${schema}/${_1_input_descriptor}_user_vars.json" # FILE
 _1_input_ai_model=4 # int, must exist on the MaaS
 
-# CT-Scan localization
-_2_input_descriptor="localization"
+# MRI localization
+_2_input_descriptor="lesion-localization"
 _2_input_ai_engine_version=6 # int, must exist on the MaaS
 _2_input_ai_engine_version_user_vars="./auxiliary_files/${schema}/${_2_input_descriptor}_user_vars.json" # FILE
 _2_input_ai_model=4 # int, must exist on the MaaS
 
-# CT-Scan prioritization
-_3_input_descriptor="prioritization"
+# MRI segmentation
+_3_input_descriptor="lesion-segmentation"
 _3_input_ai_engine_version=6 # int, must exist on the MaaS
 _3_input_ai_engine_version_user_vars="./auxiliary_files/${schema}/${_3_input_descriptor}_user_vars.json" # FILE
 _3_input_ai_model=4 # int, must exist on the MaaS
 
-# Staging classification XAI
-_4_input_descriptor="staging-classification-xai"
-_4_input_ai_engine_version=10 # int, must exist on the MaaS
+# Gland segmentation
+_4_input_descriptor="gland-segmentation"
+_4_input_ai_engine_version=12 # int, must exist on the MaaS
 _4_input_ai_engine_version_user_vars="./auxiliary_files/${schema}/${_4_input_descriptor}_user_vars.json" # FILE
-_4_input_ai_model=7 # int, must exist on the MaaS
+_4_input_ai_model=9 # int, must exist on the MaaS
 
-# Metastasis Risk classification XAI
-_5_input_descriptor="metastasis-risk-classification-xai"
-_5_input_ai_engine_version=12 # int, must exist on the MaaS
+# ISUP Score classification XAI
+_5_input_descriptor="isup-score-classification-xai"
+_5_input_ai_engine_version=10 # int, must exist on the MaaS
 _5_input_ai_engine_version_user_vars="./auxiliary_files/${schema}/${_5_input_descriptor}_user_vars.json" # FILE
-_5_input_ai_model=9 # int, must exist on the MaaS
+_5_input_ai_model=7 # int, must exist on the MaaS
 
 # Medical report generation
 _6_input_descriptor="medical-report-generation"

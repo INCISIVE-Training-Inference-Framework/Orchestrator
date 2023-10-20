@@ -55,7 +55,7 @@ _6_input_descriptor="medical-report-generation"
 _6_input_ai_engine_version=13 # int, must exist on the MaaS
 _6_input_ai_engine_version_user_vars="./auxiliary_files/${schema}/${_6_input_descriptor}_user_vars.json" # FILE
 
-# ========================== DO NOT MODIFY ABOVE CODE! ==================================
+# ========================== DO NOT MODIFY CODE BELOW THIS LINE! ==================================
 # output attributes
 # --> CODE
 curl -X POST http://${orchestrator_api_hostname}/api/executions/ \

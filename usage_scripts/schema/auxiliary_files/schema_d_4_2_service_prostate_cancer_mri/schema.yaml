@@ -61,11 +61,11 @@ spec:
             - name: ai-model-download-resume-retries
               value: "{{ workflow.parameters.execution_{{item}}-ai-model-download-resume-retries }}"
           withItems:
-          - "prioritization"
-          - "localization"
-          - "segmentation"
-          - "isup-score-classification-xai"
+          - "lesion-prioritization"
+          - "lesion-localization"
+          - "lesion-segmentation"
           - "gland-segmentation"
+          - "isup-score-classification-xai"
       - - name: medical-report-generation
           template: medical-report-generation-template
       - - name: finalization
@@ -173,30 +173,30 @@ spec:
         retryPolicy: "Always"
       inputs:
         artifacts:
-        - name: segmentation-output
-          path: "{{workflow.parameters.aiEngine_plaformVarsInputDataInference}}/segmentation"
+        - name: lesion-segmentation-output
+          path: "{{workflow.parameters.aiEngine_plaformVarsInputDataInference}}/lesion-segmentation"
           azure:
             endpoint: https://incisivesa.blob.core.windows.net
             container: d-4-2-service-prostate-cancer-mri
-            blob: "segmentation-output-{{workflow.creationTimestamp.RFC3339}}"
+            blob: "lesion-segmentation-output-{{workflow.creationTimestamp.RFC3339}}"
             accountKeySecret:
               name: incisive-azure-storage-credentials
               key: account-access-key
-        - name: localization-output
-          path: "{{workflow.parameters.aiEngine_plaformVarsInputDataInference}}/localization"
+        - name: lesion-localization-output
+          path: "{{workflow.parameters.aiEngine_plaformVarsInputDataInference}}/lesion-localization"
           azure:
             endpoint: https://incisivesa.blob.core.windows.net
             container: d-4-2-service-prostate-cancer-mri
-            blob: "localization-output-{{workflow.creationTimestamp.RFC3339}}"
+            blob: "lesion-localization-output-{{workflow.creationTimestamp.RFC3339}}"
             accountKeySecret:
               name: incisive-azure-storage-credentials
               key: account-access-key
-        - name: prioritization-output
-          path: "{{workflow.parameters.aiEngine_plaformVarsInputDataInference}}/prioritization"
+        - name: lesion-prioritization-output
+          path: "{{workflow.parameters.aiEngine_plaformVarsInputDataInference}}/lesion-prioritization"
           azure:
             endpoint: https://incisivesa.blob.core.windows.net
             container: d-4-2-service-prostate-cancer-mri
-            blob: "prioritization-output-{{workflow.creationTimestamp.RFC3339}}"
+            blob: "lesion-prioritization-output-{{workflow.creationTimestamp.RFC3339}}"
             accountKeySecret:
               name: incisive-azure-storage-credentials
               key: account-access-key
@@ -299,30 +299,30 @@ spec:
         retryPolicy: "Always"
       inputs:
         artifacts:
-        - name: visualization-segmentation
-          path: "/tmp/output_elements/segmentation/"
+        - name: visualization-lesion-segmentation
+          path: "/tmp/output_elements/lesion-segmentation/"
           azure:
             endpoint: https://incisivesa.blob.core.windows.net
             container: d-4-2-service-prostate-cancer-mri
-            blob: "visualization-segmentation-{{workflow.creationTimestamp.RFC3339}}"
+            blob: "visualization-lesion-segmentation-{{workflow.creationTimestamp.RFC3339}}"
             accountKeySecret:
               name: incisive-azure-storage-credentials
               key: account-access-key
-        - name: visualization-localization
-          path: "/tmp/output_elements/localization/"
+        - name: visualization-lesion-localization
+          path: "/tmp/output_elements/lesion-localization/"
           azure:
             endpoint: https://incisivesa.blob.core.windows.net
             container: d-4-2-service-prostate-cancer-mri
-            blob: "visualization-localization-{{workflow.creationTimestamp.RFC3339}}"
+            blob: "visualization-lesion-localization-{{workflow.creationTimestamp.RFC3339}}"
             accountKeySecret:
               name: incisive-azure-storage-credentials
               key: account-access-key
-        - name: visualization-prioritization
-          path: "/tmp/output_elements/prioritization/"
+        - name: visualization-lesion-prioritization
+          path: "/tmp/output_elements/lesion-prioritization/"
           azure:
             endpoint: https://incisivesa.blob.core.windows.net
             container: d-4-2-service-prostate-cancer-mri
-            blob: "visualization-prioritization-{{workflow.creationTimestamp.RFC3339}}"
+            blob: "visualization-lesion-prioritization-{{workflow.creationTimestamp.RFC3339}}"
             accountKeySecret:
               name: incisive-azure-storage-credentials
               key: account-access-key
