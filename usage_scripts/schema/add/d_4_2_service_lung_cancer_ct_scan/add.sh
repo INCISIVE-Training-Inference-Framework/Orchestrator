@@ -64,7 +64,7 @@ output_ai_model="false" # bool
 output_evaluation_metrics="false" # bool
 output_generic_file="true" # bool
 
-# ========================== DO NOT MODIFY ABOVE CODE! ==================================
+# ========================== DO NOT MODIFY CODE BELOW THIS LINE! ==================================
 # --> CODE
 curl -X POST http://${orchestrator_api_hostname}/api/schemas/ \
                             -H "Content-Type:multipart/form-data" \

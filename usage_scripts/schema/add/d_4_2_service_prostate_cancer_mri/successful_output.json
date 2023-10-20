@@ -1,0 +1,71 @@
+{
+  "url": "http://orchestrator-service-2nd-prototype:8000/api/schemas/d_4_2_service_prostate_cancer_mri/",
+  "name": "d_4_2_service_prostate_cancer_mri",
+  "type": "joint",
+  "implementation": "argo_workflows",
+  "description": "A schema that performs the Prostate Cancer MRI Service from D.4.2, creating a set of results and charts",
+  "auxiliary_file": "http://orchestrator-service-2nd-prototype:8000/api/schemas/d_4_2_service_prostate_cancer_mri/download_auxiliary_file/",
+  "created_at": "2023-10-20T10:39:33.620436+02:00",
+  "input_elements": {
+    "platform_data": false,
+    "external_data": true,
+    "federated_learning_configuration": false
+  },
+  "ai_elements": {
+    "ai_engines": [
+      {
+        "descriptor": "lesion-prioritization",
+        "role_type": "segmentation",
+        "functionalities": [
+          "inferencing_from_pretrained_model"
+        ],
+        "ai_model": true
+      },
+      {
+        "descriptor": "lesion-localization",
+        "role_type": "segmentation",
+        "functionalities": [
+          "inferencing_from_pretrained_model"
+        ],
+        "ai_model": true
+      },
+      {
+        "descriptor": "lesion-segmentation",
+        "role_type": "segmentation",
+        "functionalities": [
+          "inferencing_from_pretrained_model"
+        ],
+        "ai_model": true
+      },
+      {
+        "descriptor": "gland-segmentation",
+        "role_type": "segmentation",
+        "functionalities": [
+          "inferencing_from_pretrained_model"
+        ],
+        "ai_model": true
+      },
+      {
+        "descriptor": "isup-score-classification-xai",
+        "role_type": "xai",
+        "functionalities": [
+          "inferencing_from_pretrained_model"
+        ],
+        "ai_model": true
+      },
+      {
+        "descriptor": "medical-report-generation",
+        "role_type": "report_generation",
+        "functionalities": [
+          "inferencing_from_pretrained_model"
+        ],
+        "ai_model": false
+      }
+    ]
+  },
+  "output_elements": {
+    "ai_model": false,
+    "evaluation_metrics": false,
+    "generic_file": true
+  }
+}
