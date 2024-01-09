@@ -55,6 +55,11 @@ class ExecutionOutputSerializer(serializers.ModelSerializer):
                 'contents': contents_serializer_url
             }
 
+        if schema.requires_input_elements_report_metadata():
+            report_metadata_serializer = serializers.HyperlinkedIdentityField(
+                view_name='executions-report_metadata'
+            )
+
         if schema.requires_input_elements_federated_learning_configuration():
             federated_learning_configuration = instance.get_input_elements_federated_learning_configuration()
             representation['input_elements']['federated_learning_configuration'] = {

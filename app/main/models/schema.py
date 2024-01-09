@@ -50,6 +50,9 @@ class Schema(models.Model):
     def requires_input_elements_external_data(self):
         return hasattr(self, get_class_name_low_case(SchemaInputExternalData))
 
+    def requires_input_elements_report_metadata(self):
+        return hasattr(self, get_class_name_low_case(SchemaInputReportMetadata))
+
     def requires_input_elements_federated_learning_configuration(self):
         return hasattr(self, get_class_name_low_case(SchemaInputFederatedLearningConfiguration))
 
@@ -84,6 +87,14 @@ class SchemaInputPlatformData(models.Model):
 
 
 class SchemaInputExternalData(models.Model):
+    schema = models.OneToOneField(
+        Schema,
+        on_delete=models.CASCADE,
+        primary_key=True
+    )
+
+
+class SchemaInputReportMetadata(models.Model):
     schema = models.OneToOneField(
         Schema,
         on_delete=models.CASCADE,
