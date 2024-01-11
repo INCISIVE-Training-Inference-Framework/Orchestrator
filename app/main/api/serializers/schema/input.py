@@ -7,6 +7,7 @@ from main.models import \
     Schema, \
     SchemaInputPlatformData, \
     SchemaInputExternalData, \
+    SchemaInputReportMetadata, \
     SchemaInputFederatedLearningConfiguration, \
     SchemaInputAIEngine, \
     SchemaInputAIModel, \
@@ -23,6 +24,7 @@ from main.models import \
 class SchemaInputSerializerInputElements(serializers.Serializer):
     platform_data = serializers.BooleanField()
     external_data = serializers.BooleanField()
+    report_metadata = serializers.BooleanField(required=False, default=False)
     federated_learning_configuration = serializers.BooleanField()
 
     def create(self, validated_data):
@@ -42,6 +44,11 @@ class SchemaInputSerializerInputElements(serializers.Serializer):
             })
         if validated_data['federated_learning_configuration']:
             SchemaInputFederatedLearningConfiguration.objects.create(**{
+                'schema': schema_instance
+            })
+
+        if validated_data['report_medatada']:
+            SchemaInputReportMetadata.objects.create(**{
                 'schema': schema_instance
             })
 

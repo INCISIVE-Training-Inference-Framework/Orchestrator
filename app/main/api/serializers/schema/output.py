@@ -27,6 +27,7 @@ class SchemaOutputSerializer(serializers.ModelSerializer):
         representation['input_elements'] = {
             'platform_data': instance.requires_input_elements_platform_data(),
             'external_data': instance.requires_input_elements_external_data(),
+            'report_metadata': instance.requires_input_elements_report_metadata(),
             'federated_learning_configuration': instance.requires_input_elements_federated_learning_configuration()
         }
 
