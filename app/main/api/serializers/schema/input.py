@@ -47,7 +47,7 @@ class SchemaInputSerializerInputElements(serializers.Serializer):
                 'schema': schema_instance
             })
 
-        if validated_data['report_medatada']:
+        if validated_data['report_metadata']:
             SchemaInputReportMetadata.objects.create(**{
                 'schema': schema_instance
             })

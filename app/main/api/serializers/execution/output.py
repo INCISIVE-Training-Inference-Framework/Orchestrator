@@ -59,6 +59,13 @@ class ExecutionOutputSerializer(serializers.ModelSerializer):
             report_metadata_serializer = serializers.HyperlinkedIdentityField(
                 view_name='executions-report_metadata'
             )
+            report_metadata_serializer_url = report_metadata_serializer.get_url(
+                instance,
+                'executions-report_metadata',
+                self.context.get('request'),
+                None
+            )
+            representation['input_elements']['report_metadata'] = report_metadata_serializer_url
 
         if schema.requires_input_elements_federated_learning_configuration():
             federated_learning_configuration = instance.get_input_elements_federated_learning_configuration()

@@ -24,7 +24,7 @@ auxiliary_file="./auxiliary_files/schema_inferencing_from_pretrained_model/schem
 input_platform_data="false" # bool
 input_external_data="true" # bool, can only be true if input_platform_data and input_federated_learning_configuration are false
 input_federated_learning_configuration="false" # bool
-
+input_report_metadata="false" # bool, optional
 
 # AI logic attributes
 
@@ -50,6 +50,7 @@ curl -X POST http://${orchestrator_api_hostname}/api/schemas/ \
                                 \"input_elements\": {
                                     \"platform_data\": ${input_platform_data},
                                     \"external_data\": ${input_external_data},
+                                    \"report_metadata\": ${input_report_metadata},
                                     \"federated_learning_configuration\": ${input_federated_learning_configuration}
                                 },
                                 \"ai_elements\": {

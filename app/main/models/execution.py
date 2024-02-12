@@ -167,7 +167,7 @@ class ExecutionInputReportMetadata(models.Model):
     report_metadata = models.FileField(upload_to=execution_external_data_report_metadata_path, max_length=300)
     execution = models.OneToOneField(
         Execution,
-        on_delete=models.Cascade,
+        on_delete=models.CASCADE,
         primary_key=True
     )
 

@@ -137,6 +137,7 @@ class ContainerManagerArgoWorkflows(ContainerManagerInterface):
             'aiEngine_plaformVarsInputDataInference': settings.AI_ENGINE_PLATFORM_VARS_INPUT_DATA_INFERENCE,
             'aiEngine_plaformVarsInputAIElements': settings.AI_ENGINE_PLATFORM_VARS_INPUT_AI_ELEMENTS,
             'aiEngine_plaformVarsInputUserVars': settings.AI_ENGINE_PLATFORM_VARS_INPUT_USER_VARS,
+            'aiEngine_plaformVarsInputElementsReportMetadata': settings.AI_ENGINE_PLATFORM_VARS_INPUT_ELEMENTS_REPORT_METADATA,
             'aiEngine_plaformVarsInputModel': settings.AI_ENGINE_PLATFORM_VARS_INPUT_MODEL,
             'aiEngine_plaformVarsInputModels': settings.AI_ENGINE_PLATFORM_VARS_INPUT_MODELS,
             'aiEngine_plaformVarsOutputElements': settings.AI_ENGINE_PLATFORM_VARS_OUTPUT_ELEMENTS,
