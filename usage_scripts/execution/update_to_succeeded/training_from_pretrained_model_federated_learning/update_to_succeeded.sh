@@ -12,7 +12,7 @@
 source ../global_variables.sh
 
 # --> REQUIRED LOCAL VARIABLES
-id=1
+id=5
 
 ai_model=1 # int, must exist on the MaaS
 _1_evaluation_metric=1 # int, must exist on the MaaS

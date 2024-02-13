@@ -1,0 +1,32 @@
+{
+  "url": "http://orchestrator-service-2nd-prototype:8000/api/schemas/inferencing_from_pretrained_model/",
+  "name": "inferencing_from_pretrained_model",
+  "type": "individual",
+  "implementation": "argo_workflows",
+  "description": "A schema that performs inference with an AI Engine to some external data, creating a set of results and charts",
+  "auxiliary_file": "http://orchestrator-service-2nd-prototype:8000/api/schemas/inferencing_from_pretrained_model/download_auxiliary_file/",
+  "created_at": "2024-02-12T17:59:06.959090+01:00",
+  "input_elements": {
+    "platform_data": false,
+    "external_data": true,
+    "report_metadata": false,
+    "federated_learning_configuration": false
+  },
+  "ai_elements": {
+    "ai_engines": [
+      {
+        "descriptor": "main-ai-engine",
+        "role_type": "*",
+        "functionalities": [
+          "inferencing_from_pretrained_model"
+        ],
+        "ai_model": true
+      }
+    ]
+  },
+  "output_elements": {
+    "ai_model": false,
+    "evaluation_metrics": false,
+    "generic_file": true
+  }
+}

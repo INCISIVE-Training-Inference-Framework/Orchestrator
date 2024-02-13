@@ -1,0 +1,27 @@
+{
+  "url": "http://orchestrator-service-2nd-prototype:8000/api/executions/3/",
+  "id": 3,
+  "schema": "http://orchestrator-service-2nd-prototype:8000/api/schemas/inferencing_from_pretrained_model_with_report_metadata/",
+  "created_at": "2024-02-13T17:12:17.881217+01:00",
+  "updated_at": "2024-02-13T17:12:17.881236+01:00",
+  "state": {
+	"status": "pending"
+  },
+  "input_elements": {
+	"external_data": {
+	  "contents": "http://orchestrator-service-2nd-prototype:8000/api/executions/3/download_external_data/"
+	},
+	"report_metadata": "http://orchestrator-service-2nd-prototype:8000/api/executions/3/download_report_metadata/"
+  },
+  "ai_elements": {
+	"ai_engines": [
+	  {
+		"descriptor": "main-ai-engine",
+		"version": "http://maas-service-2nd-prototype:8000/api/ai_engines_versions/1/",
+		"version_user_vars": "http://orchestrator-service-2nd-prototype:8000/api/executions/3/download_user_vars/?descriptor=main-ai-engine",
+		"ai_model": "http://maas-service-2nd-prototype:8000/api/ai_models/1/"
+	  }
+	]
+  },
+  "output_elements": {}
+}

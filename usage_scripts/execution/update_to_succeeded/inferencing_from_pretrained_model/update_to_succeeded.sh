@@ -12,7 +12,7 @@
 source ../global_variables.sh
 
 # --> REQUIRED LOCAL VARIABLES
-id=1
+id=2
 
 generic_file=1 # int, must exist on the MaaS
 

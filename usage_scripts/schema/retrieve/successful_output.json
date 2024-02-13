@@ -1,14 +1,14 @@
 {
-  "url": "http://orchestrator-service-2nd-prototype:8000/api/schemas/inferencing_from_pretrained_model/",
-  "name": "inferencing_from_pretrained_model",
+  "url": "http://orchestrator-service-2nd-prototype:8000/api/schemas/training_from_scratch/",
+  "name": "training_from_scratch",
   "type": "individual",
   "implementation": "argo_workflows",
-  "description": "A schema that performs inference with an AI Engine to some external data, creating a set of results and charts",
-  "auxiliary_file": "http://orchestrator-service-2nd-prototype:8000/api/schemas/inferencing_from_pretrained_model/download_auxiliary_file/",
-  "created_at": "2024-02-12T17:59:06.959090+01:00",
+  "description": "A schema that trains an AI Engine from scratch with platform data, creating a new AI Model and a new set of Evaluation Metrics",
+  "auxiliary_file": "http://orchestrator-service-2nd-prototype:8000/api/schemas/training_from_scratch/download_auxiliary_file/",
+  "created_at": "2024-02-13T17:07:59.036455+01:00",
   "input_elements": {
-    "platform_data": false,
-    "external_data": true,
+    "platform_data": true,
+    "external_data": false,
     "report_metadata": false,
     "federated_learning_configuration": false
   },
@@ -18,15 +18,15 @@
         "descriptor": "main-ai-engine",
         "role_type": "*",
         "functionalities": [
-          "inferencing_from_pretrained_model"
+          "training_from_scratch"
         ],
-        "ai_model": true
+        "ai_model": false
       }
     ]
   },
   "output_elements": {
-    "ai_model": false,
-    "evaluation_metrics": false,
-    "generic_file": true
+    "ai_model": true,
+    "evaluation_metrics": true,
+    "generic_file": false
   }
 }
