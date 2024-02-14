@@ -17,6 +17,8 @@ from main.models import \
     ExecutionStatus
 from .parsers import MultipartJsonParser as OwnMultipartJsonParser
 
+from drf_spectacular.utils import extend_schema, extend_schema_view, OpenApiParameter
+
 logger = logging.getLogger(__name__)
 
 
@@ -28,6 +30,7 @@ def file_response(contents):
     return response
 
 
+@extend_schema(tags=['Schema'])
 class SchemaViewSet(
     mixins.ListModelMixin,
     mixins.CreateModelMixin,
@@ -51,6 +54,7 @@ class SchemaViewSet(
         return file_response(self.get_object().auxiliary_file)
 
 
+@extend_schema(tags=['Execution'])
 class ExecutionViewSet(
     mixins.ListModelMixin,
     mixins.CreateModelMixin,
