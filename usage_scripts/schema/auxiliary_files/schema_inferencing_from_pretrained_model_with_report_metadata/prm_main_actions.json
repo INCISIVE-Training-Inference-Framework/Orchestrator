@@ -33,7 +33,7 @@
     {
       "name": "download_json",
       "json_url": "http://{{workflow.parameters.platform_orchestratorApiHostname}}/api/executions/{{workflow.parameters.execution_id}}/download_report_metadata",
-      "output_path": "{{workflow.parameters.aiEngine_plaformVarsInputElementsReportMetadata}}"
+      "output_path": "{{workflow.parameters.aiEngine_plaformVarsInputDataInferenceReportMetadata}}"
     },
     {
       "name": "download_ai_model",
