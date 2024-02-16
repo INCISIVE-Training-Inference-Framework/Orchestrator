@@ -49,7 +49,7 @@ services:
     environment:
       SWAGGER_JSON: /swagger/schema.yml
     ports:
-      - 8080:8080
+      - ${SWAGGER_PORT}:${SWAGGER_PORT}
     volumes:
       - ${STORAGE_LOCAL_PATH}:/usr/application/storage
       - ./static:/static
