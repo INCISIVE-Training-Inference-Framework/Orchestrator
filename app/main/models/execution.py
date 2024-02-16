@@ -158,7 +158,6 @@ class ExecutionInputExternalData(models.Model):
 def execution_external_data_report_metadata_path(instance, filename):
     _, file_extension = os.path.splitext(filename)
     return  f'execution/' \
-            f'external_data/' \
             f'report_metadata/' \
             f'{instance.execution.id}{file_extension}'
 
