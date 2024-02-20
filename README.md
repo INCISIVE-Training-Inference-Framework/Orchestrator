@@ -102,4 +102,6 @@ Concerning the database, here are the most useful commands to manage it (check t
 It is worth mentioning that the Orchestrator implements a cron routine inside *app/management/commands/* following the Django specification. This routine cleans some data that is produced when running federated training AI Executions. This task must be run externally if using these kinds of executions. It can be run in the following way: `python3 app/manage.py clean_old_kafka_topics`.
  
 ## API documentation
-The Docker compose deployment also provides a Swagger API web server in port 8080 and an alpine-based service to interact with the rest of the services in the same network. The orchestrator init scripts will auto-generate the static files and the API schema YAML required for Swagger, so you might need to restart the Swagger container once this is done to properly see the changes
+The Docker compose deployment also provides a Swagger API web server in port 8080 and an alpine-based service to interact with the rest of the services in the same network:
+- The orchestrator init script will auto-generate the static files and the API schema YAML required for Swagger
+- The Swagger container depends on the orchestrator container being healthy, so it should always execute with the static files already created
