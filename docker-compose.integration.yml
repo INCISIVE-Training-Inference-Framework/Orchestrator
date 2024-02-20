@@ -34,11 +34,16 @@ services:
       - ./static:/static
     # Command overwrite to initialize the local db
     command:
+      - sh
       - /usr/application/init_orchestrator.sh
-      #- sleep
-      #- infinity
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://${ORCHESTRATOR_HOSTNAME}:8000/api/" ]
+      interval: 10s
+      timeout: 2s
+      retries: 3
+      start_period: 5s
     ports:
-      - ${ORCHESTRATOR_PORT}:${ORCHESTRATOR_PORT}
+      - ${ORCHESTRATOR_PORT}:8080
     networks:
       incisive:
 
@@ -54,6 +59,10 @@ services:
       - ${STORAGE_LOCAL_PATH}:/usr/application/storage
       - ./static:/static
       - ./swagger:/swagger
+    depends_on:
+      orchestrator:
+        condition: service_healthy
+        restart: true
     networks:
       incisive:
 
@@ -76,4 +85,5 @@ networks:
   incisive:
     name: incisive
     driver: bridge
-    external: true
+    # Uncomment this if you plan on using an existing network
+    #external: true
