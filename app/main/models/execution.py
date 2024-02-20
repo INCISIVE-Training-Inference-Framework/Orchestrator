@@ -40,6 +40,9 @@ class Execution(models.Model):
     def get_input_elements_external_data(self):
         return eval(f'self.{get_class_name_low_case(ExecutionInputExternalData)}')
 
+    def get_input_elements_report_metadata(self):
+        return eval(f'self.{get_class_name_low_case(ExecutionInputReportMetadata)}')
+
     def get_input_elements_federated_learning_configuration(self):
         return eval(f'self.{get_class_name_low_case(ExecutionInputFederatedLearningConfiguration)}')
 
@@ -149,6 +152,22 @@ class ExecutionInputExternalData(models.Model):
         Execution,
         on_delete=models.CASCADE,
         primary_key=True,
+    )
+
+
+def execution_external_data_report_metadata_path(instance, filename):
+    _, file_extension = os.path.splitext(filename)
+    return  f'execution/' \
+            f'report_metadata/' \
+            f'{instance.execution.id}{file_extension}'
+
+
+class ExecutionInputReportMetadata(models.Model):
+    report_metadata = models.FileField(upload_to=execution_external_data_report_metadata_path, max_length=300)
+    execution = models.OneToOneField(
+        Execution,
+        on_delete=models.CASCADE,
+        primary_key=True
     )
 
 

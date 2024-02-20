@@ -119,6 +119,17 @@ class ExecutionViewSet(
     @action(
         methods=['get'],
         detail=True,
+        url_name='report_metadata'
+    )
+    def download_report_metadata(self, *args, **kwargs):
+        instance = self.get_object()
+        if not instance.schema.requires_input_elements_report_metadata():
+            raise serializers.ValidationError(f'\"{instance.schema.name}\" does not require report metadata')
+        return file_response(instance.get_input_elements_report_metadata().report_metadata)
+
+    @action(
+        methods=['get'],
+        detail=True,
         url_name='version_user_vars'
     )
     def download_user_vars(self, *args, **kwargs):

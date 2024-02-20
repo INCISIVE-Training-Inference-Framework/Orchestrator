@@ -25,7 +25,6 @@ input_platform_data="false" # bool
 input_external_data="true" # bool, can only be true if input_platform_data and input_federated_learning_configuration are false
 input_federated_learning_configuration="false" # bool
 
-
 # AI logic attributes
 
 input_ai_engine_descriptor="main-ai-engine" # str, cannot contain spaces or special symbols (neither _)

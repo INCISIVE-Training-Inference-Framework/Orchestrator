@@ -11,6 +11,7 @@ from main.models import \
     ExecutionState, \
     ExecutionInputPlatformData, \
     ExecutionInputExternalData, \
+    ExecutionInputReportMetadata, \
     ExecutionInputFederatedLearningConfiguration, \
     ExecutionInputAIEngine, \
     ExecutionInputAIModel, \
@@ -163,9 +164,31 @@ class ExecutionInputSerializerFederatedLearningConfiguration(serializers.Seriali
         })
 
 
+class ExecutionInputSerializerReportMetadata(serializers.Serializer):
+    def _validate(self, context):
+        report_metadata = validate_uploaded_file(
+            context,
+            'report_metadata'
+        )
+        return {'report_metadata': report_metadata}
+
+    def create(self, validated_data):
+        pass
+
+    def update(self, instance, validated_data):
+        pass
+
+    def assign(self, execution_instance, validated_data):
+        ExecutionInputReportMetadata.objects.create(**{
+            'report_metadata': validated_data['report_metadata'],
+            'execution': execution_instance
+        })
+
+
 class ExecutionInputSerializerInputElements(serializers.Serializer):
     platform_data = ExecutionInputSerializerPlatformData(required=False)
     external_data = ExecutionInputSerializerExternalData(required=False)
+    report_metadata = ExecutionInputSerializerReportMetadata(required=False)
     federated_learning_configuration = ExecutionInputSerializerFederatedLearningConfiguration(required=False)
 
     def create(self, validated_data):
@@ -188,6 +211,10 @@ class ExecutionInputSerializerInputElements(serializers.Serializer):
             # TODO implement
             pass
 
+        # Check whether the schema requires or not the Report Metadata (only pipelines and Medical Report services)
+        if schema.requires_input_elements_report_metadata():
+            validated_data['report_metadata'] = ExecutionInputSerializerReportMetadata()._validate(self.context)
+
         if schema.requires_input_elements_federated_learning_configuration() and 'federated_learning_configuration' not in validated_data:
             raise serializers.ValidationError(f'schema \"{schema.name}\" requires a federated learning configuration')
         if not schema.requires_input_elements_federated_learning_configuration() and 'federated_learning_configuration' in validated_data:
@@ -206,6 +233,8 @@ class ExecutionInputSerializerInputElements(serializers.Serializer):
             ExecutionInputSerializerPlatformData().assign(execution_instance, validated_data['platform_data'])
         if 'external_data' in validated_data:
             ExecutionInputSerializerExternalData().assign(execution_instance, validated_data['external_data'])
+        if 'report_metadata' in validated_data:
+            ExecutionInputSerializerReportMetadata().assign(execution_instance, validated_data['report_metadata'])
         if 'federated_learning_configuration' in validated_data:
             ExecutionInputSerializerFederatedLearningConfiguration().assign(execution_instance, validated_data['federated_learning_configuration'])
 

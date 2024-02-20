@@ -1,31 +1,31 @@
 {
-	"url": "http://127.0.0.1:8000/api/executions/3/",
-	"id": 3,
-	"schema": "http://127.0.0.1:8000/api/schemas/training_from_scratch/",
-	"created_at": "2023-07-18T17:19:35.412829+02:00",
-	"updated_at": "2023-07-18T17:31:56.758446+02:00",
-	"state": {
-		"status": "running"
-	},
-	"input_elements": {
-		"platform_data": {
-			"data_partners_patients": {
-				"data-partner-1": ["004-000001", "004-000002"]
-			}
-		}
-	},
-	"ai_elements": {
-		"ai_engines": [{
-			"descriptor": "main-ai-engine",
-			"version": "http://127.0.0.2:8000/api/ai_engines_versions/1/",
-			"version_user_vars": "http://127.0.0.1:8000/api/executions/3/download_user_vars/?descriptor=main-ai-engine"
-		}]
-	},
-	"output_elements": {
-		"ai_model": {
-			"name": "init_plt_data",
-			"description": "initial model trained on platform data",
-			"merge_type": "default"
-		}
-	}
+  "url": "http://orchestrator-service-2nd-prototype:8000/api/executions/1/",
+  "id": 1,
+  "schema": "http://orchestrator-service-2nd-prototype:8000/api/schemas/evaluating_from_pretrained_model/",
+  "created_at": "2024-02-13T17:11:41.749040+01:00",
+  "updated_at": "2024-02-13T17:17:34.844655+01:00",
+  "state": {
+    "status": "running"
+  },
+  "input_elements": {
+    "platform_data": {
+      "data_partners_patients": {
+        "data-partner-1": [
+          "004-000001",
+          "004-000002"
+        ]
+      }
+    }
+  },
+  "ai_elements": {
+    "ai_engines": [
+      {
+        "descriptor": "main-ai-engine",
+        "version": "http://maas-service-2nd-prototype:8000/api/ai_engines_versions/1/",
+        "version_user_vars": "http://orchestrator-service-2nd-prototype:8000/api/executions/1/download_user_vars/?descriptor=main-ai-engine",
+        "ai_model": "http://maas-service-2nd-prototype:8000/api/ai_models/1/"
+      }
+    ]
+  },
+  "output_elements": {}
 }

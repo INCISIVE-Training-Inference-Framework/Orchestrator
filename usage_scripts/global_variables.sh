@@ -7,5 +7,5 @@
 # none
 
 # --> GLOBAL VARIABLES
-orchestrator_api_hostname="127.0.0.1:8000"
-#orchestrator_api_hostname="orchestrator-service-2nd-prototype:8000"
+#orchestrator_api_hostname="127.0.0.1:8000"
+orchestrator_api_hostname="orchestrator-service-2nd-prototype:8000"
