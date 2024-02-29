@@ -30,15 +30,42 @@ services:
       - ${STORAGE_LOCAL_PATH}:/usr/application/storage
       - ./docker_compose_init_orchestrator.sh:/usr/application/init_orchestrator.sh
       - ./app/main/migrations:/usr/application/app/main/migrations
+      - ./swagger:/swagger
+      - ./static:/static
     # Command overwrite to initialize the local db
     command:
+      - sh
       - /usr/application/init_orchestrator.sh
-      #- sleep
-      #- infinity
-
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://${ORCHESTRATOR_HOSTNAME}:8000/api/" ]
+      interval: 10s
+      timeout: 2s
+      retries: 3
+      start_period: 5s
+    ports:
+      - ${ORCHESTRATOR_PORT}:8080
     networks:
       incisive:
-  
+
+  # Swagger UI
+  swagger-ui:
+    image: swaggerapi/swagger-ui
+    hostname: swagger-ui
+    environment:
+      SWAGGER_JSON: /swagger/schema.yml
+    ports:
+      - ${SWAGGER_PORT}:${SWAGGER_PORT}
+    volumes:
+      - ${STORAGE_LOCAL_PATH}:/usr/application/storage
+      - ./static:/static
+      - ./swagger:/swagger
+    depends_on:
+      orchestrator:
+        condition: service_healthy
+        restart: true
+    networks:
+      incisive:
+
   # alpine for debugging purposes
   alpine-orchestrator:
     image: alpine/curl:latest
@@ -58,4 +85,5 @@ networks:
   incisive:
     name: incisive
     driver: bridge
-    external: true
+    # Uncomment this if you plan on using an existing network
+    #external: true

@@ -1,6 +1,13 @@
 venv/
 storage/
+swagger/
+static/
 usage_scripts/
 .git/
-__pycache__/
+**/__pycache__/
 .gitignore
+docker-compose.integration.yml
+docker_compose_init_orchestrator.sh
+*.env
+Dockerfile
+README.md

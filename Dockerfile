@@ -3,7 +3,7 @@ FROM python:3.9-slim
 
 # install os packages, some of them needed to install the dependencies
 RUN apt-get update && \
-    apt-get install --no-install-recommends -y build-essential gcc git && \
+    apt-get install --no-install-recommends -y build-essential gcc git curl && \
     apt-get clean && rm -rf /var/lib/apt/lists/* && \
     pip3 install --upgrade pip
     
