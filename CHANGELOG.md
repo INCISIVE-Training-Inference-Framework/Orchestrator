@@ -1,3 +1,9 @@
+## v2.2.0 (2024-03-20)
+
+*  Add API documentation (#20) [View](git@gitlab-internal.bsc.es:datacentric-computing/incisive-project/incisive_platform_orchestrator.git/commit/8a516b8cba2b0e3aee52ae4b838a825318b3b22f)
+*  feat: add CHANGELOG.md [View](git@gitlab-internal.bsc.es:datacentric-computing/incisive-project/incisive_platform_orchestrator.git/commit/a3ad02a03e38a54bf36d6c60bc8aa697f77c568f)
+
+
 ## v2.1.3 (2024-02-20)
 
 *  fix: added missing API responses on each operation [View](git@gitlab-internal.bsc.es:datacentric-computing/incisive-project/incisive_platform_orchestrator.git/commit/587c3c3f113b3ae1d64b755c9eb964acb39f23f7)
